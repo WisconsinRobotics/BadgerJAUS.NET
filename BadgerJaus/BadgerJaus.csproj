@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99272CA6-ABF9-496B-8F0D-2229025E644C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BadgerJaus</RootNamespace>
+    <AssemblyName>BadgerJaus</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="messages\JausCommandCode.cs" />
+    <Compile Include="messages\control\ConfirmControl.cs" />
+    <Compile Include="messages\control\RejectControl.cs" />
+    <Compile Include="messages\control\ReleaseControl.cs" />
+    <Compile Include="messages\control\ReportAuthority.cs" />
+    <Compile Include="messages\control\ReportControl.cs" />
+    <Compile Include="messages\control\RequestControl.cs" />
+    <Compile Include="messages\discovery\QueryIdentification.cs" />
+    <Compile Include="messages\discovery\QueryServices.cs" />
+    <Compile Include="messages\discovery\ReportIdentification.cs" />
+    <Compile Include="messages\discovery\ReportServices.cs" />
+    <Compile Include="messages\driver\ReportTravelSpeed.cs" />
+    <Compile Include="messages\driver\SetTravelSpeed.cs" />
+    <Compile Include="messages\listmanager\ConfirmElementRequest.cs" />
+    <Compile Include="messages\listmanager\ReportActiveElement.cs" />
+    <Compile Include="messages\listmanager\ReportElementCount.cs" />
+    <Compile Include="messages\listmanager\ReportElementList.cs" />
+    <Compile Include="messages\listmanager\SetElement.cs" />
+    <Compile Include="messages\liveness\QueryHeartbeatPulse.cs" />
+    <Compile Include="messages\liveness\ReportHeartbeatPulse.cs" />
+    <Compile Include="messages\localposesensor\QueryLocalPose.cs" />
+    <Compile Include="messages\localposesensor\ReportLocalPose.cs" />
+    <Compile Include="messages\localposesensor\SetLocalPose.cs" />
+    <Compile Include="messages\localvectordriver\QueryLocalVector.cs" />
+    <Compile Include="messages\localvectordriver\ReportLocalVector.cs" />
+    <Compile Include="messages\localvectordriver\SetLocalVector.cs" />
+    <Compile Include="messages\localwaypointdriver\QueryLocalWaypoint.cs" />
+    <Compile Include="messages\localwaypointdriver\ReportLocalWaypoint.cs" />
+    <Compile Include="messages\localwaypointdriver\SetLocalWaypoint.cs" />
+    <Compile Include="messages\management\QueryStatus.cs" />
+    <Compile Include="messages\management\ReportStatus.cs" />
+    <Compile Include="messages\management\Resume.cs" />
+    <Compile Include="messages\management\Shutdown.cs" />
+    <Compile Include="messages\Message.cs" />
+    <Compile Include="messages\primitivedriver\QueryWrenchEffort.cs" />
+    <Compile Include="messages\primitivedriver\ReportWrenchEffort.cs" />
+    <Compile Include="messages\primitivedriver\SetWrenchEffort.cs" />
+    <Compile Include="messages\velocitystatesensor\QueryVelocityState.cs" />
+    <Compile Include="messages\velocitystatesensor\ReportVelocityState.cs" />
+    <Compile Include="services\BaseService.cs" />
+    <Compile Include="util\AckNak.cs" />
+    <Compile Include="util\Broadcast.cs" />
+    <Compile Include="util\DataFlag.cs" />
+    <Compile Include="util\HCFlags.cs" />
+    <Compile Include="util\JausAddress.cs" />
+    <Compile Include="util\JausByte.cs" />
+    <Compile Include="util\JausBytePresenceVector.cs" />
+    <Compile Include="util\JausElement.cs" />
+    <Compile Include="util\JausServiceSignature.cs" />
+    <Compile Include="util\JausShortPresenceVector.cs" />
+    <Compile Include="util\JausTimeStamp.cs" />
+    <Compile Include="util\JausType.cs" />
+    <Compile Include="util\JausUnsignedInteger.cs" />
+    <Compile Include="util\JausUnsignedShort.cs" />
+    <Compile Include="util\Priority.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="services\core\AccessControl.cs" />
+    <Compile Include="services\core\Discovery.cs" />
+    <Compile Include="services\core\Liveness.cs" />
+    <Compile Include="services\core\Management.cs" />
+    <Compile Include="services\core\Transport.cs" />
+    <Compile Include="services\mobility\LocalPoseSensor.cs" />
+    <Compile Include="services\mobility\LocalVectorDriver.cs" />
+    <Compile Include="services\mobility\LocalWaypointDriver.cs" />
+    <Compile Include="services\mobility\LocalWaypointListDriver.cs" />
+    <Compile Include="services\mobility\PrimitiveDriver.cs" />
+    <Compile Include="services\mobility\VelocityStateSensor.cs" />
+    <Compile Include="services\ReceiveThread.cs" />
+    <Compile Include="services\SendThread.cs" />
+    <Compile Include="services\Service.cs" />
+    <Compile Include="util\Component.cs" />
+    <Compile Include="util\JausAddressPort.cs" />
+    <Compile Include="util\LivenessTime.cs" />
+    <Compile Include="util\Node.cs" />
+    <Compile Include="util\ReceivedPacket.cs" />
+    <Compile Include="util\Subsystem.cs" />
+    <Compile Include="util\WaypointElement.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
