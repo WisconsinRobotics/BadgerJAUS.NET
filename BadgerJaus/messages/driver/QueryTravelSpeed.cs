@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2015, Wisconsin Robotics
  * All rights reserved.
  * 
@@ -24,59 +24,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace BadgerJaus.Messages.LocalPoseSensor
-{
-    public class QueryLocalPose : Message
-    {
-        protected JausShortPresenceVector presence;
+using BadgerJaus.Messages;
 
+namespace BadgerJaus.messages.driver
+{
+    public class QueryTravelSpeed : Message
+    {
         protected override int CommandCode
         {
-            get { return JausCommandCode.QUERY_LOCAL_POSE; }
-        }
-
-        protected override void InitFieldData()
-        {
-            presence = new JausShortPresenceVector();
-        }
-
-        public bool IsFieldSet(int bit)
-        {
-            return presence.isBitSet(bit);
-        }
-
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
-        {
-            return PresenceOperation(buffer, index, out indexOffset, true);
-        }
-
-        public override int GetPayloadSize()
-        {
-            return JausShortPresenceVector.SIZE_BYTES;
-        }
-
-        public void SetField(int bit)
-        {
-            presence.setBit(bit);
-        }
-
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
-        {
-            return PresenceOperation(buffer, index, out indexOffset, false);
-        }
-
-        private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
-        {
-            bool status;
-            if (set)
-                status = presence.setFromJausBuffer(buffer, index);
-            else
-                status = presence.toJausBuffer(buffer, index);
-            indexOffset = index + JausShortPresenceVector.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-
-            return status;
+            get { return JausCommandCode.QUERY_TRAVEL_SPEED; }
         }
     }
 }

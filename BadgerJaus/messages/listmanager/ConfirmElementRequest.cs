@@ -52,9 +52,11 @@ namespace BadgerJaus.Messages.ListManager
             return JausByte.SIZE_BYTES;
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (!requestID.toJausBuffer(buffer, index)) return false;
+            indexOffset += JausByte.SIZE_BYTES;
 
             return true;
         }

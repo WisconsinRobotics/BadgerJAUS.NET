@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="messages\driver\QueryTravelSpeed.cs" />
     <Compile Include="messages\JausCommandCode.cs" />
     <Compile Include="messages\control\ConfirmControl.cs" />
     <Compile Include="messages\control\RejectControl.cs" />

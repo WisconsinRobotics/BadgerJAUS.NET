@@ -28,10 +28,8 @@ using System;
 
 namespace BadgerJaus.Messages.VelocityStateSensor
 {
-    public class ReportVelocityState : Message
+    public class ReportVelocityState : QueryVelocityState
     {
-        JausShortPresenceVector presenceVector;
-
         JausUnsignedInteger x;
         JausUnsignedInteger y;
         JausUnsignedInteger z;
@@ -68,7 +66,7 @@ namespace BadgerJaus.Messages.VelocityStateSensor
 
         protected override void InitFieldData()
         {
-            presenceVector = new JausShortPresenceVector();
+            base.InitFieldData();
             x = new JausUnsignedInteger();
             y = new JausUnsignedInteger();
             z = new JausUnsignedInteger();
@@ -77,54 +75,48 @@ namespace BadgerJaus.Messages.VelocityStateSensor
             yaw = new JausUnsignedShort();
             pathTolerance = new JausUnsignedInteger();
             timeStamp = new JausTimeStamp();
-
-        }
-
-        public bool IsFieldSet(int bit)
-        {
-            return presenceVector.isBitSet(bit);
         }
 
         public void SetX(double xValue)
         {
             x.setFromDouble(xValue, POSE_MIN, POSE_MAX);
-            presenceVector.setBit(X_BIT);
+            presence.setBit(X_BIT);
         }
 
         public void SetY(double yValue)
         {
             y.setFromDouble(yValue, POSE_MIN, POSE_MAX);
-            presenceVector.setBit(Y_BIT);
+            presence.setBit(Y_BIT);
         }
 
         public void SetZ(double zValue)
         {
             z.setFromDouble(zValue, POSE_MIN, POSE_MAX);
-            presenceVector.setBit(Z_BIT);
+            presence.setBit(Z_BIT);
         }
 
         public void SetRoll(double rollValue)
         {
             roll.setFromDouble(rollValue, ORIENT_MIN, ORIENT_MAX);
-            presenceVector.setBit(ROLL_BIT);
+            presence.setBit(ROLL_BIT);
         }
 
         public void SetPitch(double pitchValue)
         {
             pitch.setFromDouble(pitchValue, ORIENT_MIN, ORIENT_MAX);
-            presenceVector.setBit(PITCH_BIT);
+            presence.setBit(PITCH_BIT);
         }
 
         public void SetYaw(double yawValue)
         {
             yaw.setFromDouble(yawValue, ORIENT_MIN, ORIENT_MAX);
-            presenceVector.setBit(YAW_BIT);
+            presence.setBit(YAW_BIT);
         }
 
         public void SetTimestamp(int timeValue)
         {
             //timeStamp.setValue(timeValue);
-            presenceVector.setBit(TS_BIT);
+            presence.setBit(TS_BIT);
         }
 
         public double GetX()
@@ -160,111 +152,106 @@ namespace BadgerJaus.Messages.VelocityStateSensor
         public override int GetPayloadSize()
         {
             int payloadSize = 0;
-            payloadSize += JausShortPresenceVector.SIZE_BYTES;
+            payloadSize += base.GetPayloadSize();
 
-            if (presenceVector.isBitSet(X_BIT))
+            if (presence.isBitSet(X_BIT))
                 payloadSize += JausUnsignedInteger.SIZE_BYTES;
 
-            if (presenceVector.isBitSet(Y_BIT))
+            if (presence.isBitSet(Y_BIT))
                 payloadSize += JausUnsignedInteger.SIZE_BYTES;
 
-            if (presenceVector.isBitSet(Z_BIT))
+            if (presence.isBitSet(Z_BIT))
                 payloadSize += JausUnsignedInteger.SIZE_BYTES;
 
-            if (presenceVector.isBitSet(YAW_BIT))
+            if (presence.isBitSet(YAW_BIT))
                 payloadSize += JausUnsignedShort.SIZE_BYTES;
 
-            if (presenceVector.isBitSet(TS_BIT))
+            if (presence.isBitSet(TS_BIT))
                 payloadSize += JausTimeStamp.SIZE_BYTES;
 
             return payloadSize;
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!presenceVector.toJausBuffer(buffer, index))
+            bool status;
+
+            status = base.PayloadToJausBuffer(buffer, index, out indexOffset);
+            if (!status)
                 return false;
 
-            index += JausShortPresenceVector.SIZE_BYTES;
-
-            if (presenceVector.isBitSet(X_BIT))
+            if (presence.isBitSet(X_BIT))
             {
-                if (!x.toJausBuffer(buffer, index))
+                if (!x.toJausBuffer(buffer, indexOffset))
                     return false;
-                index += JausUnsignedInteger.SIZE_BYTES;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(Y_BIT))
+            if (presence.isBitSet(Y_BIT))
             {
-                if (!y.toJausBuffer(buffer, index))
+                if (!y.toJausBuffer(buffer, indexOffset))
                     return false;
-                index += JausUnsignedInteger.SIZE_BYTES;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(Z_BIT))
+            if (presence.isBitSet(Z_BIT))
             {
-                if (!z.toJausBuffer(buffer, index))
+                if (!z.toJausBuffer(buffer, indexOffset))
                     return false;
-                index += JausUnsignedInteger.SIZE_BYTES;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(YAW_BIT))
+            if (presence.isBitSet(YAW_BIT))
             {
-                if (!y.toJausBuffer(buffer, index))
+                if (!y.toJausBuffer(buffer, indexOffset))
                     return false;
-                index += JausUnsignedShort.SIZE_BYTES;
+                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(TS_BIT))
+            if (presence.isBitSet(TS_BIT))
             {
-                if (!timeStamp.toJausBuffer(buffer, index))
+                if (!timeStamp.toJausBuffer(buffer, indexOffset))
                     return false;
-                index += JausTimeStamp.SIZE_BYTES;
+                indexOffset += JausTimeStamp.SIZE_BYTES;
             }
 
             return true;
         }
 
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < index + this.MessageSize() - base.MessageSize())
+            bool status;
+
+            status = base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
+
+            if (presence.isBitSet(X_BIT))
             {
-                Console.Error.WriteLine("Query Identification Payload Error: Not enough Size");
-                return false; // Not Enough Size
+                x.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            presenceVector.setFromJausBuffer(buffer, index);
-
-            index += JausShortPresenceVector.SIZE_BYTES;
-
-            if (presenceVector.isBitSet(X_BIT))
+            if (presence.isBitSet(Y_BIT))
             {
-                x.setFromJausBuffer(buffer, index);
-                index += JausUnsignedInteger.SIZE_BYTES;
+                y.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(Y_BIT))
+            if (presence.isBitSet(Z_BIT))
             {
-                y.setFromJausBuffer(buffer, index);
-                index += JausUnsignedInteger.SIZE_BYTES;
+                z.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(Z_BIT))
+            if (presence.isBitSet(YAW_BIT))
             {
-                z.setFromJausBuffer(buffer, index);
-                index += JausUnsignedInteger.SIZE_BYTES;
+                yaw.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presenceVector.isBitSet(YAW_BIT))
+            if (presence.isBitSet(TS_BIT))
             {
-                yaw.setFromJausBuffer(buffer, index);
-                index += JausUnsignedShort.SIZE_BYTES;
-            }
-
-            if (presenceVector.isBitSet(TS_BIT))
-            {
-                timeStamp.setFromJausBuffer(buffer, index);
-                index += JausTimeStamp.SIZE_BYTES;
+                timeStamp.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausTimeStamp.SIZE_BYTES;
             }
 
             return true;
@@ -272,7 +259,7 @@ namespace BadgerJaus.Messages.VelocityStateSensor
 
         public void SetToCurrentTime()
         {
-            presenceVector.setBit(TS_BIT);
+            presence.setBit(TS_BIT);
             timeStamp.setToCurrentTime();
         }
     }

@@ -351,14 +351,16 @@ namespace BadgerJaus.Messages
         /// <param name="data">Array to copy data to.</param>
         /// <param name="index">Offset into array to start copying to.</param>
         /// <returns></returns>
-        protected virtual bool PayloadToJausBuffer(byte[] data, int index)
+        protected virtual bool PayloadToJausBuffer(byte[] data, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (this.data != null)
                 Array.Copy(this.data, 0, data, index, this.data.Length);
+            indexOffset += this.data.Length;
             return true;
         }
 
-        protected virtual bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected virtual bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             int payloadSize;
 
@@ -370,6 +372,8 @@ namespace BadgerJaus.Messages
             payloadSize = dataSize.getValue() - HEADER_SIZE_BYTES_NCMP - COMMAND_CODE_SIZE_BYTES - SEQUENCE_NUMBER_SIZE_BYTES;
             data = new byte[payloadSize];
             Array.Copy(buffer, index, data, 0, payloadSize);
+
+            indexOffset = index + payloadSize;
             return true;
         }
 
@@ -385,8 +389,9 @@ namespace BadgerJaus.Messages
 
         public void SetFromJausMessage(Message jausMessage)
         {
+            int indexOffset;
             SetHeaderFromJausMessage(jausMessage);
-            SetPayloadFromJausBuffer(jausMessage.GetPayload(), 0);
+            SetPayloadFromJausBuffer(jausMessage.GetPayload(), 0, out indexOffset);
         }
 
         private void SetHeaderFromJausMessage(Message jausMessage)
@@ -401,7 +406,7 @@ namespace BadgerJaus.Messages
             SetSource(jausMessage.GetSource().getId());
         }
 
-        public int SetFromJausBuffer(byte[] buffer, int index)
+        public int SetFromJausBuffer(byte[] buffer, int index = 0)
         {
             if (!SetHeaderFromJausBuffer(buffer, index))
             {
@@ -442,17 +447,13 @@ namespace BadgerJaus.Messages
 
             index += COMMAND_CODE_SIZE_BYTES;
 
-            // Perform Check on this.payloadSizeFromDataSize();
-
-            SetPayloadFromJausBuffer(buffer, index);
+            SetPayloadFromJausBuffer(buffer, index, out index);
 
             int dataSize = GetPayloadSize();
             if (dataSize < 0 || dataSize > 10000)
             {
                 return -1;
             }
-
-            index += GetPayloadSize();
 
             if (!sequenceNumber.setFromJausBuffer(buffer, index))
             {
@@ -464,68 +465,50 @@ namespace BadgerJaus.Messages
 
         // Takes the header and data byte array and packs them into a data buffer
         // This method needs to be overridden for all subclasses of JausMessage to reflect the correct pack routine
-        private bool toJausBuffer(byte[] buffer, int index)
+        public bool ToJausBuffer(byte[] buffer, int index = 0)
         {
-            try
+            // TODO: Implement Compression
+            if (this.getHCflags() != HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION))
             {
-                // TODO: Implement Compression
-                if (this.getHCflags() != HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION))
-                {
-                    Console.Error.WriteLine("Sending Compression Not Supported");
-                    return false;
-                }
-
-                // TODO: Implement Ack/Nak
-                if (this.getAckNak() != AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED))
-                {
-                    Console.Error.WriteLine("Sending Ack/Nak Not Supported");
-                    return false;
-                }
-
-                if (buffer.Length < (index + GetPayloadSize() + Message.SEQUENCE_NUMBER_SIZE_BYTES))
-                {
-                    Console.Error.WriteLine("Error in toJausBuffer: Not Enough Size");
-                    return false; // Not Enough Size	
-                }
-                if (!HeaderToJausBuffer(buffer, index))
-                {
-                    Console.Error.WriteLine("ToJausBuffer Failed");
-                    return false; //headerToJausBuffer failed
-                }
-
-                index += headerBaseSize;
-
-                if (!commandCode.toJausBuffer(buffer, index)) return false;
-                index += JausUnsignedShort.SIZE_BYTES;
-
-                PayloadToJausBuffer(buffer, index);
-                //Console.WriteLine("Claimed payload size: " + GetPayloadSize());
-                index += GetPayloadSize();	//The 2 is the size of the command code, figure out a more elegant way of handling this.
-
-                //Console.WriteLine("Sequence index position: " + index);
-
-                if (!sequenceNumber.toJausBuffer(buffer, index))
-                {
-                    Console.Error.WriteLine("Failed to write sequence number to buffer");
-                    return false; //headerToJausBuffer failed
-                }
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                // Do something more meaningful, like populate a blank message or something.
-                Console.WriteLine(e.StackTrace);
-                Console.Error.WriteLine(e);
+                Console.Error.WriteLine("Sending Compression Not Supported");
                 return false;
             }
-        }
 
-        // Overloaded method to accept no index input, assumes 0
-        public bool toJausBuffer(byte[] buffer)
-        {
-            return toJausBuffer(buffer, 0);
+            // TODO: Implement Ack/Nak
+            if (this.getAckNak() != AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED))
+            {
+                Console.Error.WriteLine("Sending Ack/Nak Not Supported");
+                return false;
+            }
+
+            if (buffer.Length < (index + GetPayloadSize() + Message.SEQUENCE_NUMBER_SIZE_BYTES))
+            {
+                Console.Error.WriteLine("Error in toJausBuffer: Not Enough Size");
+                return false; // Not Enough Size	
+            }
+            if (!HeaderToJausBuffer(buffer, index))
+            {
+                Console.Error.WriteLine("ToJausBuffer Failed");
+                return false; //headerToJausBuffer failed
+            }
+
+            index += headerBaseSize;
+
+            if (!commandCode.toJausBuffer(buffer, index)) return false;
+            index += JausUnsignedShort.SIZE_BYTES;
+
+            PayloadToJausBuffer(buffer, index, out index);
+            //Console.WriteLine("Claimed payload size: " + GetPayloadSize());
+
+            //Console.WriteLine("Sequence index position: " + index);
+
+            if (!sequenceNumber.toJausBuffer(buffer, index))
+            {
+                Console.Error.WriteLine("Failed to write sequence number to buffer");
+                return false; //headerToJausBuffer failed
+            }
+
+            return true;
         }
 
         // This function takes a byte array and attempts to extract a JAUS
@@ -568,7 +551,7 @@ namespace BadgerJaus.Messages
             buffer[index] = Message.JUDP_HEADER;
 
             index += Message.JUDP_HEADER_SIZE_BYTES;
-            return toJausBuffer(buffer, index);
+            return ToJausBuffer(buffer, index);
         }
 
 

@@ -26,11 +26,237 @@
  */
 namespace BadgerJaus.Messages.LocalPoseSensor
 {
-    public class ReportLocalPose : SetLocalPose
+    public class ReportLocalPose : QueryLocalPose
     {
+        JausUnsignedInteger x;
+        JausUnsignedInteger y;
+        JausUnsignedInteger z;
+        JausUnsignedInteger positionRMS;
+
+        JausUnsignedShort roll;
+        JausUnsignedShort pitch;
+        JausUnsignedShort yaw;
+        JausUnsignedShort attitudeRMS;
+
+        JausTimeStamp timeStamp;
+
+        public const int X_BIT = 0;
+        public const int Y_BIT = 1;
+        public const int Z_BIT = 2;
+        public const int P_RMS = 3;
+        public const int ROLL_BIT = 4;
+        public const int PITCH_BIT = 5;
+        public const int YAW_BIT = 6;
+        public const int A_RMS = 7;
+        public const int TS_BIT = 8;
+
+        private const int POSE_MIN = -100000;
+        private const int POSE_MAX = 100000;
+
+        private const double ORIENT_MIN = -System.Math.PI;
+        private const double ORIENT_MAX = System.Math.PI;
+
         protected override int CommandCode
         {
             get { return JausCommandCode.REPORT_LOCAL_POSE; }
+        }
+
+        protected override void InitFieldData()
+        {
+            base.InitFieldData();
+            x = new JausUnsignedInteger();
+            y = new JausUnsignedInteger();
+            z = new JausUnsignedInteger();
+            positionRMS = new JausUnsignedInteger();
+            roll = new JausUnsignedShort();
+            pitch = new JausUnsignedShort();
+            yaw = new JausUnsignedShort();
+            attitudeRMS = new JausUnsignedShort();
+            timeStamp = new JausTimeStamp();
+        }
+
+        public void SetX(double xValue)
+        {
+            x.setFromDouble(xValue, POSE_MIN, POSE_MAX);
+            presence.setBit(X_BIT);
+        }
+
+        public void SetY(double yValue)
+        {
+            y.setFromDouble(yValue, POSE_MIN, POSE_MAX);
+            presence.setBit(Y_BIT);
+        }
+
+        public void SetZ(double zValue)
+        {
+            z.setFromDouble(zValue, POSE_MIN, POSE_MAX);
+            presence.setBit(Z_BIT);
+        }
+
+        public void SetRoll(double rollValue)
+        {
+            roll.setFromDouble(rollValue, ORIENT_MIN, ORIENT_MAX);
+            presence.setBit(ROLL_BIT);
+        }
+
+        public void SetPitch(double pitchValue)
+        {
+            pitch.setFromDouble(pitchValue, ORIENT_MIN, ORIENT_MAX);
+            presence.setBit(PITCH_BIT);
+        }
+
+        public void SetYaw(double yawValue)
+        {
+            yaw.setFromDouble(yawValue, ORIENT_MIN, ORIENT_MAX);
+            presence.setBit(YAW_BIT);
+        }
+
+        public void SetTimestamp(int timeValue)
+        {
+            //timeStamp.setValue(timeValue);
+            presence.setBit(TS_BIT);
+        }
+
+        public double GetX()
+        {
+            return x.scaleToDouble(POSE_MIN, POSE_MAX);
+        }
+
+        public double GetY()
+        {
+            return y.scaleToDouble(POSE_MIN, POSE_MAX);
+        }
+
+        public double GetZ()
+        {
+            return z.scaleToDouble(POSE_MIN, POSE_MAX);
+        }
+
+        public double GetRoll()
+        {
+            return roll.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+        }
+
+        public double GetPitch()
+        {
+            return pitch.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+        }
+
+        public double GetYaw()
+        {
+            return yaw.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+        }
+
+        public override int GetPayloadSize()
+        {
+            int payloadSize = 0;
+            payloadSize += base.GetPayloadSize();
+
+            if (presence.isBitSet(X_BIT))
+                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+
+            if (presence.isBitSet(Y_BIT))
+                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+
+            if (presence.isBitSet(Z_BIT))
+                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+
+            if (presence.isBitSet(YAW_BIT))
+                payloadSize += JausUnsignedShort.SIZE_BYTES;
+
+            if (presence.isBitSet(TS_BIT))
+                payloadSize += JausTimeStamp.SIZE_BYTES;
+
+            return payloadSize;
+        }
+
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
+        {
+            bool status;
+
+            status = base.PayloadToJausBuffer(buffer, index, out indexOffset);
+            if (!status)
+                return false;
+
+            if (presence.isBitSet(X_BIT))
+            {
+                if (!x.toJausBuffer(buffer, indexOffset))
+                    return false;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(Y_BIT))
+            {
+                if (!y.toJausBuffer(buffer, indexOffset))
+                    return false;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(Z_BIT))
+            {
+                if (!z.toJausBuffer(buffer, indexOffset))
+                    return false;
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(YAW_BIT))
+            {
+                if (!y.toJausBuffer(buffer, indexOffset))
+                    return false;
+                indexOffset += JausUnsignedShort.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(TS_BIT))
+            {
+                if (!timeStamp.toJausBuffer(buffer, indexOffset))
+                    return false;
+                indexOffset += JausTimeStamp.SIZE_BYTES;
+            }
+
+            return true;
+        }
+
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
+        {
+            base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
+
+            if (presence.isBitSet(X_BIT))
+            {
+                x.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(Y_BIT))
+            {
+                y.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(Z_BIT))
+            {
+                z.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(YAW_BIT))
+            {
+                yaw.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausUnsignedShort.SIZE_BYTES;
+            }
+
+            if (presence.isBitSet(TS_BIT))
+            {
+                timeStamp.setFromJausBuffer(buffer, indexOffset);
+                indexOffset += JausTimeStamp.SIZE_BYTES;
+            }
+
+            return true;
+        }
+
+        public void SetToCurrentTime()
+        {
+            presence.setBit(TS_BIT);
+            timeStamp.setToCurrentTime();
         }
     }
 }

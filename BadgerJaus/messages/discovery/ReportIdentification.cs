@@ -69,57 +69,51 @@ namespace BadgerJaus.Messages.Discovery
             identification = "";
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!queryType.toJausBuffer(buffer, index)) return false;
+            indexOffset = index;
+            if (!queryType.toJausBuffer(buffer, indexOffset)) return false;
 
-            index += JausByte.SIZE_BYTES;
+            indexOffset += JausByte.SIZE_BYTES;
 
-            if (!type.toJausBuffer(buffer, index)) return false;
+            if (!type.toJausBuffer(buffer, indexOffset)) return false;
 
-            index += JausUnsignedShort.SIZE_BYTES;
+            indexOffset += JausUnsignedShort.SIZE_BYTES;
 
             JausByte count_field = new JausByte(identification.Length);
 
-            if (!count_field.toJausBuffer(buffer, index)) return false;
+            if (!count_field.toJausBuffer(buffer, indexOffset)) return false;
 
-            index += JausByte.SIZE_BYTES;
+            indexOffset += JausByte.SIZE_BYTES;
 
             if (index + identification.Length > buffer.Length)
                 return false;
 
             Encoding enc = Encoding.UTF8;
-            Array.Copy(enc.GetBytes(identification), 0, buffer, index, identification.Length);
+            Array.Copy(enc.GetBytes(identification), 0, buffer, indexOffset, identification.Length);
+            indexOffset += identification.Length;
 
             return true;
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < index + GetPayloadSize())
-            {
-                Console.Error.WriteLine("Report Identification Payload Error: Not enough Size.");
-                Console.Error.WriteLine("Index: " + index);
-                return false; // Not Enough Size
-            }
-            else
-            {
-                queryType.setFromJausBuffer(buffer, index);
-                index += JausByte.SIZE_BYTES;
-                type.setFromJausBuffer(buffer, index);
-                index += JausUnsignedShort.SIZE_BYTES;
+            indexOffset = index;
+            queryType.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+            type.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += JausUnsignedShort.SIZE_BYTES;
 
-                //TODO Parse string Length -> JausByte and then parse String
-                /*char[] convertedBuffer = new char[count_field.getValue()];
-                for(int i = index; i <= index+count_field.getValue(); i++)
-                {
+            //TODO Parse string Length -> JausByte and then parse String
+            /*char[] convertedBuffer = new char[count_field.getValue()];
+            for(int i = index; i <= index+count_field.getValue(); i++)
+            {
                 
-                }
-                String.copyValueOf(buffer, count_field.getValue(), index);
-                */
-                return true;
             }
+            String.copyValueOf(buffer, count_field.getValue(), index);
+            */
+            return true;
         }
     }
 }

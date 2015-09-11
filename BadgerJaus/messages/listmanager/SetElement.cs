@@ -62,21 +62,21 @@ namespace BadgerJaus.Messages.ListManager
             return true;
         }
 
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
+            if (!requestID.setFromJausBuffer(buffer, indexOffset)) return false;
+            indexOffset += JausByte.SIZE_BYTES;
 
-            if (!requestID.setFromJausBuffer(buffer, index)) return false;
-            index += JausByte.SIZE_BYTES;
-
-            if (!listSize.setFromJausBuffer(buffer, index)) return false;
-            index += JausByte.SIZE_BYTES;
+            if (!listSize.setFromJausBuffer(buffer, indexOffset)) return false;
+            indexOffset += JausByte.SIZE_BYTES;
             Console.WriteLine("Element list size: " + listSize.getValue());
             for (int count = 0; count < listSize.getValue(); count++)
             {
                 JausElement element = new JausElement();
-                if (!element.setFromJausBuffer(buffer, index)) return false;
+                if (!element.setFromJausBuffer(buffer, indexOffset)) return false;
                 elements.AddLast(element);
-                index += element.size();
+                indexOffset += element.size();
             }
 
             return true;

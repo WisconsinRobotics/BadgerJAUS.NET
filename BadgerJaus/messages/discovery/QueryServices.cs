@@ -77,16 +77,17 @@ namespace BadgerJaus.Messages.Discovery
         }
 
         // Packs Message Fields into byte[] then passes array to super class
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!nodeID.toJausBuffer(buffer, index))
+            indexOffset = index;
+            if (!nodeID.toJausBuffer(buffer, indexOffset))
             {
                 return false; // Failed to add query type to buffer;
             }
 
-            index += JausByte.SIZE_BYTES;
+            indexOffset += JausByte.SIZE_BYTES;
 
-            if (!componentID.toJausBuffer(buffer, index))
+            if (!componentID.toJausBuffer(buffer, indexOffset))
             {
                 return false; // Failed to add query type to buffer;
             }
@@ -95,17 +96,12 @@ namespace BadgerJaus.Messages.Discovery
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < index + GetPayloadSize())
-            {
-                Console.Error.WriteLine("Query Services Payload Error: Not enough Size.");
-                Console.Error.WriteLine("Index: " + index);
-                return false; // Not Enough Size
-            }
-
-            nodeID.setValue(buffer[index]);
-            componentID.setValue(buffer[index + JausByte.SIZE_BYTES]);
+            indexOffset = index;
+            nodeID.setValue(buffer[indexOffset]);
+            indexOffset += JausByte.SIZE_BYTES;
+            componentID.setValue(buffer[indexOffset]);
             return true;
         }
 

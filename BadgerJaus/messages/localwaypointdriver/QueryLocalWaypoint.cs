@@ -30,7 +30,7 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
 {
     public class QueryLocalWaypoint : Message
     {
-        JausBytePresenceVector presence;
+        protected JausBytePresenceVector presence;
 
         protected override int CommandCode
         {
@@ -47,15 +47,28 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
             return presence.isBitSet(bit);
         }
 
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            /*
-            if(buffer.Length < index + this.size() - super.size()) {
-                Console.Error.WriteLine("Query Identification Payload Error: Not enough Size");
-                return false; // Not Enough Size
-            }
-            */
-            return presence.setFromJausBuffer(buffer, index);
+            return PresenceOperation(buffer, index, out indexOffset, true);
+        }
+
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
+        {
+            return PresenceOperation(buffer, index, out indexOffset, false);
+        }
+
+        private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
+        {
+            bool status;
+            if (set)
+                status = presence.setFromJausBuffer(buffer, index);
+            else
+                status = presence.toJausBuffer(buffer, index);
+            indexOffset = index + JausBytePresenceVector.SIZE_BYTES;
+            if (!status)
+                indexOffset = index;
+
+            return status;
         }
     }
 }

@@ -61,33 +61,37 @@ namespace BadgerJaus.Messages.Management
             return status.size() + reserved.size();
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!status.toJausBuffer(buffer, index))
+            indexOffset = index;
+            if (!status.toJausBuffer(buffer, indexOffset))
             {
                 return false;
             }
-            index += JausByte.SIZE_BYTES;
+            indexOffset += JausByte.SIZE_BYTES;
 
-            if (!reserved.toJausBuffer(buffer, index))
+            if (!reserved.toJausBuffer(buffer, indexOffset))
             {
                 return false;
             }
-            index += JausUnsignedInteger.SIZE_BYTES;
+            indexOffset += JausUnsignedInteger.SIZE_BYTES;
 
             return true;
         }
 
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (buffer.Length < index + this.MessageSize() - base.MessageSize())
             {
                 Console.Error.WriteLine("Report Status Payload Error: Not enough Size");
                 return false; // Not Enough Size
             }
 
-            status.setFromJausBuffer(buffer, index);
-            reserved.setFromJausBuffer(buffer, index + status.size());
+            status.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+            reserved.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += JausUnsignedInteger.SIZE_BYTES;
             return true;
         }
     }

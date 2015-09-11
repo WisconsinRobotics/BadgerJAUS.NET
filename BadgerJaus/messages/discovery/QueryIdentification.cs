@@ -88,27 +88,22 @@ namespace BadgerJaus.Messages.Discovery
         }
 
         // Packs Message Fields into byte[] then passes array to super class
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!queryType.toJausBuffer(buffer, index)) return false;
+            indexOffset = index;
+            if (!queryType.toJausBuffer(buffer, indexOffset)) return false;
+            indexOffset += JausByte.SIZE_BYTES;
 
             return true;
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < index + GetPayloadSize())
-            {
-                Console.Error.WriteLine("Query Identification Payload Error: Not enough Size.");
-                Console.Error.WriteLine("Index: " + index);
-                return false; // Not Enough Size
-            }
-            else
-            {
-                queryType.setValue(buffer[index]);
-                return true;
-            }
+            indexOffset = index;
+            queryType.setValue(buffer[indexOffset]);
+            indexOffset += JausByte.SIZE_BYTES;
+            return true;
         }
 
         public override String toString()

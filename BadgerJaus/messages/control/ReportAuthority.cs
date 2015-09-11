@@ -66,26 +66,24 @@ namespace BadgerJaus.Messages.Control
         }
 
         // Packs Message Fields into byte[] then passes array to super class
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (!authorityCode.toJausBuffer(buffer, index))
+            indexOffset = index;
+            if (!authorityCode.toJausBuffer(buffer, indexOffset))
             {
                 return false;
             }
+            indexOffset += JausByte.SIZE_BYTES;
 
             return true;
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < ReportAuthority.MAX_DATA_SIZE_BYTES)
-            {
-                //Console.Error.WriteLine("Report Control Payload Error: Not enough Size");
-                return false; // Not Enough Size
-            }
-
-            authorityCode.setFromJausBuffer(buffer, index);
+            indexOffset = index;
+            authorityCode.setFromJausBuffer(buffer, indexOffset);
+            indexOffset = JausByte.SIZE_BYTES;
 
             return true;
         }

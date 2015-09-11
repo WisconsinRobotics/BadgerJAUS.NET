@@ -24,52 +24,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-
 namespace BadgerJaus.Messages.Driver
 {
-    public class SetTravelSpeed : Message
+    public class SetTravelSpeed : ReportTravelSpeed
     {
-        private static double SPEED_MIN = 0;
-        private static double SPEED_MAX = 327.67;
-        private JausUnsignedShort speed = new JausUnsignedShort();
-
         protected override int CommandCode
         {
             get { return JausCommandCode.SET_TRAVEL_SPEED; }
-        }
-
-        public void SetSpeed(double value)
-        {
-            speed.setFromDouble(value, SPEED_MIN, SPEED_MAX);
-        }
-
-        public int GetSpeed()
-        {
-            return speed.getValue();
-        }
-
-        public override int GetPayloadSize()
-        {
-            return JausUnsignedShort.SIZE_BYTES;
-        }
-
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
-        {
-            if (!speed.toJausBuffer(buffer, index)) return false;
-
-            return true;
-        }
-
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
-        {
-            if (buffer.Length < index + this.MessageSize() - base.MessageSize())
-            {
-                Console.Error.WriteLine("Query Identification Payload Error: Not enough Size");
-                return false; // Not Enough Size
-            }
-
-            return speed.setFromJausBuffer(buffer, index);
         }
     }
 }

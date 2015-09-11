@@ -50,9 +50,11 @@ namespace BadgerJaus.Messages.ListManager
             return JausUnsignedShort.SIZE_BYTES;
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (!elementUID.toJausBuffer(buffer, index)) return false;
+            indexOffset += JausUnsignedShort.SIZE_BYTES;
 
             return true;
         }

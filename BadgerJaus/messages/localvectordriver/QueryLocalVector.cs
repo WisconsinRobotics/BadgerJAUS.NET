@@ -32,7 +32,13 @@ namespace BadgerJaus.Messages.LocalVectorDriver
 {
     public class QueryLocalVector : Message
     {
-        JausBytePresenceVector presence;
+        public const int SPEED_BIT = 0;
+        public const int Z_BIT = 1;
+        public const int HEADING_BIT = 2;
+        public const int ROLL_BIT = 3;
+        public const int PITCH_BIT = 4;
+
+        protected JausBytePresenceVector presence;
 
         protected override int CommandCode
         {
@@ -59,20 +65,28 @@ namespace BadgerJaus.Messages.LocalVectorDriver
             return JausBytePresenceVector.SIZE_BYTES;
         }
 
-        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index)
+        protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            if (buffer.Length < index + GetPayloadSize())
-            {
-                Console.Error.WriteLine("Query Identification Payload Error: Not enough Size");
-                return false; // Not Enough Size
-            }
-
-            return presence.setFromJausBuffer(buffer, index);
+            return PresenceOperation(buffer, index, out indexOffset, true);
         }
 
-        protected override bool PayloadToJausBuffer(byte[] buffer, int index)
+        protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            return presence.toJausBuffer(buffer, index);
+            return PresenceOperation(buffer, index, out indexOffset, false);
+        }
+
+        private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
+        {
+            bool status;
+            if(set)
+                status = presence.setFromJausBuffer(buffer, index);
+            else
+                status = presence.toJausBuffer(buffer, index);
+            indexOffset = index + JausBytePresenceVector.SIZE_BYTES;
+            if (!status)
+                indexOffset = index;
+
+            return status;
         }
     }
 }
