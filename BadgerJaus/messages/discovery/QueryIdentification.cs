@@ -58,7 +58,7 @@ namespace BadgerJaus.Messages.Discovery
 
 
         // Message Fields
-        JausByte queryType;
+        protected JausByte queryType;
 
         protected override int CommandCode
         {

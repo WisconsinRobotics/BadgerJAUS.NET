@@ -31,30 +31,25 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.Discovery
 {
-    public class ReportIdentification : Message
+    public class ReportIdentification : QueryIdentification
     {
         public const int SYSTEM_IDENTIFICATION = 1;
         public const int SUBSYSTEM_IDENTIFICATION = 2;
         public const int NODE_IDENTIFICATION = 3;
         public const int COMPONENT_IDENTIFICATION = 4;
 
-        private JausByte queryType;
         private JausUnsignedShort type;
-        private String identification;
+        private string identification;
 
         protected override int CommandCode
         {
             get { return JausCommandCode.REPORT_IDENTIFICATION; }
         }
 
-        public String getName()
+        public string Identification
         {
-            return identification;
-        }
-
-        public void setName(String name)
-        {
-            identification = name;
+            get { return identification; }
+            set { identification = value; }
         }
 
         public override int GetPayloadSize()
@@ -64,29 +59,26 @@ namespace BadgerJaus.Messages.Discovery
 
         protected override void InitFieldData()
         {
-            queryType = new JausByte();
+            base.InitFieldData();
             type = new JausUnsignedShort();
             identification = "";
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!queryType.toJausBuffer(buffer, indexOffset)) return false;
-
-            indexOffset += JausByte.SIZE_BYTES;
+            base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
             if (!type.toJausBuffer(buffer, indexOffset)) return false;
 
             indexOffset += JausUnsignedShort.SIZE_BYTES;
 
-            JausByte count_field = new JausByte(identification.Length);
+            JausByte identificationCountField = new JausByte(identification.Length);
 
-            if (!count_field.toJausBuffer(buffer, indexOffset)) return false;
+            if (!identificationCountField.toJausBuffer(buffer, indexOffset)) return false;
 
             indexOffset += JausByte.SIZE_BYTES;
 
-            if (index + identification.Length > buffer.Length)
+            if (indexOffset + identification.Length > buffer.Length)
                 return false;
 
             Encoding enc = Encoding.UTF8;
@@ -99,20 +91,25 @@ namespace BadgerJaus.Messages.Discovery
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            queryType.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            JausByte identificationCountField = new JausByte();
+            int identificationLength;
+
+            base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
             type.setFromJausBuffer(buffer, indexOffset);
             indexOffset += JausUnsignedShort.SIZE_BYTES;
+            identificationCountField.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+            identificationLength = identificationCountField.getValue();
 
-            //TODO Parse string Length -> JausByte and then parse String
-            /*char[] convertedBuffer = new char[count_field.getValue()];
-            for(int i = index; i <= index+count_field.getValue(); i++)
-            {
-                
-            }
-            String.copyValueOf(buffer, count_field.getValue(), index);
-            */
+            if (identificationLength <= 0)
+                return true;
+
+            if (indexOffset + identificationLength > buffer.Length)
+                return false;
+
+            identification = Encoding.UTF8.GetString(buffer, indexOffset, identificationLength);
+            indexOffset += identificationLength;
+
             return true;
         }
     }
