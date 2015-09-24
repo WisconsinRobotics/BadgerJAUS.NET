@@ -33,11 +33,6 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class ReportIdentification : QueryIdentification
     {
-        public const int SYSTEM_IDENTIFICATION = 1;
-        public const int SUBSYSTEM_IDENTIFICATION = 2;
-        public const int NODE_IDENTIFICATION = 3;
-        public const int COMPONENT_IDENTIFICATION = 4;
-
         private JausUnsignedShort type;
         private string identification;
 
