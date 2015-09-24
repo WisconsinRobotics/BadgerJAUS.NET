@@ -36,7 +36,7 @@ namespace BadgerJaus.Util
 {
     public class Component
     {
-        private JausByte componentID;
+        private int componentID;
         private HashSet<Service> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
@@ -46,15 +46,19 @@ namespace BadgerJaus.Util
 
         public Component(int componentID)
         {
-            this.componentID = new JausByte(componentID);
+            this.componentID = componentID;
             serviceList = new HashSet<Service>();
-            jausAddress = null;
+            jausAddress = new JausAddress();
+            jausAddress.setComponent(componentID);
         }
 
         public int ComponentID
         {
-            get { return componentID.getValue(); }
-            set { componentID.setValue(value); }
+            get { return componentID; }
+            set {
+                componentID = value;
+                jausAddress.setComponent(value);
+            }
         }
 
         public void AddService(Service service)
@@ -83,7 +87,9 @@ namespace BadgerJaus.Util
         {
             int bytesWritten = 0;
             JausByte version = new JausByte();
-            componentID.toJausBuffer(buffer, index);
+            JausByte componentIDByte = new JausByte();
+            componentIDByte.setValue(componentID);
+            componentIDByte.toJausBuffer(buffer, index);
             bytesWritten += JausByte.SIZE_BYTES;
 
             foreach (Service service in serviceList)
@@ -118,7 +124,13 @@ namespace BadgerJaus.Util
 
         public void SetNode(Node node)
         {
+            Subsystem subsystem;
             jausNode = node;
+            jausAddress.setNode(jausNode.NodeID);
+            subsystem = jausNode.GetSubsystem();
+            if (subsystem == null)
+                return;
+            jausAddress.setSubsystem(subsystem.SubsystemID);
         }
 
         public Node GetNode()
@@ -126,24 +138,14 @@ namespace BadgerJaus.Util
             return jausNode;
         }
 
-        public JausAddress GetAddress()
+        public JausAddress JausAddress
         {
-            if(jausAddress == null)
-            {
-                jausAddress = new JausAddress(jausNode.GetSubsystem().SubsystemID, jausNode.NodeID, componentID.getValue());
-            }
-
-            return jausAddress;
+            get { return jausAddress; }
         }
 
         public void SetSubsystemAddress(int subsystemID)
         {
             jausAddress.setSubsystem(subsystemID);
-        }
-
-        public void SetNodeAddress(int nodeID)
-        {
-            jausAddress.setNode(nodeID);
         }
 
         public byte[] getBytes(String str)

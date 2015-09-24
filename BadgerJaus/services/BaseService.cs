@@ -75,7 +75,7 @@ namespace BadgerJaus.Services
         public void SetComponent(Component component)
         {
             this.component = component;
-            this.jausAddress = component.GetAddress();
+            this.jausAddress = component.JausAddress;
         }
 
         public int GetMajorVersion()

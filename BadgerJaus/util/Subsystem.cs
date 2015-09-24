@@ -65,11 +65,11 @@ namespace BadgerJaus.Util
 
         public void AddNode(Node node)
         {
-            if (node != null)
-            {
-                nodeList.Add(node);
-                node.SetSubsystem(this);
-            }
+            if (node == null)
+                return;
+
+            nodeList.Add(node);
+            node.SetSubsystem(this);
         }
 
         public IEnumerable<Node> GetNodes()

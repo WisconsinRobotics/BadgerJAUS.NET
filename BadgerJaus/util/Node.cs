@@ -89,7 +89,15 @@ namespace BadgerJaus.Util
 
         public void SetSubsystem(Subsystem subsystem)
         {
+            if (subsystem == null)
+                return;
+
+            int subsystemID = jausSubsystem.SubsystemID;
             jausSubsystem = subsystem;
+            foreach (Component component in componentList)
+            {
+                component.SetSubsystemAddress(subsystemID);
+            }
         }
 
         public Subsystem GetSubsystem()
