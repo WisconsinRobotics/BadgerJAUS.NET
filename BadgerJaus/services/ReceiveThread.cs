@@ -36,8 +36,8 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Services
 {
-    public class ReceiveThread/* : Runnable */{
-
+    public class ReceiveThread
+    {
         UdpClient socket = null;
         BlockingCollection<ReceivedPacket> receivedMessage = null;
 
