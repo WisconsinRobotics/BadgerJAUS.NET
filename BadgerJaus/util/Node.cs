@@ -89,7 +89,7 @@ namespace BadgerJaus.Util
             if (subsystem == null)
                 return;
 
-            int subsystemID = jausSubsystem.SubsystemID;
+            int subsystemID = subsystem.SubsystemID;
             jausSubsystem = subsystem;
             foreach (Component component in componentList)
             {
