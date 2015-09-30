@@ -79,9 +79,8 @@ namespace BadgerJaus.Messages.Discovery
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            if (!node.PayloadToJausBuffer(buffer, indexOffset))
+            if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset))
                 return false;
-            indexOffset += node.GetPayloadSize();
 
             return true;
         }

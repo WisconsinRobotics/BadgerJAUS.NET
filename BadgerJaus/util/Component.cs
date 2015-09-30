@@ -36,7 +36,7 @@ namespace BadgerJaus.Util
 {
     public class Component
     {
-        private int componentID;
+        private JausByte componentID;
         private HashSet<Service> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
@@ -46,7 +46,7 @@ namespace BadgerJaus.Util
 
         public Component(int componentID)
         {
-            this.componentID = componentID;
+            this.componentID = new JausByte(componentID);
             serviceList = new HashSet<Service>();
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
@@ -54,9 +54,9 @@ namespace BadgerJaus.Util
 
         public int ComponentID
         {
-            get { return componentID; }
+            get { return componentID.getValue(); }
             set {
-                componentID = value;
+                componentID.setValue(value);
                 jausAddress.setComponent(value);
             }
         }
@@ -83,28 +83,31 @@ namespace BadgerJaus.Util
             return Enumerable.AsEnumerable<Service>(serviceList);
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index)
+        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
-            int bytesWritten = 0;
-            JausByte version = new JausByte();
-            JausByte componentIDByte = new JausByte();
-            componentIDByte.setValue(componentID);
-            componentIDByte.toJausBuffer(buffer, index);
-            bytesWritten += JausByte.SIZE_BYTES;
+            bool status;
+            indexOffset = index;
+            status = componentID.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
 
+            if (!getServices)
+                return status;
+
+            /*
+             * TODO: Fix this
             foreach (Service service in serviceList)
             {
                 String serviceID = service.GetServiceID();
-                Array.Copy(getBytes(serviceID), 0, buffer, index + bytesWritten, serviceID.Length);
-                bytesWritten += serviceID.Length;
+                Array.Copy(getBytes(serviceID), 0, buffer, indexOffset, serviceID.Length);
+                indexOffset += serviceID.Length;
                 version.setValue(service.GetMajorVersion());
-                version.toJausBuffer(buffer, index + bytesWritten);
+                version.toJausBuffer(buffer, indexOffset);
                 bytesWritten += JausByte.SIZE_BYTES;
                 version.setValue(service.GetMinorVersion());
-                version.toJausBuffer(buffer, index + bytesWritten);
+                version.toJausBuffer(buffer, indexOffset);
                 bytesWritten += JausByte.SIZE_BYTES;
             }
-
+            */
             return true;
         }
 
