@@ -37,7 +37,7 @@ namespace BadgerJaus.Util
     {
 
         // Values for Service identification (See RegisterServicesMessage)
-        private string URI;
+        private string uri;
         private JausByte majorVersionNumber;
         private JausByte minorVersionNumber;
 
@@ -45,7 +45,7 @@ namespace BadgerJaus.Util
         public JausServiceSignature()
         {
 
-            URI = "";
+            uri = "";
             majorVersionNumber = new JausByte();
             minorVersionNumber = new JausByte();
 
@@ -62,7 +62,7 @@ namespace BadgerJaus.Util
         public JausServiceSignature(String uri, int majorVN, int minorVN)
         {
 
-            this.URI = uri;
+            this.uri = uri;
             this.majorVersionNumber = new JausByte(majorVN);
             this.minorVersionNumber = new JausByte(minorVN);
 
@@ -71,36 +71,23 @@ namespace BadgerJaus.Util
         // Getters and Setters
 
         // URI
-        public String getURI()
+        public string URI
         {
-            return URI;
-        }
-
-        public void setURI(String uri)
-        {
-            URI = uri;
+            get { return uri; }
+            set { uri = value; }
         }
 
         // Major Version Number
-        public int getMajorVersionNumber()
+        public int MajorVersion
         {
-            return majorVersionNumber.getValue();
+            get { return majorVersionNumber.getValue(); }
+            set { majorVersionNumber.setValue(value); }
         }
 
-        public void setMajorVersionNumber(int majorVersionNumber)
+        public int MinorVersion
         {
-            this.majorVersionNumber.setValue(majorVersionNumber);
-        }
-
-        // Minor Version Number
-        public int getMinorVersionNumber()
-        {
-            return minorVersionNumber.getValue();
-        }
-
-        public void setMinorVersionNumber(int minorVersionNumber)
-        {
-            this.minorVersionNumber.setValue(minorVersionNumber);
+            get { return minorVersionNumber.getValue(); }
+            set { minorVersionNumber.setValue(value); }
         }
 
         // JausType Methods
@@ -127,30 +114,22 @@ namespace BadgerJaus.Util
 
         public bool toJausBuffer(byte[] byteArray, int index)
         {
+            Encoding enc = Encoding.UTF8;
+            JausByte signatureLength = new JausByte(uri.Length);
 
-            try
-            {
+            signatureLength.toJausBuffer(byteArray, index);
+            index += JausByte.SIZE_BYTES;
 
-                (new JausByte(URI.Length)).toJausBuffer(byteArray, index);
-                index += JausByte.SIZE_BYTES;
+            Array.Copy(enc.GetBytes(uri), 0, byteArray, index, uri.Length);
+            index += uri.Length;
 
-                Array.Copy(getBytes(URI), 0, byteArray, index, URI.Length);
-                index += URI.Length;
+            this.majorVersionNumber.toJausBuffer(byteArray, index);
+            index += JausByte.SIZE_BYTES;
 
-                this.majorVersionNumber.toJausBuffer(byteArray, index);
-                index += JausByte.SIZE_BYTES;
+            this.minorVersionNumber.toJausBuffer(byteArray, index);
+            index += JausByte.SIZE_BYTES;
 
-                this.minorVersionNumber.toJausBuffer(byteArray, index);
-                index += JausByte.SIZE_BYTES;
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine("JausServicesSignature Encoding Error: " + e);
-                throw new ArgumentException(e.Message);
-            }
+            return true;
         }
 
         public bool setFromJausBuffer(byte[] byteArray)
@@ -173,7 +152,7 @@ namespace BadgerJaus.Util
 
                 URIBytes = new byte[URILength];
                 Array.Copy(byteArray, index, URIBytes, 0, URILength);
-                this.URI = getString(URIBytes);
+                this.uri = getString(URIBytes);
                 index += URILength;
 
                 this.majorVersionNumber.setFromJausBuffer(byteArray, index);
@@ -194,19 +173,17 @@ namespace BadgerJaus.Util
 
         public int size()
         {
-
-            return JausByte.SIZE_BYTES + URI.Length + JausByte.SIZE_BYTES + JausByte.SIZE_BYTES;
-
+            return JausByte.SIZE_BYTES + uri.Length + JausByte.SIZE_BYTES + JausByte.SIZE_BYTES;
         }
 
         public String toHexString()
         {
 
-            byte[] tmpByteArray = getBytes(URI);
+            byte[] tmpByteArray = getBytes(uri);
             JausByte tmpJB = new JausByte();
 
             String temp = "";
-            temp += (new JausByte(URI.Length).toHexString());
+            temp += (new JausByte(uri.Length).toHexString());
             for (int i = 0; i < tmpByteArray.Length; i++)
             {
                 tmpJB.setValue((int)tmpByteArray[i]);
@@ -217,35 +194,11 @@ namespace BadgerJaus.Util
             return temp;
         }
 
-        public int hashCode()
-        {
-            return (this.URI + this.getMajorVersionNumber() + this.getMinorVersionNumber()).GetHashCode();
-        }
-
-        public bool equals(Object jss)
-        {
-
-            JausServiceSignature jss2 = (JausServiceSignature)jss;
-            if (this.URI.Equals(jss2.getURI()) &&
-                this.majorVersionNumber.getValue() == jss2.getMajorVersionNumber() &&
-                this.minorVersionNumber.getValue() == jss2.getMinorVersionNumber())
-            {
-
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-
         public String toString()
         {
 
             String temp;
-            temp = "id = " + URI + " " +
+            temp = "id = " + uri + " " +
                     "version = " + this.majorVersionNumber.getValue() + "." +
                     this.minorVersionNumber.getValue() + "\n";
             return temp;

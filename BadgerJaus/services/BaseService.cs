@@ -44,9 +44,6 @@ namespace BadgerJaus.Services
         protected JausServiceSignature jausServiceSignature = null;
         protected Service parentService = null;
 
-        public const int MAJOR_VERSION = 1;
-        public const int MINOR_VERSION = 0;
-
         public const int DEFAULT_SLEEP_TIME = 5000;
 
         private Stopwatch executionStopwatch;
@@ -55,6 +52,7 @@ namespace BadgerJaus.Services
         {
             executionStopwatch = new Stopwatch();
             executionStopwatch.Start();
+            jausServiceSignature = new JausServiceSignature("BaseService", 1, 0);
         }
 
         protected virtual void Execute()
@@ -67,30 +65,28 @@ namespace BadgerJaus.Services
             return parentService;
         }
 
-        public JausServiceSignature GetServiceSignature()
-        {
-            return jausServiceSignature;
-        }
-
         public void SetComponent(Component component)
         {
             this.component = component;
             this.jausAddress = component.JausAddress;
         }
 
-        public int GetMajorVersion()
+        public int MajorVersion
         {
-            return MAJOR_VERSION;
+            get { return jausServiceSignature.MajorVersion; }
+            set { jausServiceSignature.MajorVersion = value; }
         }
 
-        public int GetMinorVersion()
+        public int MinorVersion
         {
-            return MINOR_VERSION;
+            get { return jausServiceSignature.MinorVersion; }
+            set { jausServiceSignature.MinorVersion = value; }
         }
 
-        public String GetServiceID()
+        public string ServiceID
         {
-            return null;
+            get { return jausServiceSignature.URI; }
+            set { jausServiceSignature.URI = value; }
         }
 
         public abstract bool IsSupported(int commandCode);
@@ -112,6 +108,15 @@ namespace BadgerJaus.Services
         public virtual long SleepTime
         {
             get { return DEFAULT_SLEEP_TIME; }
+        }
+
+        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
+        {
+            indexOffset = index;
+            jausServiceSignature.toJausBuffer(buffer, indexOffset);
+            indexOffset += jausServiceSignature.size();
+
+            return true;
         }
     }
 }

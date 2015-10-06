@@ -40,6 +40,7 @@ namespace BadgerJaus.Util
         private HashSet<Service> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
+        private JausByte instanceID;
 
         Management managementService = null;
         AccessControl accessControlService = null;
@@ -50,6 +51,7 @@ namespace BadgerJaus.Util
             serviceList = new HashSet<Service>();
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
+            instanceID = new JausByte(0);
         }
 
         public int ComponentID
@@ -86,13 +88,23 @@ namespace BadgerJaus.Util
         public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
             bool status;
+            JausByte serviceCount = new JausByte(serviceList.Count);
             indexOffset = index;
             status = componentID.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+            instanceID.toJausBuffer(buffer, indexOffset);
             indexOffset += JausByte.SIZE_BYTES;
 
             if (!getServices)
                 return status;
+            
+            serviceCount.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
 
+            foreach(Service service in serviceList)
+            {
+                service.PayloadToJausBuffer(buffer, index, out indexOffset);
+            }
             /*
              * TODO: Fix this
             foreach (Service service in serviceList)
@@ -116,8 +128,9 @@ namespace BadgerJaus.Util
             int totalSize = JausByte.SIZE_BYTES;
             foreach (Service service in serviceList)
             {
-                String serviceID = service.GetServiceID();
-                totalSize += serviceID.Length;
+#warning This needs to be fixed
+                //String serviceID = service.GetServiceID();
+                //totalSize += serviceID.Length;
                 totalSize += JausByte.SIZE_BYTES;
                 totalSize += JausByte.SIZE_BYTES;
             }

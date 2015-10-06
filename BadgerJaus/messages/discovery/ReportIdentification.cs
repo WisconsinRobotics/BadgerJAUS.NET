@@ -61,6 +61,7 @@ namespace BadgerJaus.Messages.Discovery
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            Encoding enc = Encoding.UTF8;
             base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
             if (!type.toJausBuffer(buffer, indexOffset)) return false;
@@ -75,8 +76,7 @@ namespace BadgerJaus.Messages.Discovery
 
             if (indexOffset + identification.Length > buffer.Length)
                 return false;
-
-            Encoding enc = Encoding.UTF8;
+            
             Array.Copy(enc.GetBytes(identification), 0, buffer, indexOffset, identification.Length);
             indexOffset += identification.Length;
 
