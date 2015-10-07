@@ -66,6 +66,9 @@
     <Compile Include="messages\discovery\ReportServices.cs" />
     <Compile Include="messages\driver\ReportTravelSpeed.cs" />
     <Compile Include="messages\driver\SetTravelSpeed.cs" />
+    <Compile Include="messages\jointeffort\QueryJointEffort.cs" />
+    <Compile Include="messages\jointeffort\ReportJointEffort.cs" />
+    <Compile Include="messages\jointeffort\SetJointEffort.cs" />
     <Compile Include="messages\listmanager\ConfirmElementRequest.cs" />
     <Compile Include="messages\listmanager\ReportActiveElement.cs" />
     <Compile Include="messages\listmanager\ReportElementCount.cs" />
