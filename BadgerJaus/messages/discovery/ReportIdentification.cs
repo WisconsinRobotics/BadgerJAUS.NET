@@ -33,11 +33,6 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class ReportIdentification : QueryIdentification
     {
-        public const int SYSTEM_IDENTIFICATION = 1;
-        public const int SUBSYSTEM_IDENTIFICATION = 2;
-        public const int NODE_IDENTIFICATION = 3;
-        public const int COMPONENT_IDENTIFICATION = 4;
-
         private JausUnsignedShort type;
         private string identification;
 
@@ -66,6 +61,7 @@ namespace BadgerJaus.Messages.Discovery
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            Encoding enc = Encoding.UTF8;
             base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
             if (!type.toJausBuffer(buffer, indexOffset)) return false;
@@ -80,8 +76,7 @@ namespace BadgerJaus.Messages.Discovery
 
             if (indexOffset + identification.Length > buffer.Length)
                 return false;
-
-            Encoding enc = Encoding.UTF8;
+            
             Array.Copy(enc.GetBytes(identification), 0, buffer, indexOffset, identification.Length);
             indexOffset += identification.Length;
 

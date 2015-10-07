@@ -59,18 +59,15 @@ namespace BadgerJaus.Util
             set { nodeID.setValue(value); }
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index)
+        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
-            int bytesWritten = 0;
-            nodeID.toJausBuffer(buffer, index);
-            bytesWritten += JausByte.SIZE_BYTES;
-
+            JausByte componentCount = new JausByte(componentList.Count);
+            indexOffset = index;
+            componentCount.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
             foreach (Component component in componentList)
             {
-                int componentSize = component.GetPayloadSize();
-                if (!component.PayloadToJausBuffer(buffer, index + bytesWritten))
-                    return false;
-                bytesWritten += componentSize;
+                component.Serialize(buffer, indexOffset, out indexOffset, getServices);
             }
 
             return true;
@@ -89,7 +86,15 @@ namespace BadgerJaus.Util
 
         public void SetSubsystem(Subsystem subsystem)
         {
+            if (subsystem == null)
+                return;
+
+            int subsystemID = subsystem.SubsystemID;
             jausSubsystem = subsystem;
+            foreach (Component component in componentList)
+            {
+                component.SetSubsystemAddress(subsystemID);
+            }
         }
 
         public Subsystem GetSubsystem()

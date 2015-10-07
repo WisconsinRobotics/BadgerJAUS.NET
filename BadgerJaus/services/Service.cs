@@ -52,14 +52,10 @@ namespace BadgerJaus.Services
     public interface Service
     {
         Service GetParentService();
-        JausServiceSignature GetServiceSignature();
         bool IsSupported(int commandCode);
         bool ImplementsAndHandledMessage(Message message);
-        String GetServiceID();
-        int GetMajorVersion();
-        int GetMinorVersion();
         void SetComponent(Component component);
-
+        bool Serialize(byte[] buffer, int index, out int indexOffset);
         //String toString();
     }
 }

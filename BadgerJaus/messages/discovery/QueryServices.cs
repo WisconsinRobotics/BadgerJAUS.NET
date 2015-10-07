@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
+using System.Collections.Generic;
 
 using BadgerJaus.Util;
 
@@ -32,10 +33,8 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class QueryServices : Message
     {
-        private const int MAX_DATA_SIZE_BYTES = JausByte.SIZE_BYTES * 2;
-
-        JausByte nodeID;
-        JausByte componentID;
+        //private const int MAX_DATA_SIZE_BYTES = JausByte.SIZE_BYTES * 2;
+        List<Node> nodeList;
 
         protected override int CommandCode
         {
@@ -44,52 +43,37 @@ namespace BadgerJaus.Messages.Discovery
 
         protected override void InitFieldData()
         {
-            nodeID = new JausByte();
-            componentID = new JausByte();
+            nodeList = new List<Node>();
         }
 
         // Getters and Setters
-        public int GetNodeID()
+        public void AddNode(Node node)
         {
-            return nodeID.getValue();
-        }
-
-        public int GetComponentID()
-        {
-            return componentID.getValue();
-        }
-
-        public void SetNodeID(int nodeID)
-        {
-            if (nodeID > 0 && nodeID < 256)
-                this.nodeID.setValue(nodeID);
-        }
-
-        public void SetComponentID(int componentID)
-        {
-            if (componentID > 0 && componentID < 256)
-                this.componentID.setValue(componentID);
+            nodeList.Add(node);
         }
 
         public override int GetPayloadSize()
         {
-            return MAX_DATA_SIZE_BYTES;
+            int size = 1;
+            foreach(Node node in nodeList)
+            {
+                size += node.GetPayloadSize();
+            }
+            return size;
         }
 
         // Packs Message Fields into byte[] then passes array to super class
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            JausByte nodeCount = new JausByte(nodeList.Count);
             indexOffset = index;
-            if (!nodeID.toJausBuffer(buffer, indexOffset))
-            {
-                return false; // Failed to add query type to buffer;
-            }
-
+            nodeCount.toJausBuffer(buffer, indexOffset);
             indexOffset += JausByte.SIZE_BYTES;
-
-            if (!componentID.toJausBuffer(buffer, indexOffset))
+            
+            foreach(Node node in nodeList)
             {
-                return false; // Failed to add query type to buffer;
+                if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset, false))
+                    return false;
             }
 
             return true;
@@ -98,10 +82,28 @@ namespace BadgerJaus.Messages.Discovery
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            JausByte nodeCount = new JausByte();
+            int nodeIndex;
             indexOffset = index;
-            nodeID.setValue(buffer[indexOffset]);
+            Node node;
+
+            if (nodeList == null)
+            {
+                nodeList = new List<Node>();
+            }
+            else
+            {
+                nodeList.Clear();
+            }
+            nodeCount.setFromJausBuffer(buffer, indexOffset);
             indexOffset += JausByte.SIZE_BYTES;
-            componentID.setValue(buffer[indexOffset]);
+
+            for (nodeIndex = 0; nodeIndex < nodeCount.getValue(); ++nodeIndex )
+            {
+#warning Unpacking is not yet implemented
+                node = new Node(0);
+            }
+            
             return true;
         }
 

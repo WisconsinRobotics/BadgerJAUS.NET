@@ -36,8 +36,8 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Services.Core
 {
-    public class SendThread/* : Runnable*/ {
-
+    public class SendThread
+    {
         BlockingCollection<Message> sendMessage = null;
         ConcurrentDictionary<String, JausAddressPort> jausAddrMap = null;
         UdpClient socket = null;

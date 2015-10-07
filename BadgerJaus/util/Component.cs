@@ -40,6 +40,7 @@ namespace BadgerJaus.Util
         private HashSet<Service> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
+        private JausByte instanceID;
 
         Management managementService = null;
         AccessControl accessControlService = null;
@@ -48,13 +49,18 @@ namespace BadgerJaus.Util
         {
             this.componentID = new JausByte(componentID);
             serviceList = new HashSet<Service>();
-            jausAddress = null;
+            jausAddress = new JausAddress();
+            jausAddress.setComponent(componentID);
+            instanceID = new JausByte(0);
         }
 
         public int ComponentID
         {
             get { return componentID.getValue(); }
-            set { componentID.setValue(value); }
+            set {
+                componentID.setValue(value);
+                jausAddress.setComponent(value);
+            }
         }
 
         public void AddService(Service service)
@@ -79,24 +85,25 @@ namespace BadgerJaus.Util
             return Enumerable.AsEnumerable<Service>(serviceList);
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index)
+        public bool Serialize(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
-            int bytesWritten = 0;
-            JausByte version = new JausByte();
-            componentID.toJausBuffer(buffer, index);
-            bytesWritten += JausByte.SIZE_BYTES;
+            bool status;
+            JausByte serviceCount = new JausByte(serviceList.Count);
+            indexOffset = index;
+            status = componentID.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+            instanceID.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
 
-            foreach (Service service in serviceList)
+            if (!getServices)
+                return status;
+            
+            serviceCount.toJausBuffer(buffer, indexOffset);
+            indexOffset += JausByte.SIZE_BYTES;
+
+            foreach(Service service in serviceList)
             {
-                String serviceID = service.GetServiceID();
-                Array.Copy(getBytes(serviceID), 0, buffer, index + bytesWritten, serviceID.Length);
-                bytesWritten += serviceID.Length;
-                version.setValue(service.GetMajorVersion());
-                version.toJausBuffer(buffer, index + bytesWritten);
-                bytesWritten += JausByte.SIZE_BYTES;
-                version.setValue(service.GetMinorVersion());
-                version.toJausBuffer(buffer, index + bytesWritten);
-                bytesWritten += JausByte.SIZE_BYTES;
+                service.Serialize(buffer, index, out indexOffset);
             }
 
             return true;
@@ -107,8 +114,9 @@ namespace BadgerJaus.Util
             int totalSize = JausByte.SIZE_BYTES;
             foreach (Service service in serviceList)
             {
-                String serviceID = service.GetServiceID();
-                totalSize += serviceID.Length;
+#warning This needs to be fixed
+                //String serviceID = service.GetServiceID();
+                //totalSize += serviceID.Length;
                 totalSize += JausByte.SIZE_BYTES;
                 totalSize += JausByte.SIZE_BYTES;
             }
@@ -118,7 +126,13 @@ namespace BadgerJaus.Util
 
         public void SetNode(Node node)
         {
+            Subsystem subsystem;
             jausNode = node;
+            jausAddress.setNode(jausNode.NodeID);
+            subsystem = jausNode.GetSubsystem();
+            if (subsystem == null)
+                return;
+            jausAddress.setSubsystem(subsystem.SubsystemID);
         }
 
         public Node GetNode()
@@ -126,24 +140,14 @@ namespace BadgerJaus.Util
             return jausNode;
         }
 
-        public JausAddress GetAddress()
+        public JausAddress JausAddress
         {
-            if(jausAddress == null)
-            {
-                jausAddress = new JausAddress(jausNode.GetSubsystem().SubsystemID, jausNode.NodeID, componentID.getValue());
-            }
-
-            return jausAddress;
+            get { return jausAddress; }
         }
 
         public void SetSubsystemAddress(int subsystemID)
         {
             jausAddress.setSubsystem(subsystemID);
-        }
-
-        public void SetNodeAddress(int nodeID)
-        {
-            jausAddress.setNode(nodeID);
         }
 
         public byte[] getBytes(String str)
