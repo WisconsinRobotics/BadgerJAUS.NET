@@ -55,7 +55,7 @@ namespace BadgerJaus.Services
         bool IsSupported(int commandCode);
         bool ImplementsAndHandledMessage(Message message);
         void SetComponent(Component component);
-        bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset);
+        bool Serialize(byte[] buffer, int index, out int indexOffset);
         //String toString();
     }
 }

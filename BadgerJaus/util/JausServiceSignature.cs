@@ -141,34 +141,21 @@ namespace BadgerJaus.Util
         public bool setFromJausBuffer(byte[] byteArray, int index)
         {
 
-            int URILength;
-            byte[] URIBytes;
+            int uriLength;
 
-            try
-            {
+            uriLength = (new JausByte(byteArray, index).getValue());
+            index += JausByte.SIZE_BYTES;
 
-                URILength = (new JausByte(byteArray, index).getValue());
-                index += JausByte.SIZE_BYTES;
+            uri = Encoding.UTF8.GetString(byteArray, index, uriLength);
+            index += uriLength;
 
-                URIBytes = new byte[URILength];
-                Array.Copy(byteArray, index, URIBytes, 0, URILength);
-                this.uri = getString(URIBytes);
-                index += URILength;
+            this.majorVersionNumber.setFromJausBuffer(byteArray, index);
+            index += JausByte.SIZE_BYTES;
 
-                this.majorVersionNumber.setFromJausBuffer(byteArray, index);
-                index += JausByte.SIZE_BYTES;
+            this.minorVersionNumber.setFromJausBuffer(byteArray, index);
+            index += JausByte.SIZE_BYTES;
 
-                this.minorVersionNumber.setFromJausBuffer(byteArray, index);
-                index += JausByte.SIZE_BYTES;
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine("JausServicesSignature Decoding Error: " + e);
-                throw new ArgumentException(e.Message);
-            }
+            return true;
         }
 
         public int size()

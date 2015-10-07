@@ -110,12 +110,20 @@ namespace BadgerJaus.Services
             get { return DEFAULT_SLEEP_TIME; }
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
+        public bool Serialize(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
             jausServiceSignature.toJausBuffer(buffer, indexOffset);
             indexOffset += jausServiceSignature.size();
 
+            return true;
+        }
+
+        public bool Deserialize(byte[] buffer, int index, out int indexOffset)
+        {
+            indexOffset = index;
+            jausServiceSignature.setFromJausBuffer(buffer, indexOffset);
+            indexOffset += jausServiceSignature.size();
             return true;
         }
     }

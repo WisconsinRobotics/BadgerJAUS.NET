@@ -67,7 +67,7 @@ namespace BadgerJaus.Util
             indexOffset += JausByte.SIZE_BYTES;
             foreach (Component component in componentList)
             {
-                component.PayloadToJausBuffer(buffer, indexOffset, out indexOffset, getServices);
+                component.Serialize(buffer, indexOffset, out indexOffset, getServices);
             }
 
             return true;

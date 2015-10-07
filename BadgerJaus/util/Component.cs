@@ -85,7 +85,7 @@ namespace BadgerJaus.Util
             return Enumerable.AsEnumerable<Service>(serviceList);
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
+        public bool Serialize(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
             bool status;
             JausByte serviceCount = new JausByte(serviceList.Count);
@@ -103,23 +103,9 @@ namespace BadgerJaus.Util
 
             foreach(Service service in serviceList)
             {
-                service.PayloadToJausBuffer(buffer, index, out indexOffset);
+                service.Serialize(buffer, index, out indexOffset);
             }
-            /*
-             * TODO: Fix this
-            foreach (Service service in serviceList)
-            {
-                String serviceID = service.GetServiceID();
-                Array.Copy(getBytes(serviceID), 0, buffer, indexOffset, serviceID.Length);
-                indexOffset += serviceID.Length;
-                version.setValue(service.GetMajorVersion());
-                version.toJausBuffer(buffer, indexOffset);
-                bytesWritten += JausByte.SIZE_BYTES;
-                version.setValue(service.GetMinorVersion());
-                version.toJausBuffer(buffer, indexOffset);
-                bytesWritten += JausByte.SIZE_BYTES;
-            }
-            */
+
             return true;
         }
 
