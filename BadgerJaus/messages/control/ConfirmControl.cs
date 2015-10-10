@@ -35,7 +35,7 @@ namespace BadgerJaus.Messages.Control
     public class ConfirmControl : Message
     {
         // Size of payload not including Message Code
-        private const int MAX_DATA_SIZE_BYTES = JausByte.SIZE_BYTES;
+        private const int MAX_DATA_SIZE_BYTES = JausBaseType.BYTE_BYTE_SIZE;
 
         public const int CONTROL_ACCEPTED = 0;
         public const int NOT_AVAILABLE = 1;
@@ -60,12 +60,12 @@ namespace BadgerJaus.Messages.Control
         // Getters and Setters
         public int GetResponseCode()
         {
-            return responseCode.getValue();
+            return (int)responseCode.Value;
         }
 
         public void SetResponseCode(int responseCode)
         {
-            this.responseCode.setValue(responseCode);
+            this.responseCode.Value = responseCode;
         }
 
         public JausAddress GetController()
@@ -81,30 +81,19 @@ namespace BadgerJaus.Messages.Control
         // Packs Message Fields into byte[] then passes array to super class
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!responseCode.toJausBuffer(buffer, indexOffset))
-            {
-                return false;
-            }
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return responseCode.Serialize(buffer, index, out indexOffset);
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            responseCode.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return responseCode.Deserialize(buffer, index, out indexOffset);
         }
 
-        public override string toString()
+        public override string ToString()
         {
             String str = base.ToString();
-            str += "Response Code: " + responseCodes[responseCode.getValue()] + "\n";
+            str += "Response Code: " + responseCodes[responseCode.Value] + "\n";
             return str;
         }
         

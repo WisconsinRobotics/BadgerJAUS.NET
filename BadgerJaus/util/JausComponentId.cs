@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BadgerJaus.util
+namespace BadgerJaus.Util
 {
     /// <summary>
     /// The legacy JAUS Reference Architecture had a set of predefined

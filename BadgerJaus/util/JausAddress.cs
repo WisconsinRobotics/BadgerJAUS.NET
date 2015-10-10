@@ -28,7 +28,7 @@ using System;
 
 namespace BadgerJaus.Util
 {
-    public class JausAddress : JausType
+    public class JausAddress : JausUnsignedInteger
     {
         private const int SUBSYSTEM_BIT_POSITION = 16;
         private const int NODE_BIT_POSITION = 8;
@@ -74,8 +74,6 @@ namespace BadgerJaus.Util
          */
         public const int SIZE = 4;
 
-        private int id;
-
         /**
          * Creates the empty JAUS Address 0.0.0. This is not a valid address, in the 
          * sense of a valid address for a JAUS component.  After generating an 
@@ -85,7 +83,7 @@ namespace BadgerJaus.Util
          */
         public JausAddress()
         {
-            id = 0;
+            value = 0;
         }
 
         /**
@@ -101,7 +99,7 @@ namespace BadgerJaus.Util
          */
         public JausAddress(int id)
         {
-            this.id = id;
+            this.value = id;
         }
 
         /**
@@ -114,7 +112,7 @@ namespace BadgerJaus.Util
          */
         public JausAddress(JausAddress address)
         {
-            id = address.getId();
+            value = address.Value;
         }
 
         /**
@@ -133,23 +131,6 @@ namespace BadgerJaus.Util
         }
 
         /**
-         * Returns the unique identifier representing this JausAddress. Identifiers 
-         * are unique in that two JausAddresses with different subsystems, nodes, or
-         * components will have different unique identifiers.  That is to say the 
-         * unique identifier can be used as a representation of an address's 
-         * subsystem, node and component.
-         *   
-         * @return The unique identifier associated with this JausAddress
-         * 
-         * @see #equals(Object)
-         * @see #setId(int)
-         */
-        public int getId()
-        {
-            return id;
-        }
-
-        /**
          * Returns the subsystem associated with this JausAddress. Valid ranges for 
          * a subsystem include 0 through 65535.   
          * 
@@ -159,7 +140,7 @@ namespace BadgerJaus.Util
          */
         public int getSubsystem()
         {
-            return id >> SUBSYSTEM_BIT_POSITION;
+            return (int)value >> SUBSYSTEM_BIT_POSITION;
         }
 
         /**
@@ -172,7 +153,7 @@ namespace BadgerJaus.Util
          */
         public int getNode()
         {
-            return (id >> NODE_BIT_POSITION) & 0xFF;
+            return ((int)value >> NODE_BIT_POSITION) & 0xFF;
         }
 
         /**
@@ -185,25 +166,7 @@ namespace BadgerJaus.Util
          */
         public int getComponent()
         {
-            return (id >> COMPONENT_BIT_POSITION) & 0xFF;
-        }
-
-        /**
-         * Sets the unique identifier representing this JausAddress. Identifiers 
-         * are unique in that two JausAddresses with different subsystems, nodes, or
-         * components will have different unique identifiers.  That is to say the 
-         * unique identifier can be used as a representation of an address's 
-         * subsystem, node and component.
-         *   
-         * @param id The unique identifier associated with this JausAddress
-         * 
-         * @see #equals(Object)
-         * @see #getId()
-         * @see #JausAddress(int)
-         */
-        public void setId(int id)
-        {
-            this.id = id;
+            return ((int)value >> COMPONENT_BIT_POSITION) & 0xFF;
         }
 
         /**
@@ -220,7 +183,7 @@ namespace BadgerJaus.Util
         {
             if (subsystem > -1 && subsystem < 65536)
             {
-                id = (subsystem << SUBSYSTEM_BIT_POSITION) | (id & 0x0000FFFF);
+                value = (uint)(subsystem << SUBSYSTEM_BIT_POSITION) | (value & 0xFFFF);
             }
         }
 
@@ -237,7 +200,7 @@ namespace BadgerJaus.Util
         {
             if (node > -1 && node < 256)
             {
-                id = (node << NODE_BIT_POSITION) | (int)(id & 0xFFFF00FF);
+                value = (node << NODE_BIT_POSITION) | (int)(value & 0xFFFF00FF);
             }
         }
 
@@ -254,7 +217,7 @@ namespace BadgerJaus.Util
         {
             if (component > -1 && component < 256)
             {
-                id = (component << COMPONENT_BIT_POSITION) | (int)(id & 0xFFFFFF00);
+                value = (component << COMPONENT_BIT_POSITION) | (int)(value & 0xFFFFFF00);
             }
         }
 
@@ -278,60 +241,6 @@ namespace BadgerJaus.Util
             }
         }
 
-        public int hashCode()
-        {
-            return id;
-        }
-
-        /**
-         * 
-         */
-        public bool equals(Object comparisionAddress)
-        {
-            return id == ((JausAddress)comparisionAddress).getId();
-        }
-
-        public bool toJausBuffer(byte[] buffer, int index)
-        {
-            if (buffer.Length < index + SIZE)
-            {
-                return false;
-            }
-            else
-            {
-                buffer[index] = (byte)this.getComponent();
-                buffer[index + 1] = (byte)this.getNode();
-                new JausUnsignedShort(this.getSubsystem()).toJausBuffer(buffer, index + 2);
-                return true;
-            }
-        }
-
-        public bool toJausBuffer(byte[] byteArray)
-        {
-            return this.toJausBuffer(byteArray, 0);
-        }
-
-        public bool setFromJausBuffer(byte[] buffer, int index)
-        {
-            if (buffer.Length < index + SIZE)
-            {
-                return false;
-                // Not Enough Size
-            }
-            else
-            {
-                this.setComponent(buffer[index]);
-                this.setNode(buffer[index + 1]);
-                this.setSubsystem(new JausUnsignedShort(buffer, index + 2).getValue());
-                return true;
-            }
-        }
-
-        public bool setFromJausBuffer(byte[] byteArray)
-        {
-            return this.setFromJausBuffer(byteArray, 0);
-        }
-
         public String toHexString()
         {
             return (new JausByte(this.getComponent())).toHexString() +
@@ -344,7 +253,7 @@ namespace BadgerJaus.Util
             return SIZE;
         }
 
-        public String toString()
+        public override string ToString()
         {
             return "" + getSubsystem() + "." + getNode() + "." + getComponent();
         }

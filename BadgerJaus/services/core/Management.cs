@@ -33,7 +33,7 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Services.Core
 {
-    public class Management : AccessControl
+    public class Management : BaseService
     {
         new public const String SERVICE_NAME = "Management";
         new private const String SERVICE_ID = "urn:jaus:jss:core:Management";
@@ -41,21 +41,25 @@ namespace BadgerJaus.Services.Core
 
         private ReportStatus reportStatus;
         private ReleaseControl releaseControl;
-        
 
-        COMPONENT_STATE currentState;
+        private static Management managementService = null;
 
-        public Management()
-            : base()
+        public static Management CreateManagementInstance()
         {
-            currentState = COMPONENT_STATE.STATE_INIT;
-            releaseControl = new ReleaseControl();
+            if (managementService == null)
+                managementService = new Management();
+
+            return managementService;
         }
 
-        public COMPONENT_STATE CurrentState
+        public static Management GetInstance()
         {
-            get { return currentState; }
-            set { currentState = value; }
+            return managementService;
+        }
+
+        private Management()
+        {
+
         }
 
         public override bool IsSupported(int commandCode)
@@ -68,37 +72,38 @@ namespace BadgerJaus.Services.Core
                 case JausCommandCode.QUERY_STATUS:
                     return true;
                 default:
-                    return base.IsSupported(commandCode);
+                    return false;
             }
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             // TODO Auto-generated method stub
             switch (message.GetCommandCode())
             {
                 case JausCommandCode.SHUTDOWN:
+                    releaseControl = new ReleaseControl();
                     releaseControl.SetAddressFromJausMessage(message);
-                    currentState = COMPONENT_STATE.STATE_SHUTDOWN;
+                    component.ComponentState = ComponentState.STATE_SHUTDOWN;
 
-                    return base.ImplementsAndHandledMessage(releaseControl);
+                    return AccessControl.GetInstance().ImplementsAndHandledMessage(releaseControl, component);
                 case JausCommandCode.STANDBY:
-                    if (IsController(message.GetSource()))
-                        currentState = COMPONENT_STATE.STATE_STANDBY;
+                    if (component.IsController(message.GetSource()))
+                        component.ComponentState = ComponentState.STATE_STANDBY;
                     return true;
                 case JausCommandCode.RESUME:
-                    if (IsController(message.GetSource()))
-                        currentState = COMPONENT_STATE.STATE_READY;
+                    if (component.IsController(message.GetSource()))
+                        component.ComponentState = ComponentState.STATE_READY;
                     return true;
                 case JausCommandCode.QUERY_STATUS:
                     reportStatus = new ReportStatus();
                     reportStatus.SetDestination(message.GetSource());
-                    reportStatus.SetSource(jausAddress);
-                    reportStatus.SetStatus((int)currentState);
+                    reportStatus.SetSource(component.JausAddress);
+                    reportStatus.SetStatus((int)component.ComponentState);
                     Transport.SendMessage(reportStatus);
                     return true;
                 default:
-                    return base.ImplementsAndHandledMessage(message);
+                    return false;
             }
         }
 

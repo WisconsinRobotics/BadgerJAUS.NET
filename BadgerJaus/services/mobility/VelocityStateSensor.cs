@@ -54,7 +54,7 @@ namespace BadgerJaus.Services.Mobility
             return false;
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             if (message.GetCommandCode() != JausCommandCode.QUERY_VELOCITY_STATE) return false;
 

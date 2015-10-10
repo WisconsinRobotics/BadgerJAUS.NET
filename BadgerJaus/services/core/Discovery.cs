@@ -42,7 +42,7 @@ namespace BadgerJaus.Services.Core
         public const String SERVICE_ID = "urn:jaus:jss:core:Discovery";
         public const String PARENT_SERVICE = "Events";
         // Discovery Service States
-        public enum DiscoveryState { STATE_INIT, STATE_READY };
+        public enum DiscoveryState { BROADCAST_STATE, SERVICE_STATE, CONFIGURATION_STATE };
 
         QueryIdentification qID = new QueryIdentification();
         QueryServices queryServices = new QueryServices();
@@ -50,27 +50,49 @@ namespace BadgerJaus.Services.Core
 
         Subsystem subsystem = null;
 
-        DiscoveryState discoveryState;
-        //long lastCheck = System.nanoTime();
+        DiscoveryState clientDiscoveryState;
+        DiscoveryState serverDiscoveryState;
 
-        public Discovery(Subsystem subsystem)
+        long sleepTime = BaseService.DEFAULT_SLEEP_TIME;
+        bool performDiscovery;
+
+        private static Discovery discoveryService = null;
+
+        public static Discovery CreateDiscoveryInstance(Subsystem subsystem)
         {
-            this.subsystem = subsystem;
-            discoveryState = DiscoveryState.STATE_INIT;
+            if (discoveryService == null)
+                discoveryService = new Discovery(subsystem);
+
+            return discoveryService;
         }
 
-        public int GetState()
+        public static Discovery GetInstance()
         {
-            return (int)discoveryState;
+            return discoveryService;
+        }
+
+        private Discovery(Subsystem subsystem)
+        {
+            this.subsystem = subsystem;
+            clientDiscoveryState = DiscoveryState.BROADCAST_STATE;
+            performDiscovery = false;
         }
 
         public override bool IsSupported(int commandCode)
         {
-            // TODO Auto-generated method stub
-            return false;
+            switch (commandCode)
+            {
+                case JausCommandCode.QUERY_IDENTIFICATION:
+                case JausCommandCode.QUERY_SERVICES:
+                case JausCommandCode.REPORT_IDENTIFICATION:
+                case JausCommandCode.REPORT_SERVICES:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {
@@ -84,31 +106,37 @@ namespace BadgerJaus.Services.Core
             }
         }
 
-        protected override void Execute()
+        public void InitiateDiscovery()
         {
-            //HACK: This is primarily to deal with competition.
+            performDiscovery = true;
+            sleepTime = 0;
+        }
+
+        protected override void Execute(Component component)
+        {
             JausAddress destination = new JausAddress();
-            destination.setSubsystem(42);
-            destination.setNode(1);
-            destination.setComponent(1);
-            JausAddress source = new JausAddress();
-            source.setComponent(1);
-            source.setNode(1);
-            source.setSubsystem(114);
+            destination.setSubsystem(0);
+            destination.setNode(0);
+            destination.setComponent(0);
             qID.SetDestination(destination);
-            qID.SetSource(source);
+            qID.SetSource(component.JausAddress);
             Console.WriteLine(qID.GetDestination().toHexString());
             // TODO Auto-generated method stub
-            if (discoveryState == DiscoveryState.STATE_INIT)
+            if (clientDiscoveryState == DiscoveryState.BROADCAST_STATE)
             {
                 //long currentTime = System.nanoTime();
                 Transport.SendMessage(qID);
             }
         }
 
+        public override long SleepTime
+        {
+            get { return sleepTime; }
+        }
+
         private bool HandleReportIdentification(Message message)
         {
-            discoveryState = DiscoveryState.STATE_READY;
+            //discoveryState = DiscoveryState.STATE_READY;
             //JausAddress address = message.getSource();
             //Transport.AddReceiver(address.toString());
             return true;

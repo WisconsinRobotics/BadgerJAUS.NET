@@ -26,161 +26,51 @@
  */
 using System;
 
-public class JausUnsignedShort : JausType
+namespace BadgerJaus.Util
 {
-	private const double RANGE = 65535.0; // NOTE: This range is incorrect, but is as defined by Jaus
-	public const int MAX_VALUE = 65535;
-	public const int MIN_VALUE = 0;
-	
-	public const int SIZE_BYTES = 2;
-	protected int value;
+    public class JausUnsignedShort : JausBaseType
+    {
+        public JausUnsignedShort()
+            : base()
+        {
+        }
 
-	public JausUnsignedShort()
-	{
-		value = 0;
-	}
+        public JausUnsignedShort(int value)
+            : base(value)
+        {
+        }
 
-	public JausUnsignedShort(int value)
-	{
-		setValue(value);
-	}
-	
-	public JausUnsignedShort(JausUnsignedShort other)
-	{
-		setValue(other.getValue());
-	}
+        public JausUnsignedShort(long value) : base(value)
+        { }
 
-	public JausUnsignedShort(byte[] byteArray)
-	{
-		value = fromJausBuffer(byteArray, 0);
-	}
+        public JausUnsignedShort(JausUnsignedShort other)
+            : base(other)
+        {
+        }
 
-	public JausUnsignedShort(byte[] byteArray, int index)
-	{
-		value = fromJausBuffer(byteArray, index);
-	}
-	
-	public bool toJausBuffer(byte[] byteArray)
-	{
-		return toJausBuffer(this.value, byteArray, 0);
-	}
-	
-	public bool toJausBuffer(byte[] byteArray, int index)
-	{
-		return toJausBuffer(this.value, byteArray, index);
-	}
+        public JausUnsignedShort(byte[] byteArray)
+            : base(byteArray)
+        {
+        }
 
-	public bool setFromJausBuffer(byte[] byteArray)
-	{
-		return setFromJausBuffer(byteArray, 0);
-	}
-	
-	public bool setFromJausBuffer(byte[] byteArray, int index)
-	{
-		if(byteArray.Length - index < SIZE_BYTES)
-			return false;
-		else
-		{
-			value = fromJausBuffer(byteArray, index);
-			return true;
-		}
-	}	
-	
-	public int getValue()
-	{
-		return value;
-	}
-	
-	public void setValue(int value)
-	{
-		if(value < 0) 
-			value = 0;
-		else 
-			this.value = value;
-	}
-	public int size()
-	{
-		return SIZE_BYTES;
-	}
+        public JausUnsignedShort(byte[] byteArray, int index)
+            : base(byteArray, index)
+        {
+        }
 
-	// Takes the input double and the scale range and stores the coresponding scaled integer in value
-	// This is to support Jaus Scaled Integers
-	// Real_Value = Integer_Value*Scale_Factor + Bias
-	public double scaleToDouble(double min, double max)
-	{
-		//BUG: What to do when max < min
-		//limit value between min and max Integer values
-		if(value > MAX_VALUE) value = MAX_VALUE;
-		if(value < MIN_VALUE) value = MIN_VALUE;
-		
-		double scaleFactor = (max-min)/RANGE;
-		double bias = min;
-	    
-		return value*scaleFactor + bias;
-	}
+        public override int SIZE_BYTES
+        {
+            get { return 2; }
+        }
 
-	// Takes the input double and the scale range and stores the coresponding scaled integer in value
-	// This is to support Jaus Scaled Integers
-	// Integer_Value = Round((Real_Value ??? Bias)/Scale_Factor)
-	public void setFromDouble(double value, double min, double max)
-	{
-		//BUG: What to do when max < min
-		double scaleFactor = (max-min)/RANGE;
-		double bias = min;
-		
-		// limit real number between min and max
-		if(value < min) value = min;
-		if(value > max) value = max;
-				
-		// calculate rounded integer value
-		this.value = (int) Math.Round((value - bias)/scaleFactor);
-	}
-	
-	public static bool toJausBuffer(int value, byte[] byteArray)
-	{
-		return toJausBuffer(value, byteArray, 0);
-	}
-	
-	public static bool toJausBuffer(int value, byte[] byteArray, int index)
-	{
-		if(byteArray.Length < index + SIZE_BYTES)
-			return false; //not enough size
-		
-		for(int i=0; i < SIZE_BYTES; i++)
-		{
-			byteArray[index+i] = (byte)((value >> (i*8)) & 0xFF); // 8 bits per byte
-		}
-		return true;
-	}
+        public override long MAX_VALUE
+        {
+            get { return 65535; }
+        }
 
-	public static int fromJausBuffer(byte[] byteArray)
-	{
-		return fromJausBuffer(byteArray, 0);
-	}
-	
-	public static int fromJausBuffer(byte[] byteArray, int index)
-	{
-		int tempValue = 0;
-		int arrayUpperBounds = byteArray.Length-index;
-		
-		// NOTE: Should not get an input array not equal in size to a Integer
-		//       If this occurs, the higher order bytes will be left as zeros 
-		for(int i = 0; i < SIZE_BYTES && i < arrayUpperBounds; i++)
-		{
-			tempValue = tempValue | ((byteArray[index+i] & 0xFF) << i*8); // 8 bits per byte
-		}
-		
-		return tempValue;
-	}
-	
-	public String toHexString()
-	{
-        return (value & 0xFF).ToString("x");
-	}
-		
-	public String toString()
-	{
-        return Convert.ToString(this.value);
-
-	}
+        public override long RANGE
+        {
+            get { return 65535; }
+        }
+    }
 }

@@ -33,7 +33,7 @@ namespace BadgerJaus.Messages.Control
     public class ReportControl : Message
     {
         // Size of payload not including Message Code
-        private const int MAX_DATA_SIZE_BYTES = JausAddress.SIZE + JausByte.SIZE_BYTES;
+        private const int MAX_DATA_SIZE_BYTES = JausAddress.SIZE + JausBaseType.BYTE_BYTE_SIZE;
 
 
         // Message Fields
@@ -54,12 +54,12 @@ namespace BadgerJaus.Messages.Control
         // Getters and Setters
         public int GetAuthorityCode()
         {
-            return authorityCode.getValue();
+            return (int)authorityCode.Value;
         }
 
-        public void SetAuthorityCode(int queryType)
+        public void SetAuthorityCode(int authorityCode)
         {
-            this.authorityCode.setValue(queryType);
+            this.authorityCode.Value = authorityCode;
         }
 
         public JausAddress GetController()
@@ -83,17 +83,15 @@ namespace BadgerJaus.Messages.Control
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            if (!controller.toJausBuffer(buffer, indexOffset))
+            if (!controller.Serialize(buffer, indexOffset, out indexOffset))
             {
                 return false;
             }
-            indexOffset += JausAddress.SIZE;
 
-            if (!authorityCode.toJausBuffer(buffer, indexOffset))
+            if (!authorityCode.Serialize(buffer, indexOffset, out indexOffset))
             {
                 return false;
             }
-            indexOffset += JausByte.SIZE_BYTES;
 
             return true;
         }
@@ -102,18 +100,16 @@ namespace BadgerJaus.Messages.Control
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            controller.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausAddress.SIZE;
+            controller.Deserialize(buffer, indexOffset, out indexOffset);
 
-            authorityCode.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            authorityCode.Deserialize(buffer, indexOffset, out indexOffset);
 
             return true;
         }
 
-        public override String toString()
+        public override String ToString()
         {
-            String str = base.toString();
+            String str = base.ToString();
             //str += "Query Type: " + queryTypes[queryType.getValue() - 1] + "\n";
             return str;
         }

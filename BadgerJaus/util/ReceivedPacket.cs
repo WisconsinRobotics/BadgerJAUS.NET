@@ -49,15 +49,5 @@ namespace BadgerJaus.Util
             get { return sourceAddr; }
             set { sourceAddr = value; }
         }
-
-        public IPAddress GetSourceIP()
-        {
-            return sourceAddr.Address;
-        }
-
-        public int GetPort()
-        {
-            return sourceAddr.Port;
-        }
     }
 }

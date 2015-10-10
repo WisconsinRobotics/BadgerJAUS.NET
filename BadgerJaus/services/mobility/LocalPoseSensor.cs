@@ -71,7 +71,7 @@ namespace BadgerJaus.Services.Mobility
             }
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {

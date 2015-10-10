@@ -50,24 +50,24 @@ namespace BadgerJaus.Messages.Discovery
         // Getters and Setters
         public int GetNodeID()
         {
-            return nodeID.getValue();
+            return (int)nodeID.Value;
         }
 
         public int GetComponentID()
         {
-            return componentID.getValue();
+            return (int)componentID.Value;
         }
 
         public void SetNodeID(int nodeID)
         {
             if (nodeID > 0 && nodeID < 256)
-                this.nodeID.setValue(nodeID);
+                this.nodeID.Value = nodeID;
         }
 
         public void SetComponentID(int componentID)
         {
             if (componentID > 0 && componentID < 256)
-                this.componentID.setValue(componentID);
+                this.componentID.Value = componentID;
         }
 
         public override int GetPayloadSize()
@@ -89,17 +89,15 @@ namespace BadgerJaus.Messages.Discovery
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            nodeID.setValue(buffer[indexOffset]);
-            indexOffset += JausByte.SIZE_BYTES;
-            componentID.setValue(buffer[indexOffset]);
-            indexOffset += JausByte.SIZE_BYTES;
+            nodeID.Deserialize(buffer, index, out indexOffset);
+            componentID.Deserialize(buffer, index, out indexOffset);
 
             return true;
         }
 
-        public override String toString()
+        public override String ToString()
         {
-            String str = base.toString();
+            String str = base.ToString();
             //str += "Query Type: " + queryTypes[queryType.getValue() - 1] + "\n";
             return str;
         }

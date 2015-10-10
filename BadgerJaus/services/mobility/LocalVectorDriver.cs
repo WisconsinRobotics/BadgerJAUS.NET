@@ -87,7 +87,7 @@ namespace BadgerJaus.Services.Mobility
             }
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {
@@ -95,7 +95,7 @@ namespace BadgerJaus.Services.Mobility
                     queryVector.SetFromJausMessage(message);
                     return HandleQueryLocalVector(queryVector);
                 case JausCommandCode.SET_LOCAL_VECTOR:
-                    return HandleSetLocalVector(message);
+                    return HandleSetLocalVector(message, component);
 
                 default:
                     return false;
@@ -111,19 +111,19 @@ namespace BadgerJaus.Services.Mobility
             report.SetSource(message.GetDestination());
 
             //Set requested data
-            if (message.isBitSet(SetLocalVector.SPEED_BIT))
+            if (message.IsBitSet(SetLocalVector.SPEED_BIT))
                 report.SetSpeed(reportSpeed);
 
-            if (message.isBitSet(SetLocalVector.Z_BIT))
+            if (message.IsBitSet(SetLocalVector.Z_BIT))
                 report.SetZ(reportZ);
 
-            if (message.isBitSet(SetLocalVector.HEADING_BIT))
+            if (message.IsBitSet(SetLocalVector.HEADING_BIT))
                 report.SetHeading(reportHeading);
 
-            if (message.isBitSet(SetLocalVector.ROLL_BIT))
+            if (message.IsBitSet(SetLocalVector.ROLL_BIT))
                 report.SetRoll(reportRoll);
 
-            if (message.isBitSet(SetLocalVector.PITCH_BIT))
+            if (message.IsBitSet(SetLocalVector.PITCH_BIT))
                 report.SetPitch(reportPitch);
 
             //Send response
@@ -132,7 +132,7 @@ namespace BadgerJaus.Services.Mobility
             return true;
         }
 
-        protected bool HandleSetLocalVector(Message message)
+        protected bool HandleSetLocalVector(Message message, Component component)
         {
             if (!component.IsController(message.GetSource()))
                 return true;

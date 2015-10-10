@@ -24,6 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.ListManager
 {
     public class ReportElementCount : Message
@@ -42,21 +44,17 @@ namespace BadgerJaus.Messages.ListManager
 
         public void SetElementCount(int value)
         {
-            elementCount.setValue(value);
+            elementCount.Value = value;
         }
 
         public override int GetPayloadSize()
         {
-            return JausUnsignedShort.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!elementCount.toJausBuffer(buffer, index)) return false;
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
-
-            return true;
+            return elementCount.Serialize(buffer, index, out indexOffset);
         }
     }
 }

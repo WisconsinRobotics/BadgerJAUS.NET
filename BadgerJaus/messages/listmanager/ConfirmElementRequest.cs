@@ -44,21 +44,17 @@ namespace BadgerJaus.Messages.ListManager
 
         public void SetRequestID(int value)
         {
-            requestID.setValue(value);
+            requestID.Value = value;
         }
 
         public override int GetPayloadSize()
         {
-            return JausByte.SIZE_BYTES;
+            return JausBaseType.BYTE_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!requestID.toJausBuffer(buffer, index)) return false;
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return requestID.Serialize(buffer, index, out indexOffset);
         }
     }
 }

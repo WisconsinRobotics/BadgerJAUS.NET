@@ -26,70 +26,81 @@
  */
 using System;
 
-public class JausShortPresenceVector : JausUnsignedShort
+namespace BadgerJaus.Util
 {
-	public JausShortPresenceVector() : base()
-	{
-	}
-	
-	public JausShortPresenceVector(int value) : base(value)
-	{
-	}
-	
-	public JausShortPresenceVector(JausUnsignedShort value) 
-	{
-        this.value = value.getValue();
-	}
+    public class JausShortPresenceVector : JausUnsignedShort
+    {
+        public JausShortPresenceVector()
+            : base()
+        {
+        }
 
-	public JausShortPresenceVector(byte[] byteArray) : base(byteArray)
-	{
-	}
+        public JausShortPresenceVector(int value)
+            : base(value)
+        {
+        }
 
-	public JausShortPresenceVector(byte[] byteArray, int index) : base(byteArray, index)
-	{
-	}
+        public JausShortPresenceVector(long value) : base(value)
+        { }
 
-	public bool isBitSet(int bit)
-	{
-		return ((value & (0x01 << bit)) > 0);
-	}
-	
-	public bool setBit(int bit)
-	{
-        if (bit >= SIZE_BYTES * 8)
-            return false;
+        public JausShortPresenceVector(JausUnsignedShort value)
+            : base(value)
+        {
+        }
 
-        value |= (0x01 << bit);
-        return true;
-	}
-	
-	public bool clearBit(int bit)
-	{
-        if (bit >= SIZE_BYTES * 8)
-            return false;
+        public JausShortPresenceVector(byte[] byteArray)
+            : base(byteArray)
+        {
+        }
 
-        value &= ~(0x01 << bit);
-        return true;
-	}
-	
-	public void setPresenceVector(JausUnsignedShort value)
-	{
-        this.value = value.getValue();
-	}
-	
-	public JausShortPresenceVector getResultantPresenceVector(JausShortPresenceVector vector) {
-		return new JausShortPresenceVector(this.value & vector.getValue());
-	}
-	
-	public String toString() {
-		String str = "";
-		for (int i = this.size()*8-1; i >= 0; i--) {
-			if (this.isBitSet(i)) {
-				str += "1";
-			} else {
-				str += "0";
-			}
-		}
-		return str;
-	}
+        public JausShortPresenceVector(byte[] byteArray, int index)
+            : base(byteArray, index)
+        {
+        }
+
+        public bool IsBitSet(int bit)
+        {
+            return ((value & (0x01 << bit)) > 0);
+        }
+
+        public bool setBit(int bit)
+        {
+            if (bit >= SIZE_BYTES * 8)
+                return false;
+
+            value |= (0x01 << bit);
+            return true;
+        }
+
+        public bool clearBit(int bit)
+        {
+            if (bit >= SIZE_BYTES * 8)
+                return false;
+
+            value &= ~(0x01 << bit);
+            return true;
+        }
+
+        public JausShortPresenceVector getResultantPresenceVector(JausShortPresenceVector vector)
+        {
+            return new JausShortPresenceVector(this.value & vector.Value);
+        }
+
+        public override string ToString()
+        {
+            String str = "";
+            for (int i = SIZE_BYTES * 8 - 1; i >= 0; i--)
+            {
+                if (this.IsBitSet(i))
+                {
+                    str += "1";
+                }
+                else
+                {
+                    str += "0";
+                }
+            }
+            return str;
+        }
+    }
 }

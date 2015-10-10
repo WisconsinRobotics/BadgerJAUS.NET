@@ -54,9 +54,9 @@ namespace BadgerJaus.Messages
         // and uncompressed message payload
 
         public const int SEQUENCE_NUMBER_MAX = 65535;
-        public const int SEQUENCE_NUMBER_SIZE_BYTES = JausUnsignedShort.SIZE_BYTES;
+        public const int SEQUENCE_NUMBER_SIZE_BYTES = JausBaseType.SHORT_BYTE_SIZE;
 
-        public const int COMMAND_CODE_SIZE_BYTES = JausUnsignedShort.SIZE_BYTES;
+        public const int COMMAND_CODE_SIZE_BYTES = JausBaseType.SHORT_BYTE_SIZE;
 
         // Properties Bit Positions				
         public const int PRIORITY_BIT_POSITION = 0;
@@ -115,7 +115,7 @@ namespace BadgerJaus.Messages
             setBcast(BroadcastClass.value(BroadcastClass.Broadcast.NO));
             setAckNak(AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED));
             setDataFlag(DataFlagClass.value(DataFlagClass.DataFlag.SINGLE_DATA_PACKET));
-            commandCode.setValue(CommandCode);
+            commandCode.Value = CommandCode;
         }
 
         private void InitData()
@@ -282,7 +282,7 @@ namespace BadgerJaus.Messages
 
         public int GetCommandCode()
         {
-            return commandCode.getValue();
+            return (int)commandCode.Value;
         }
 
         public JausAddress GetDestination()
@@ -290,14 +290,14 @@ namespace BadgerJaus.Messages
             return destination;
         }
 
-        public void SetDestination(int id)
+        public void SetDestination(long id)
         {
-            destination.setId(id);
+            destination.Value = id;
         }
 
         public void SetDestination(JausAddress address)
         {
-            destination.setId(address.getId());
+            destination.Value = address.Value;
         }
 
         public JausAddress GetSource()
@@ -305,14 +305,14 @@ namespace BadgerJaus.Messages
             return source;
         }
 
-        public void SetSource(int id)
+        public void SetSource(long id)
         {
-            this.source.setId(id);
+            this.source.Value = id;
         }
 
         public void SetSource(JausAddress address)
         {
-            source.setId(address.getId());
+            source.Value = address.Value;
         }
 
         public byte[] GetPayload()
@@ -369,7 +369,7 @@ namespace BadgerJaus.Messages
             // tag. To get just the size of the data payload we need to
             // subtract all that out.
             
-            payloadSize = dataSize.getValue() - HEADER_SIZE_BYTES_NCMP - COMMAND_CODE_SIZE_BYTES - SEQUENCE_NUMBER_SIZE_BYTES;
+            payloadSize = (int)dataSize.Value - HEADER_SIZE_BYTES_NCMP - COMMAND_CODE_SIZE_BYTES - SEQUENCE_NUMBER_SIZE_BYTES;
             data = new byte[payloadSize];
             Array.Copy(buffer, index, data, 0, payloadSize);
 
@@ -379,12 +379,12 @@ namespace BadgerJaus.Messages
 
         public int GetSequenceNumber()
         {
-            return sequenceNumber.getValue();
+            return (int)sequenceNumber.Value;
         }
 
         public void SetSequenceNumber(int sequenceNumber)
         {
-            this.sequenceNumber.setValue(sequenceNumber);
+            this.sequenceNumber.Value = sequenceNumber;
         }
 
         public void SetFromJausMessage(Message jausMessage)
@@ -397,16 +397,16 @@ namespace BadgerJaus.Messages
         private void SetHeaderFromJausMessage(Message jausMessage)
         {
             SetAddressFromJausMessage(jausMessage);
-            dataSize.setValue(jausMessage.MessageSize());
+            dataSize.Value = jausMessage.MessageSize();
         }
 
         public void SetAddressFromJausMessage(Message jausMessage)
         {
-            SetDestination(jausMessage.GetDestination().getId());
-            SetSource(jausMessage.GetSource().getId());
+            SetDestination(jausMessage.GetDestination().Value);
+            SetSource(jausMessage.GetSource().Value);
         }
 
-        public int SetFromJausBuffer(byte[] buffer, int index = 0)
+        public int Deserialize(byte[] buffer, int index = 0)
         {
             if (!SetHeaderFromJausBuffer(buffer, index))
             {
@@ -433,7 +433,7 @@ namespace BadgerJaus.Messages
 
             if(CommandCode == JausCommandCode.NONE)
             {
-                if (!commandCode.setFromJausBuffer(buffer, index))
+                if (!commandCode.Deserialize(buffer, index, out index))
                 {
                     return -1; // setCommandCodeFromJausBuffer failed
                 }
@@ -441,7 +441,7 @@ namespace BadgerJaus.Messages
             else
             {
                 JausUnsignedShort bufferCommandCode = new JausUnsignedShort(buffer, index);
-                if (bufferCommandCode.getValue() != CommandCode)
+                if (bufferCommandCode.Value != CommandCode)
                     return -1;
             }
 
@@ -455,18 +455,24 @@ namespace BadgerJaus.Messages
                 return -1;
             }
 
-            if (!sequenceNumber.setFromJausBuffer(buffer, index))
+            if (!sequenceNumber.Deserialize(buffer, index, out index))
             {
                 return -1; // setSequenceNumberFromJausBuffer failed
             }
 
-            return index + JausUnsignedShort.SIZE_BYTES;
+            return index;
+        }
+
+        public bool ToJausBuffer(byte[] buffer, out int indexOffset)
+        {
+            return ToJausBuffer(buffer, 0, out indexOffset);
         }
 
         // Takes the header and data byte array and packs them into a data buffer
         // This method needs to be overridden for all subclasses of JausMessage to reflect the correct pack routine
-        public bool ToJausBuffer(byte[] buffer, int index = 0)
+        public bool ToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             // TODO: Implement Compression
             if (this.getHCflags() != HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION))
             {
@@ -481,28 +487,25 @@ namespace BadgerJaus.Messages
                 return false;
             }
 
-            if (buffer.Length < (index + GetPayloadSize() + Message.SEQUENCE_NUMBER_SIZE_BYTES))
+            if (buffer.Length < (indexOffset + GetPayloadSize() + Message.SEQUENCE_NUMBER_SIZE_BYTES))
             {
                 Console.Error.WriteLine("Error in toJausBuffer: Not Enough Size");
                 return false; // Not Enough Size	
             }
-            if (!HeaderToJausBuffer(buffer, index))
+            if (!HeaderToJausBuffer(buffer, indexOffset, out indexOffset))
             {
                 Console.Error.WriteLine("ToJausBuffer Failed");
                 return false; //headerToJausBuffer failed
             }
 
-            index += headerBaseSize;
+            if (!commandCode.Serialize(buffer, indexOffset, out indexOffset)) return false;
 
-            if (!commandCode.toJausBuffer(buffer, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
-
-            PayloadToJausBuffer(buffer, index, out index);
+            PayloadToJausBuffer(buffer, indexOffset, out indexOffset);
             //Console.WriteLine("Claimed payload size: " + GetPayloadSize());
 
             //Console.WriteLine("Sequence index position: " + index);
 
-            if (!sequenceNumber.toJausBuffer(buffer, index))
+            if (!sequenceNumber.Serialize(buffer, indexOffset, out indexOffset))
             {
                 Console.Error.WriteLine("Failed to write sequence number to buffer");
                 return false; //headerToJausBuffer failed
@@ -530,7 +533,7 @@ namespace BadgerJaus.Messages
             }
 
             index += JUDP_HEADER_SIZE_BYTES;
-            index = SetFromJausBuffer(buffer, index);
+            index = Deserialize(buffer, index);
 
             return index;
         }
@@ -540,31 +543,32 @@ namespace BadgerJaus.Messages
             return SetFromJausUdpBuffer(buffer, 0);
         }
 
-        public bool ToJausUdpBuffer(byte[] buffer, int index)
+        public bool ToJausUdpBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (buffer.Length < (index + JUDP_HEADER_SIZE_BYTES))
             {
-                Console.Error.WriteLine("ToJausUdpBuffer Failed: Not Enough Size");
                 return false; // Not Enough Size
             }
 
-            buffer[index] = Message.JUDP_HEADER;
+            buffer[indexOffset] = Message.JUDP_HEADER;
 
-            index += Message.JUDP_HEADER_SIZE_BYTES;
-            return ToJausBuffer(buffer, index);
+            indexOffset += Message.JUDP_HEADER_SIZE_BYTES;
+            return ToJausBuffer(buffer, index, out indexOffset);
         }
 
 
         // Overloaded method to accept a buffer and pack this message into its UDP form
-        public bool ToJausUdpBuffer(byte[] buffer)
+        public bool ToJausUdpBuffer(byte[] buffer, out int indexOffset)
         {
-            return ToJausUdpBuffer(buffer, 0);
+            return ToJausUdpBuffer(buffer, 0, out indexOffset);
         }
 
         // This private method takes a buffer at the given index and unpacks it into the header properties and data fields
         // This method is called whenever a message is unpacked to pull the header properties
         private bool SetHeaderFromJausBuffer(byte[] buffer, int index)
         {
+            int indexOffset;
             if (buffer.Length < index + headerBaseSize)
                 return false; // Not Enough Size
 
@@ -578,55 +582,61 @@ namespace BadgerJaus.Messages
             }
 
             // int data1 = buffer[index+2];
-            dataSize.setFromJausBuffer(buffer, index + 1);
+            dataSize.Deserialize(buffer, index + 1, out indexOffset);
 
             // No Compression Assumed
             this.setProperties(buffer[index + 3]);
 
             destination.setComponent(buffer[index + 4]);
             destination.setNode(buffer[index + 5]);
-            destination.setSubsystem(new JausUnsignedShort(buffer, index + 6).getValue());
+            destination.setSubsystem((int)(new JausUnsignedShort(buffer, index + 6).Value));
 
             source.setComponent(buffer[index + 8]);
             source.setNode(buffer[index + 9]);
-            source.setSubsystem(new JausUnsignedShort(buffer, index + 10).getValue());
+            source.setSubsystem((int)(new JausUnsignedShort(buffer, index + 10).Value));
 
             return true;
         }
 
         // This private method packs the header properties and data fields into the provided buffer at the given index
         // This method is called whenever a message is packed to put the header properties
-        private bool HeaderToJausBuffer(byte[] buffer, int index)
+        private bool HeaderToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            indexOffset = index;
             if (buffer.Length < index + headerBaseSize)
                 return false; // Not Enough Size
 
-            buffer[index] = this.getMessageTypeHCflags();			// Message type
-
+            buffer[indexOffset] = this.getMessageTypeHCflags();			// Message type
+            indexOffset += 1;
             //Console.WriteLine("Size: " + size());
 
-            dataSize.setValue(MessageSize());
-            dataSize.toJausBuffer(buffer, index + 1);
+            dataSize.Value = MessageSize();
+            dataSize.Serialize(buffer, indexOffset, out indexOffset);
 
             //buffer[index + 3] = 0;								// HC number, not needed
             //buffer[index + 4] = 0;								// HC Length, not needed
 
-            buffer[index + 3] = this.getProperties();				// Message Properties
+            buffer[indexOffset] = this.getProperties();				// Message Properties
+            indexOffset += 1;
 
-            buffer[index + 4] = (byte)destination.getComponent();	// Destination component
-            buffer[index + 5] = (byte)destination.getNode();		// Destination node	
-            new JausUnsignedShort(destination.getSubsystem()).toJausBuffer(buffer, index + 6);
+            buffer[indexOffset] = (byte)destination.getComponent();	// Destination component
+            indexOffset += 1;
+            buffer[indexOffset] = (byte)destination.getNode();		// Destination node	
+            indexOffset += 1;
+            new JausUnsignedShort(destination.getSubsystem()).Serialize(buffer, indexOffset, out indexOffset);
 
-            buffer[index + 8] = (byte)source.getComponent();		// Source component
-            buffer[index + 9] = (byte)source.getNode();				// Source node
-            new JausUnsignedShort(source.getSubsystem()).toJausBuffer(buffer, index + 10);
+            buffer[indexOffset] = (byte)source.getComponent();		// Source component
+            indexOffset += 1;
+            buffer[indexOffset] = (byte)source.getNode();				// Source node
+            indexOffset += 1;
+            new JausUnsignedShort(source.getSubsystem()).Serialize(buffer, indexOffset, out indexOffset);
 
             return true;
         }
 
-        public virtual string toString()
+        public override string ToString()
         {
-            string str = "Command Code: " + JausCommandCode.Lookup(commandCode.getValue()) + " (0x" + Convert.ToString(commandCode.getValue(), 16).ToUpper() + ") " + "\n";
+            string str = "Command Code: " + JausCommandCode.Lookup((int)(commandCode.Value)) + " (0x" + Convert.ToString(commandCode.Value, 16).ToUpper() + ") " + "\n";
             return str;
         }
 
@@ -636,7 +646,7 @@ namespace BadgerJaus.Messages
             // str += "JUDP Version: " + JausMessage.JUDP_HEADER + "\n";
             str += "Message Type: " + this.messageType + "\n";
             str += "HC flags: " + this.HCflags + "\n";
-            str += "Data Size: " + this.dataSize.getValue() + "\n";
+            str += "Data Size: " + this.dataSize.Value + "\n";
             // str += "HC Number: " + this.getHCnumber() + "\n";
             // str += "HC Length: " + this.getHCLength() + "\n";
             str += "Priority: " + this.priority + "\n";
@@ -647,7 +657,7 @@ namespace BadgerJaus.Messages
             str += "Source: " + this.source.toString() + "\n";
             //str += "Command Code: " + commandCodeJT + " (0x" + Integer.toString(this.commandCodeJT.COMMAND_CODE(), 16).toUpperCase() + ") " + "\n";
             str += "Data: " + this.payloadToString() + "\n";
-            str += "Sequence Number: " + sequenceNumber.getValue() + "\n";
+            str += "Sequence Number: " + sequenceNumber.Value + "\n";
 
             return str;
         }

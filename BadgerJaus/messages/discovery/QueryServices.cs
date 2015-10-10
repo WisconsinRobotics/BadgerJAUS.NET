@@ -33,7 +33,7 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class QueryServices : Message
     {
-        //private const int MAX_DATA_SIZE_BYTES = JausByte.SIZE_BYTES * 2;
+        //private const int MAX_DATA_SIZE_BYTES = JausBaseType.BYTE_BYTE_SIZE * 2;
         List<Node> nodeList;
 
         protected override int CommandCode
@@ -67,8 +67,7 @@ namespace BadgerJaus.Messages.Discovery
         {
             JausByte nodeCount = new JausByte(nodeList.Count);
             indexOffset = index;
-            nodeCount.toJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            nodeCount.Serialize(buffer, indexOffset, out indexOffset);
             
             foreach(Node node in nodeList)
             {
@@ -95,10 +94,9 @@ namespace BadgerJaus.Messages.Discovery
             {
                 nodeList.Clear();
             }
-            nodeCount.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            nodeCount.Deserialize(buffer, indexOffset, out indexOffset);
 
-            for (nodeIndex = 0; nodeIndex < nodeCount.getValue(); ++nodeIndex )
+            for (nodeIndex = 0; nodeIndex < nodeCount.Value; ++nodeIndex )
             {
 #warning Unpacking is not yet implemented
                 node = new Node(0);
@@ -107,9 +105,9 @@ namespace BadgerJaus.Messages.Discovery
             return true;
         }
 
-        public override String toString()
+        public override String ToString()
         {
-            String str = base.toString();
+            String str = base.ToString();
             //str += "Query Type: " + queryTypes[queryType.getValue() - 1] + "\n";
             return str;
         }

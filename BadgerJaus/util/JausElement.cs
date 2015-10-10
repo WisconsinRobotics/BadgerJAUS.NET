@@ -32,7 +32,7 @@ using BadgerJaus.Messages.LocalWaypointDriver;
 
 namespace BadgerJaus.Util
 {
-    public class JausElement : JausType
+    public class JausElement
     {
         public const int MIN_DATA_SIZE_BYTES = 9;
 
@@ -57,18 +57,19 @@ namespace BadgerJaus.Util
 
         public JausElement(byte[] byteArray, int index)
         {
+            int indexOffset;
             this.configure();
-            this.setFromJausBuffer(byteArray, index);
+            this.Deserialize(byteArray, index, out indexOffset);
         }
 
         public JausElement(JausElement e)
         {
             this.configure();
-            elementUID.setValue(e.getElementUID());
-            previousUID.setValue(e.getPreviousUID());
-            nextUID.setValue(e.getNextUID());
+            elementUID.Value = e.getElementUID();
+            previousUID.Value = e.getPreviousUID();
+            nextUID.Value = e.getNextUID();
             elementData = e.getElementData();
-            dataSize.setValue(elementData.Length);
+            dataSize.Value = elementData.Length;
         }
 
         //Getters and Setters
@@ -79,85 +80,83 @@ namespace BadgerJaus.Util
                 Console.Error.WriteLine("Invalid UID value");
                 return false;
             }
-            elementUID.setValue(value);
+            elementUID.Value = value;
             return true;
         }
 
         public int getElementUID()
         {
-            return elementUID.getValue();
+            return (int)elementUID.Value;
         }
 
         public void setPreviousUID(int value)
         {
-            previousUID.setValue(value);
+            previousUID.Value = value;
         }
 
         public int getPreviousUID()
         {
-            return previousUID.getValue();
+            return (int)previousUID.Value;
         }
 
         public void setNextUID(int value)
         {
-            nextUID.setValue(value);
+            nextUID.Value = value;
         }
 
         public int getNextUID()
         {
-            return nextUID.getValue();
+            return (int)nextUID.Value;
         }
 
         public void setElementData(byte[] data)
         {
             elementData = new byte[data.Length];
             Array.Copy(data, 0, elementData, 0, data.Length);
-            dataSize.setValue(data.Length);
+            dataSize.Value = data.Length;
         }
 
         public byte[] getElementData()
         {
-            byte[] temp = new byte[dataSize.getValue()];
-            Array.Copy(elementData, 0, temp, 0, dataSize.getValue());
+            byte[] temp = new byte[dataSize.Value];
+            Array.Copy(elementData, 0, temp, 0, dataSize.Value);
             return temp;
         }
 
-        public bool setFromJausBuffer(byte[] byteArray)
+        public bool Deserialize(byte[] byteArray, out int indexOffset)
         {
-            setFromJausBuffer(byteArray, 0);
+            Deserialize(byteArray, 0, out indexOffset);
             return false;
         }
 
-        public bool setFromJausBuffer(byte[] byteArray, int index)
+        public bool Deserialize(byte[] byteArray, int index, out int indexOffset)
         {
-            if (index + MIN_DATA_SIZE_BYTES > byteArray.Length)
+            indexOffset = index;
+            if (indexOffset + MIN_DATA_SIZE_BYTES > byteArray.Length)
             {
                 Console.Error.WriteLine("Not enough size for Jaus Element");
                 return false;
             }
-            if (!elementUID.setFromJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!elementUID.Deserialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            if (!previousUID.setFromJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!previousUID.Deserialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            if (!nextUID.setFromJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!nextUID.Deserialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            if (!formatField.setFromJausBuffer(byteArray, index)) return false;
-            index += JausByte.SIZE_BYTES;	//Byte for variable-format field
+            if (!formatField.Deserialize(byteArray, indexOffset, out indexOffset)) return false;
+            //Byte for variable-format field
 
-            dataSize.setFromJausBuffer(byteArray, index);
-            index += JausUnsignedShort.SIZE_BYTES;
+            dataSize.Deserialize(byteArray, indexOffset, out indexOffset);
 
-            elementData = new byte[dataSize.getValue()];
-            Array.Copy(byteArray, index, elementData, 0, dataSize.getValue());
+            elementData = new byte[dataSize.Value];
+            Array.Copy(byteArray, indexOffset, elementData, 0, dataSize.Value);
+            indexOffset += (int)dataSize.Value;
             return true;
         }
 
         public int size()
         {
-            return MIN_DATA_SIZE_BYTES + dataSize.getValue();
+            return MIN_DATA_SIZE_BYTES + (int)dataSize.Value;
         }
 
         public String toString()
@@ -184,28 +183,25 @@ namespace BadgerJaus.Util
             return hex + temp;
         }
 
-        public bool toJausBuffer(byte[] byteArray, int index)
+        public bool Serialize(byte[] byteArray, int index, out int indexOffset)
         {
-            if (!elementUID.toJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            indexOffset = index;
+            if (!elementUID.Serialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            if (!previousUID.toJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!previousUID.Serialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            if (!nextUID.toJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!nextUID.Serialize(byteArray, indexOffset, out indexOffset)) return false;
 
             index++;	//Byte for variable-format field
-            if (!dataSize.toJausBuffer(byteArray, index)) return false;
-            index += JausUnsignedShort.SIZE_BYTES;
+            if (!dataSize.Serialize(byteArray, indexOffset, out indexOffset)) return false;
 
-            Array.Copy(elementData, 0, byteArray, index, dataSize.getValue());
+            Array.Copy(elementData, 0, byteArray, index, dataSize.Value);
             return true;
         }
 
-        public bool toJausBuffer(byte[] byteArray)
+        public bool Serialize(byte[] byteArray, out int indexOffset)
         {
-            toJausBuffer(byteArray, 0);
+            Serialize(byteArray, 0, out indexOffset);
             return false;
         }
 

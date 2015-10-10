@@ -31,14 +31,14 @@ namespace BadgerJaus.Util
     public class JausAddressPort
     {
         private IPEndPoint ipEndpoint;
-        public IPAddress ipAddr;
-        public int port = 3794;
+        //public IPAddress ipAddr;
+        //public int port = 3794;
 
         public JausAddressPort(IPAddress ipAddr, int port)
         {
             ipEndpoint = new IPEndPoint(ipAddr, port);
-            this.ipAddr = ipAddr;
-            this.port = port;
+            //this.ipAddr = ipAddr;
+            //this.port = port;
         }
     }
 }

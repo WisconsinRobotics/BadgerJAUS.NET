@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Sockets;
 using System;
 using System.Threading;
@@ -39,12 +40,12 @@ namespace BadgerJaus.Services.Core
     public class SendThread
     {
         BlockingCollection<Message> sendMessage = null;
-        ConcurrentDictionary<String, JausAddressPort> jausAddrMap = null;
+        ConcurrentDictionary<String, IPEndPoint> jausAddrMap = null;
         UdpClient socket = null;
         int maxJausRecvSize = Message.UDP_MAX_PACKET_SIZE + 100; // (100 = buffer)
         short sequenceNumber = 0;
 
-        public SendThread(BlockingCollection<Message> sendMessage, ConcurrentDictionary<String, JausAddressPort> jausAddrMap, UdpClient socket)
+        public SendThread(BlockingCollection<Message> sendMessage, ConcurrentDictionary<String, IPEndPoint> jausAddrMap, UdpClient socket)
         {
             this.sendMessage = sendMessage;
             this.jausAddrMap = jausAddrMap;
@@ -54,13 +55,13 @@ namespace BadgerJaus.Services.Core
         public void run()
         {
             // TODO Auto-generated method stub
-            JausAddressPort currentDest = null;
+            IPEndPoint currentDest = null;
             if (sendMessage == null) return;
             if (jausAddrMap == null) return;
             if (socket == null) return;
-            JausAddressPort dest = null;
+            IPEndPoint dest = null;
             byte[] sendbuffer = new byte[maxJausRecvSize];
-
+            int indexOffset;
 
             while (true)
             {
@@ -99,18 +100,17 @@ namespace BadgerJaus.Services.Core
 
                 if (currentDest == null || currentDest != dest)
                 {
-                    System.Net.IPEndPoint endPoint = new System.Net.IPEndPoint(dest.ipAddr, dest.port);
-                    socket.Connect(endPoint);
+                    //System.Net.IPEndPoint endPoint = new System.Net.IPEndPoint(dest.ipAddr, dest.port);
+                    socket.Connect(dest);
                 }
                 else if (currentDest != dest)
                 {
                     socket.Close();
-                    System.Net.IPEndPoint endPoint = new System.Net.IPEndPoint(dest.ipAddr, dest.port);
-                    socket.Connect(endPoint);
+                    socket.Connect(dest);
                 }
                 currentDest = dest;
 
-                if (!message.ToJausUdpBuffer(sendbuffer))
+                if (!message.ToJausUdpBuffer(sendbuffer, out indexOffset))
                 {
                     Console.Error.WriteLine("Failed to convert message.");
                 }

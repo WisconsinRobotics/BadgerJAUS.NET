@@ -100,6 +100,7 @@
     <Compile Include="util\Broadcast.cs" />
     <Compile Include="util\DataFlag.cs" />
     <Compile Include="util\HCFlags.cs" />
+    <Compile Include="util\JausBaseType.cs" />
     <Compile Include="util\JausAddress.cs" />
     <Compile Include="util\JausByte.cs" />
     <Compile Include="util\JausBytePresenceVector.cs" />

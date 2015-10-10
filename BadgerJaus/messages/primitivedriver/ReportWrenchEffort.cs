@@ -92,139 +92,139 @@ namespace BadgerJaus.Messages.PrimitiveDriver
 
         public bool isFieldSet(int bit)
         {
-            return presence.isBitSet(bit);
+            return presence.IsBitSet(bit);
         }
 
         public void SetPropulsiveLinearEffortX(double xEffort)
         {
-            propLinearX.setFromDouble(xEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propLinearX.SetValueFromDouble(xEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_LINEAR_EFFORT_X_BIT);
         }
 
         public void SetPropulsiveLinearEffortY(double yEffort)
         {
-            propLinearY.setFromDouble(yEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propLinearY.SetValueFromDouble(yEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_LINEAR_EFFORT_Y_BIT);
         }
 
         public void SetPropulsiveLinearEffortZ(double zEffort)
         {
-            propLinearZ.setFromDouble(zEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propLinearZ.SetValueFromDouble(zEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_LINEAR_EFFORT_Z_BIT);
         }
 
         public void SetPropulsiveRotationalEffortX(double xEffort)
         {
-            propRotX.setFromDouble(xEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propRotX.SetValueFromDouble(xEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT);
         }
 
         public void SetPropulsiveRotationalEffortY(double yEffort)
         {
-            propRotY.setFromDouble(yEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propRotY.SetValueFromDouble(yEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT);
         }
 
         public void SetPropulsiveRotationalEffortZ(double zEffort)
         {
-            propRotZ.setFromDouble(zEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            propRotZ.SetValueFromDouble(zEffort, PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
             presence.setBit(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT);
         }
 
         public void SetResistiveLinearEffortX(double xEffort)
         {
-            resistLinearX.setFromDouble(xEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistLinearX.SetValueFromDouble(xEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_LINEAR_EFFORT_X_BIT);
         }
 
         public void SetResistiveLinearEffortY(double yEffort)
         {
-            resistLinearY.setFromDouble(yEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistLinearY.SetValueFromDouble(yEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_LINEAR_EFFORT_Y_BIT);
         }
 
         public void SetResistiveLinearEffortZ(double zEffort)
         {
-            resistLinearZ.setFromDouble(zEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistLinearZ.SetValueFromDouble(zEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_LINEAR_EFFORT_Z_BIT);
         }
 
         public void SetResistiveRotationalEffortX(double xEffort)
         {
-            resistRotX.setFromDouble(xEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistRotX.SetValueFromDouble(xEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_ROTATIONAL_EFFORT_X_BIT);
         }
 
         public void SetResistiveRotationalEffortY(double yEffort)
         {
-            resistRotY.setFromDouble(yEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistRotY.SetValueFromDouble(yEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT);
         }
 
         public void SetResistiveRotationalEffortZ(double zEffort)
         {
-            resistRotZ.setFromDouble(zEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            resistRotZ.SetValueFromDouble(zEffort, RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
             presence.setBit(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT);
         }
 
         public double GetPropulsiveLinearEffortX()
         {
-            return propLinearX.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propLinearX.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetPropulsiveLinearEffortY()
         {
-            return propLinearY.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propLinearY.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetPropulsiveLinearEffortZ()
         {
-            return propLinearZ.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propLinearZ.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetPropulsiveRotationalEffortX()
         {
-            return propRotX.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propRotX.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetPropulsiveRotationalEffortY()
         {
-            return propRotY.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propRotY.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetPropulsiveRotationalEffortZ()
         {
-            return propRotZ.scaleToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
+            return propRotZ.ScaleValueToDouble(PROPULSIVE_EFFORT_MIN, PROPULSIVE_EFFORT_MAX);
         }
 
         public double GetResistiveLinearEffortX()
         {
-            return resistLinearX.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistLinearX.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public double GetResistiveLinearEffortY()
         {
-            return resistLinearY.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistLinearY.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public double GetResistiveLinearEffortZ()
         {
-            return resistLinearZ.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistLinearZ.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public double GetResistiveRotationalEffortX()
         {
-            return resistRotX.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistRotX.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public double GetResistiveRotationalEffortY()
         {
-            return resistRotY.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistRotY.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public double GetResistiveRotationalEffortZ()
         {
-            return resistRotZ.scaleToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
+            return resistRotZ.ScaleValueToDouble(RESISTIVE_EFFORT_MIN, RESISTIVE_EFFORT_MAX);
         }
 
         public override int GetPayloadSize()
@@ -233,41 +233,41 @@ namespace BadgerJaus.Messages.PrimitiveDriver
 
             payloadSize += base.GetPayloadSize();
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
-                payloadSize += JausByte.SIZE_BYTES;
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
+                payloadSize += JausBaseType.BYTE_BYTE_SIZE;
 
             return payloadSize;
         }
@@ -276,76 +276,64 @@ namespace BadgerJaus.Messages.PrimitiveDriver
         {
             base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
             {
-                propLinearX.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propLinearX.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
             {
-                propLinearY.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propLinearY.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
             {
-                propLinearZ.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propLinearZ.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
             {
-                propRotX.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propRotX.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
             {
-                propRotY.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propRotY.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
             {
-                propRotZ.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                propRotZ.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
             {
-                resistLinearX.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistLinearX.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
             {
-                resistLinearY.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistLinearY.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
             {
-                resistLinearZ.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistLinearZ.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
             {
-                resistRotX.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistRotX.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
             {
-                resistRotY.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistRotY.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
             {
-                resistRotZ.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausByte.SIZE_BYTES;
+                resistRotZ.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
             return true;
@@ -355,100 +343,76 @@ namespace BadgerJaus.Messages.PrimitiveDriver
         {
             base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_X_BIT))
             {
-                if (!propLinearX.toJausBuffer(buffer, indexOffset))
+                if (!propLinearX.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Y_BIT))
             {
-                if (!propLinearY.toJausBuffer(buffer, indexOffset))
+                if (!propLinearY.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
+            if (presence.IsBitSet(PROPULSIVE_LINEAR_EFFORT_Z_BIT))
             {
-                if (!propLinearZ.toJausBuffer(buffer, indexOffset))
+                if (!propLinearZ.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
             {
-                if (!propRotX.toJausBuffer(buffer, indexOffset))
+                if (!propRotX.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
             {
-                if (!propRotY.toJausBuffer(buffer, indexOffset))
+                if (!propRotY.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (presence.IsBitSet(PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
             {
-                if (!propRotZ.toJausBuffer(buffer, indexOffset))
+                if (!propRotZ.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_X_BIT))
             {
-                if (!resistLinearX.toJausBuffer(buffer, indexOffset))
+                if (!resistLinearX.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Y_BIT))
             {
-                if (!resistLinearY.toJausBuffer(buffer, indexOffset))
+                if (!resistLinearY.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
+            if (presence.IsBitSet(RESISTIVE_LINEAR_EFFORT_Z_BIT))
             {
-                if (!resistLinearZ.toJausBuffer(buffer, indexOffset))
+                if (!resistLinearZ.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
             {
-                if (!resistRotX.toJausBuffer(buffer, indexOffset))
+                if (!resistRotX.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
             {
-                if (!resistRotY.toJausBuffer(buffer, indexOffset))
+                if (!resistRotY.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (presence.IsBitSet(RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
             {
-                if (!resistRotZ.toJausBuffer(buffer, indexOffset))
+                if (!resistRotZ.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausByte.SIZE_BYTES;
             }
 
             return true;

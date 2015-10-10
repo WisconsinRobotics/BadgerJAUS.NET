@@ -55,19 +55,15 @@ namespace BadgerJaus.messages.discovery
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!queryType.toJausBuffer(buffer, indexOffset)) return false;
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return queryType.Serialize(buffer, index, out indexOffset);
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            queryType.setValue(buffer[indexOffset]);
-            indexOffset += JausByte.SIZE_BYTES;
+            queryType.Value = buffer[indexOffset];
+            indexOffset += JausBaseType.BYTE_BYTE_SIZE;
             return true;
         }
     }

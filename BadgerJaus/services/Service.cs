@@ -32,29 +32,11 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Services
 {
-    public enum COMPONENT_STATE
-    {
-        STATE_INIT = 0,
-        STATE_READY = 1,
-        STATE_STANDBY = 2,
-        STATE_SHUTDOWN = 3,
-        STATE_FAILURE = 4,
-        STATE_EMERGENCY = 5
-    };
-
-    public enum ControlState
-    {
-        STATE_CONTROL_NOT_AVAILABLE,
-        STATE_NOT_CONTROLLED,
-        STATE_CONTROLLED
-    };
-
     public interface Service
     {
         Service GetParentService();
         bool IsSupported(int commandCode);
-        bool ImplementsAndHandledMessage(Message message);
-        void SetComponent(Component component);
+        bool ImplementsAndHandledMessage(Message message, Component component);
         bool Serialize(byte[] buffer, int index, out int indexOffset);
         //String toString();
     }

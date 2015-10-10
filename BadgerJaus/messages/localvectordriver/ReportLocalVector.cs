@@ -24,6 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.LocalVectorDriver
 {
@@ -61,62 +62,62 @@ namespace BadgerJaus.Messages.LocalVectorDriver
 
         public bool isFieldSet(int bit)
         {
-            return presence.isBitSet(bit);
+            return presence.IsBitSet(bit);
         }
 
         public double GetSpeed()
         {
-            return speed.scaleToDouble(MIN_SPEED, MAX_SPEED);
+            return speed.ScaleValueToDouble(MIN_SPEED, MAX_SPEED);
         }
 
         public double GetZ()
         {
-            return z.scaleToDouble(MIN_Z, MAX_Z);
+            return z.ScaleValueToDouble(MIN_Z, MAX_Z);
         }
 
         public double GetHeading()
         {
-            return heading.scaleToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            return heading.ScaleValueToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
         }
 
         public double GetRoll()
         {
-            return roll.scaleToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            return roll.ScaleValueToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
         }
 
         public double GetPitch()
         {
-            return pitch.scaleToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            return pitch.ScaleValueToDouble(MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
         }
 
         public void SetSpeed(double speed)
         {
-            this.speed.setFromDouble(speed, MIN_SPEED, MAX_SPEED);
-            presence.setBit(SPEED_BIT);
+            this.speed.SetValueFromDouble(speed, MIN_SPEED, MAX_SPEED);
+            presence.ToggleBit(SPEED_BIT, true);
         }
 
         public void SetZ(double z)
         {
-            this.z.setFromDouble(z, MIN_Z, MAX_Z);
-            presence.setBit(Z_BIT);
+            this.z.SetValueFromDouble(z, MIN_Z, MAX_Z);
+            presence.ToggleBit(Z_BIT, true);
         }
 
         public void SetHeading(double heading)
         {
-            this.heading.setFromDouble(heading, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
-            presence.setBit(HEADING_BIT);
+            this.heading.SetValueFromDouble(heading, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            presence.ToggleBit(HEADING_BIT, true);
         }
 
         public void SetRoll(double roll)
         {
-            this.roll.setFromDouble(roll, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
-            presence.setBit(ROLL_BIT);
+            this.roll.SetValueFromDouble(roll, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            presence.ToggleBit(ROLL_BIT, true);
         }
 
         public void SetPitch(double pitch)
         {
-            this.pitch.setFromDouble(pitch, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
-            presence.setBit(PITCH_BIT);
+            this.pitch.SetValueFromDouble(pitch, MIN_HEADING_ROLL_PITCH, MAX_HEADING_ROLL_PITCH);
+            presence.ToggleBit(PITCH_BIT, true);
         }
 
         public override int GetPayloadSize()
@@ -125,20 +126,20 @@ namespace BadgerJaus.Messages.LocalVectorDriver
 
             size += base.GetPayloadSize();
 
-            if (presence.isBitSet(SPEED_BIT))
-                size += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(SPEED_BIT))
+                size += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(Z_BIT))
-                size += JausUnsignedInteger.SIZE_BYTES;
+            if (presence.IsBitSet(Z_BIT))
+                size += JausBaseType.INT_BYTE_SIZE;
 
-            if (presence.isBitSet(HEADING_BIT))
-                size += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(HEADING_BIT))
+                size += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(ROLL_BIT))
-                size += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(ROLL_BIT))
+                size += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PITCH_BIT))
-                size += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PITCH_BIT))
+                size += JausBaseType.SHORT_BYTE_SIZE;
 
             return size;
         }
@@ -152,36 +153,31 @@ namespace BadgerJaus.Messages.LocalVectorDriver
             }
 
             //presence.getPresenceVector().setFromJausBuffer(buffer, index);
-            base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
+            base.SetPayloadFromJausBuffer(buffer, indexOffset, out indexOffset);
 
-            if (presence.isBitSet(SPEED_BIT))
+            if (presence.IsBitSet(SPEED_BIT))
             {
-                speed.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                speed.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(Z_BIT))
+            if (presence.IsBitSet(Z_BIT))
             {
-                z.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+                z.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(HEADING_BIT))
+            if (presence.IsBitSet(HEADING_BIT))
             {
-                heading.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                heading.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(ROLL_BIT))
+            if (presence.IsBitSet(ROLL_BIT))
             {
-                roll.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                roll.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(PITCH_BIT))
+            if (presence.IsBitSet(PITCH_BIT))
             {
-                pitch.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                pitch.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
             return true;
@@ -189,50 +185,37 @@ namespace BadgerJaus.Messages.LocalVectorDriver
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!presence.toJausBuffer(buffer, index))
-                return false;
 
             base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
-            if (presence.isBitSet(SPEED_BIT))
+            if (presence.IsBitSet(SPEED_BIT))
             {
-                if (!speed.toJausBuffer(buffer, indexOffset))
+                if (!speed.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(Z_BIT))
+            if (presence.IsBitSet(Z_BIT))
             {
-                if (!z.toJausBuffer(buffer, indexOffset))
+                if (!z.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(HEADING_BIT))
+            if (presence.IsBitSet(HEADING_BIT))
             {
-                if (!heading.toJausBuffer(buffer, indexOffset))
+                if (!heading.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(ROLL_BIT))
+            if (presence.IsBitSet(ROLL_BIT))
             {
-                if (!roll.toJausBuffer(buffer, indexOffset))
+                if (!roll.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(PITCH_BIT))
+            if (presence.IsBitSet(PITCH_BIT))
             {
-                if (!pitch.toJausBuffer(buffer, indexOffset))
+                if (!pitch.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
             return true;

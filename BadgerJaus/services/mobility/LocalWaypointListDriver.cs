@@ -78,7 +78,7 @@ namespace BadgerJaus.Services.Mobility
             return false;
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             Message returnMessage = null;
             bool handled = true;
@@ -95,7 +95,7 @@ namespace BadgerJaus.Services.Mobility
                     break;
                 case JausCommandCode.REPORT_ELEMENT_LIST:
                     ReportElementList reportElementList = new ReportElementList();
-                    reportElementList.SetRequestID(requestID.getValue());
+                    reportElementList.SetRequestID((int)requestID.Value);
                     returnMessage = reportElementList;
                     break;
                 case JausCommandCode.QUERY_ACTIVE_ELEMENT:
@@ -161,20 +161,21 @@ namespace BadgerJaus.Services.Mobility
 
         public bool HandleSetElement(SetElement message)
         {
-            requestID.setValue(message.GetRequestID());
+#warning Completely broken
+            requestID.Value = message.GetRequestID();
             List<JausElement> elements = message.GetElements();
             JausUnsignedShort elementCommandCode = new JausUnsignedShort();
             foreach (JausElement element in elements)
             {
                 byte[] data = element.getElementData();
-                elementCommandCode.setFromJausBuffer(data);
-                if (!(elementCommandCode.getValue() == JausCommandCode.SET_LOCAL_WAYPOINT))
+                //elementCommandCode.Deserialize(data);
+                if (!(elementCommandCode.Value == JausCommandCode.SET_LOCAL_WAYPOINT))
                     continue;
 
-#warning Commented out DUE to visibiliy modifier
+
                 //Commented out DUE to visibility modifier
                 //SetLocalWaypoint setLocalWaypoint = new SetLocalWaypoint();
-                //setLocalWaypoint.setPayloadFromJausBuffer(data, JausUnsignedShort.SIZE_BYTES);
+                //setLocalWaypoint.setPayloadFromJausBuffer(data, JausBaseType.SHORT_BYTE_SIZE);
 
                 //WaypointElement waypoint = new WaypointElement(element, setLocalWaypoint);
                 //waypointList.AddLast(waypoint);

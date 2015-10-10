@@ -30,6 +30,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Timers;
+using System.Net;
 
 using BadgerJaus.Services;
 using BadgerJaus.Services.Core;
@@ -43,24 +44,35 @@ namespace BadgerJaus.Util
 
         protected const int JAUS_PORT = 3974;
 
-        private Transport transportService;
         private UdpClient udpClient;
-        protected ConcurrentDictionary<string, JausAddressPort> jausAddrMap;
+        protected ConcurrentDictionary<string, IPEndPoint> jausAddrMap;
         private Timer timer;
 
-        public Subsystem(int subsystemID)
+        protected static Transport transportService;
+        //protected static Event eventService --not yet implemented
+        protected static AccessControl accessControlService;
+        protected static Management managementService;
+        //protected static Time timeService --not yet implemented
+        protected static Liveness livenessService;
+        protected static Discovery discoveryService;
+
+        public Subsystem(int subsystemID, int port = JAUS_PORT)
         {
             nodeList = new HashSet<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
-            udpClient = new UdpClient(JAUS_PORT);
-            jausAddrMap = new ConcurrentDictionary<string,JausAddressPort>();
-            transportService = Transport.GetTransportService(udpClient, jausAddrMap);
+            udpClient = new UdpClient(port);
+            jausAddrMap = new ConcurrentDictionary<string, IPEndPoint>();
+            transportService = Transport.CreateTransportInstance(udpClient, jausAddrMap);
+            accessControlService = AccessControl.CreateAccessControlInstance();
+            managementService = Management.CreateManagementInstance();
+            livenessService = Liveness.CreateLivenessInstance();
+            discoveryService = Discovery.CreateDiscoveryInstance(this);
         }
 
         public int SubsystemID
         {
-            get { return subsystemID.getValue(); }
-            set { subsystemID.setValue(value); }
+            get { return (int)subsystemID.Value; }
+            set { subsystemID.Value = value; }
         }
 
         public void AddNode(Node node)
@@ -107,7 +119,7 @@ namespace BadgerJaus.Util
                 {
                     foreach (BaseService service in component.GetServices())
                     {
-                        service.ExecuteOnTime();
+                        service.ExecuteOnTime(component);
                     }
                 }
             }

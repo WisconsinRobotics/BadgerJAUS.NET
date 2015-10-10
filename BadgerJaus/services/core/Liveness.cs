@@ -51,7 +51,22 @@ namespace BadgerJaus.Services.Core
         //private JausAddress destinationJausAddress;
         private ConcurrentDictionary<String, LivenessTime> targetAddressMap;
 
-        public Liveness()
+        private static Liveness livenessService = null;
+
+        public static Liveness CreateLivenessInstance()
+        {
+            if (livenessService == null)
+                livenessService = new Liveness();
+
+            return livenessService;
+        }
+
+        public static Liveness GetInstance()
+        {
+            return livenessService;
+        }
+
+        private Liveness()
         {
             //if (this.stopwatch == null) this.stopwatch = new Stopwatch();
             this.targetAddressMap = new ConcurrentDictionary<String, LivenessTime>();
@@ -93,17 +108,17 @@ namespace BadgerJaus.Services.Core
         */
 
 
-        private void SendQuery()
+        private void SendQuery(Component component)
         {
             foreach (LivenessTime currentLivenessTime in this.targetAddressMap.Values)
             {
                 QueryHeartbeatPulse queryHeartBeat = new QueryHeartbeatPulse();
                 JausAddress destinationAddress = currentLivenessTime.getAddress();
-                queryHeartBeat.SetSource(jausAddress);
+                queryHeartBeat.SetSource(component.JausAddress);
                 queryHeartBeat.SetDestination(destinationAddress);
 
-                Console.WriteLine("\t [Sent] QueryHeartbeat source: " + jausAddress.getId());
-                Console.WriteLine("\t [Sent] QueryHeartbeat dest: " + destinationAddress.getId());
+                //Console.WriteLine("\t [Sent] QueryHeartbeat source: " + jausAddress.getId());
+                //Console.WriteLine("\t [Sent] QueryHeartbeat dest: " + destinationAddress.getId());
 
                 Transport.SendMessage(queryHeartBeat);
             }
@@ -119,7 +134,7 @@ namespace BadgerJaus.Services.Core
             return false;
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {
@@ -133,7 +148,7 @@ namespace BadgerJaus.Services.Core
                 case JausCommandCode.QUERY_HEARTBEAT_PULSE:
                     ReportHeartbeatPulse reportHeartBeat = new ReportHeartbeatPulse();
                     reportHeartBeat.SetDestination(message.GetSource());
-                    reportHeartBeat.SetSource(jausAddress);
+                    reportHeartBeat.SetSource(component.JausAddress);
                     Transport.SendMessage(reportHeartBeat);
                     return true;
                 default:
@@ -141,11 +156,11 @@ namespace BadgerJaus.Services.Core
             }
         }
 
-        protected override void Execute()
+        protected override void Execute(Component component)
         {
             if (this.targetAddressMap.Count == 0)
                 return;
-            SendQuery();
+            SendQuery(component);
         }
 
         public override bool IsSupported(int commandCode)

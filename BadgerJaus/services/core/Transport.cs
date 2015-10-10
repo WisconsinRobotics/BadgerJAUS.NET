@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
+using System.Net;
 
 using BadgerJaus.Messages;
 
@@ -36,7 +37,7 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Services.Core
 {
-    public sealed class Transport : BaseService//, Runnable
+    public sealed class Transport : BaseService
     {
         public const String SERVICE_NAME = "Transport";
         public const String SERVICE_VERSION = "1.0";
@@ -49,11 +50,11 @@ namespace BadgerJaus.Services.Core
         private static ReceiveThread receiveThread;
         private static BlockingCollection<Message> sendMessageQueue;
         private static BlockingCollection<ReceivedPacket> receivedMessageQueue;
-        private static ConcurrentDictionary<string, JausAddressPort> sendAddrs;
+        private static ConcurrentDictionary<string, IPEndPoint> sendAddrs;
 
         private LinkedList<Subsystem> subsystems = null;
 
-        public static Transport GetTransportService(UdpClient socket, ConcurrentDictionary<string, JausAddressPort> jausAddrMap)
+        public static Transport CreateTransportInstance(UdpClient socket, ConcurrentDictionary<string, IPEndPoint> jausAddrMap)
         {
             if (transportService == null)
                 transportService = new Transport(socket, jausAddrMap);
@@ -66,7 +67,7 @@ namespace BadgerJaus.Services.Core
             return transportService;
         }
 
-        private Transport(UdpClient socket, ConcurrentDictionary<String, JausAddressPort> jausAddrMap)
+        private Transport(UdpClient socket, ConcurrentDictionary<String, IPEndPoint> jausAddrMap)
         {
             sendMessageQueue = new BlockingCollection<Message>();
             receivedMessageQueue = new BlockingCollection<ReceivedPacket>();
@@ -76,9 +77,9 @@ namespace BadgerJaus.Services.Core
             subsystems = new LinkedList<Subsystem>();
         }
 
-        public void AddRemoteAddress(String hostAddress, JausAddressPort jausAddrPort)
+        public void AddRemoteAddress(String hostAddress, IPEndPoint ipEndpoint)
         {
-            sendAddrs.AddOrUpdate(hostAddress, jausAddrPort, (key, oldValue) => jausAddrPort);
+            sendAddrs.AddOrUpdate(hostAddress, ipEndpoint, (key, oldValue) => ipEndpoint);
         }
 
         public void AddSubsystem(Subsystem subsystem)
@@ -100,7 +101,7 @@ namespace BadgerJaus.Services.Core
             return false;
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             return false;
         }
@@ -130,8 +131,7 @@ namespace BadgerJaus.Services.Core
                     JausAddress destination = message.GetDestination();
                     if (!sendAddrs.ContainsKey(from))
                     {
-                        JausAddressPort jap = new JausAddressPort(receivedPacket.GetSourceIP(), receivedPacket.GetPort());
-                        sendAddrs.TryAdd(from, jap);
+                        sendAddrs.TryAdd(from, receivedPacket.SourceAddr);
                     }
 
                     foreach (Subsystem subsystem in subsystems)
@@ -151,7 +151,7 @@ namespace BadgerJaus.Services.Core
 
                                 foreach (Service service in component.GetServices())
                                 {
-                                    if (service.ImplementsAndHandledMessage(message))
+                                    if (service.ImplementsAndHandledMessage(message, component))
                                     {
                                         messageHandled = true;
                                         break;

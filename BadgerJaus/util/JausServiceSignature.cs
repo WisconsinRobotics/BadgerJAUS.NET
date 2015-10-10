@@ -33,7 +33,7 @@ using System.Net.Sockets;
 
 namespace BadgerJaus.Util
 {
-    public class JausServiceSignature : JausType
+    public class JausServiceSignature
     {
 
         // Values for Service identification (See RegisterServicesMessage)
@@ -54,8 +54,8 @@ namespace BadgerJaus.Util
         public JausServiceSignature(byte[] buffer, int index)
             : this()
         {
-
-            this.setFromJausBuffer(buffer, index);
+            int indexOffset;
+            this.Deserialize(buffer, index, out indexOffset);
 
         }
 
@@ -80,22 +80,22 @@ namespace BadgerJaus.Util
         // Major Version Number
         public int MajorVersion
         {
-            get { return majorVersionNumber.getValue(); }
-            set { majorVersionNumber.setValue(value); }
+            get { return (int)majorVersionNumber.Value; }
+            set { majorVersionNumber.Value = value; }
         }
 
         public int MinorVersion
         {
-            get { return minorVersionNumber.getValue(); }
-            set { minorVersionNumber.setValue(value); }
+            get { return (int)minorVersionNumber.Value; }
+            set { minorVersionNumber.Value = value; }
         }
 
         // JausType Methods
 
-        public bool toJausBuffer(byte[] byteArray)
+        public bool Serialize(byte[] byteArray, out int indexOffset)
         {
 
-            return this.toJausBuffer(byteArray, 0);
+            return this.Serialize(byteArray, 0, out indexOffset);
         }
 
         private static byte[] getBytes(String str)
@@ -112,55 +112,52 @@ namespace BadgerJaus.Util
             return new String(chars);
         }
 
-        public bool toJausBuffer(byte[] byteArray, int index)
+        public bool Serialize(byte[] byteArray, int index, out int indexOffset)
         {
             Encoding enc = Encoding.UTF8;
             JausByte signatureLength = new JausByte(uri.Length);
+            indexOffset = index;
 
-            signatureLength.toJausBuffer(byteArray, index);
-            index += JausByte.SIZE_BYTES;
+            signatureLength.Serialize(byteArray, indexOffset, out indexOffset);
 
-            Array.Copy(enc.GetBytes(uri), 0, byteArray, index, uri.Length);
-            index += uri.Length;
+            Array.Copy(enc.GetBytes(uri), 0, byteArray, indexOffset, uri.Length);
+            indexOffset += uri.Length;
 
-            this.majorVersionNumber.toJausBuffer(byteArray, index);
-            index += JausByte.SIZE_BYTES;
+            this.majorVersionNumber.Serialize(byteArray, indexOffset, out indexOffset);
 
-            this.minorVersionNumber.toJausBuffer(byteArray, index);
-            index += JausByte.SIZE_BYTES;
+            this.minorVersionNumber.Serialize(byteArray, indexOffset, out indexOffset);
 
             return true;
         }
 
-        public bool setFromJausBuffer(byte[] byteArray)
+        public bool Deserialize(byte[] byteArray, out int indexOffset)
         {
 
-            return this.setFromJausBuffer(byteArray, 0);
+            return this.Deserialize(byteArray, 0, out indexOffset);
         }
 
-        public bool setFromJausBuffer(byte[] byteArray, int index)
+        public bool Deserialize(byte[] byteArray, int index, out int indexOffset)
         {
 
             int uriLength;
+            indexOffset = index;
 
-            uriLength = (new JausByte(byteArray, index).getValue());
-            index += JausByte.SIZE_BYTES;
+            uriLength = (int)(new JausByte(byteArray, indexOffset).Value);
+            indexOffset += JausBaseType.BYTE_BYTE_SIZE;
 
             uri = Encoding.UTF8.GetString(byteArray, index, uriLength);
-            index += uriLength;
+            indexOffset += uriLength;
 
-            this.majorVersionNumber.setFromJausBuffer(byteArray, index);
-            index += JausByte.SIZE_BYTES;
+            this.majorVersionNumber.Deserialize(byteArray, index, out indexOffset);
 
-            this.minorVersionNumber.setFromJausBuffer(byteArray, index);
-            index += JausByte.SIZE_BYTES;
+            this.minorVersionNumber.Deserialize(byteArray, index, out indexOffset);
 
             return true;
         }
 
         public int size()
         {
-            return JausByte.SIZE_BYTES + uri.Length + JausByte.SIZE_BYTES + JausByte.SIZE_BYTES;
+            return JausBaseType.BYTE_BYTE_SIZE + uri.Length + JausBaseType.BYTE_BYTE_SIZE + JausBaseType.BYTE_BYTE_SIZE;
         }
 
         public String toHexString()
@@ -173,7 +170,7 @@ namespace BadgerJaus.Util
             temp += (new JausByte(uri.Length).toHexString());
             for (int i = 0; i < tmpByteArray.Length; i++)
             {
-                tmpJB.setValue((int)tmpByteArray[i]);
+                tmpJB.Value = tmpByteArray[i];
                 temp += tmpJB.toHexString();
             }
             temp += this.majorVersionNumber.toHexString();
@@ -186,8 +183,8 @@ namespace BadgerJaus.Util
 
             String temp;
             temp = "id = " + uri + " " +
-                    "version = " + this.majorVersionNumber.getValue() + "." +
-                    this.minorVersionNumber.getValue() + "\n";
+                    "version = " + this.majorVersionNumber.Value + "." +
+                    this.minorVersionNumber.Value + "\n";
             return temp;
 
         }

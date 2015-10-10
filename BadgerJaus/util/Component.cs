@@ -34,6 +34,23 @@ using BadgerJaus.Services.Core;
 
 namespace BadgerJaus.Util
 {
+    public enum ComponentState
+    {
+        STATE_INIT = 0,
+        STATE_READY = 1,
+        STATE_STANDBY = 2,
+        STATE_SHUTDOWN = 3,
+        STATE_FAILURE = 4,
+        STATE_EMERGENCY = 5
+    };
+
+    public enum ControlState
+    {
+        STATE_CONTROL_NOT_AVAILABLE,
+        STATE_NOT_CONTROLLED,
+        STATE_CONTROLLED
+    };
+
     public class Component
     {
         private JausByte componentID;
@@ -45,6 +62,11 @@ namespace BadgerJaus.Util
         Management managementService = null;
         AccessControl accessControlService = null;
 
+        ControlState controlState;
+        ComponentState componentState;
+        JausAddress controller;
+        int authorityCode;
+
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
@@ -52,13 +74,17 @@ namespace BadgerJaus.Util
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
             instanceID = new JausByte(0);
+            controlState = ControlState.STATE_NOT_CONTROLLED;
+            componentState = ComponentState.STATE_INIT;
+            controller = null;
+            authorityCode = AccessControl.DEFAULT_AUTHORITY_CODE;
         }
 
         public int ComponentID
         {
-            get { return componentID.getValue(); }
+            get { return (int)componentID.Value; }
             set {
-                componentID.setValue(value);
+                componentID.Value = value;
                 jausAddress.setComponent(value);
             }
         }
@@ -77,7 +103,6 @@ namespace BadgerJaus.Util
             }
 
             serviceList.Add(service);
-            service.SetComponent(this);
         }
 
         public IEnumerable<Service> GetServices()
@@ -85,21 +110,42 @@ namespace BadgerJaus.Util
             return Enumerable.AsEnumerable<Service>(serviceList);
         }
 
+        public ControlState ControlState
+        {
+            get { return controlState; }
+            set { controlState = value; }
+        }
+
+        public ComponentState ComponentState
+        {
+            get { return componentState; }
+            set { componentState = value; }
+        }
+
+        public JausAddress Controller
+        {
+            get { return controller; }
+            set { controller = value; }
+        }
+
+        public int AuthorityCode
+        {
+            get { return authorityCode; }
+            set { authorityCode = value; }
+        }
+
         public bool Serialize(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
             bool status;
             JausByte serviceCount = new JausByte(serviceList.Count);
             indexOffset = index;
-            status = componentID.toJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
-            instanceID.toJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            status = componentID.Serialize(buffer, indexOffset, out indexOffset);
+            instanceID.Serialize(buffer, indexOffset, out indexOffset);
 
             if (!getServices)
                 return status;
             
-            serviceCount.toJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            serviceCount.Serialize(buffer, indexOffset, out indexOffset);
 
             foreach(Service service in serviceList)
             {
@@ -111,14 +157,14 @@ namespace BadgerJaus.Util
 
         public int GetPayloadSize()
         {
-            int totalSize = JausByte.SIZE_BYTES;
+            int totalSize = JausBaseType.BYTE_BYTE_SIZE;
             foreach (Service service in serviceList)
             {
 #warning This needs to be fixed
                 //String serviceID = service.GetServiceID();
                 //totalSize += serviceID.Length;
-                totalSize += JausByte.SIZE_BYTES;
-                totalSize += JausByte.SIZE_BYTES;
+                totalSize += JausBaseType.BYTE_BYTE_SIZE;
+                totalSize += JausBaseType.BYTE_BYTE_SIZE;
             }
 
             return totalSize;
@@ -157,22 +203,12 @@ namespace BadgerJaus.Util
             return bytes;
         }
 
-        public COMPONENT_STATE GetState()
-        {
-            if(managementService == null)
-            {
-                return COMPONENT_STATE.STATE_SHUTDOWN;
-            }
-
-            return managementService.CurrentState;
-        }
-
         public bool IsController(JausAddress address)
         {
             if (accessControlService == null)
                 return false;
 
-            return accessControlService.IsController(address);
+            return accessControlService.IsController(address, this);
         }
     }
 }

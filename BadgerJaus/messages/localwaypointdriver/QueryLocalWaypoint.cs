@@ -44,7 +44,7 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
 
         public bool IsFieldSet(int bit)
         {
-            return presence.isBitSet(bit);
+            return presence.IsBitSet(bit);
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
@@ -59,16 +59,9 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
 
         private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
         {
-            bool status;
             if (set)
-                status = presence.setFromJausBuffer(buffer, index);
-            else
-                status = presence.toJausBuffer(buffer, index);
-            indexOffset = index + JausBytePresenceVector.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-
-            return status;
+                return presence.Deserialize(buffer, index, out indexOffset);
+            return presence.Serialize(buffer, index, out indexOffset);
         }
     }
 }

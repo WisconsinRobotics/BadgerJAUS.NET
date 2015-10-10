@@ -33,7 +33,7 @@ namespace BadgerJaus.Messages.Control
     public class ReportAuthority : Message
     {
         // Size of payload not including Message Code
-        private const int MAX_DATA_SIZE_BYTES = JausByte.SIZE_BYTES;
+        private const int MAX_DATA_SIZE_BYTES = JausBaseType.BYTE_BYTE_SIZE;
 
 
         // Message Fields
@@ -52,12 +52,12 @@ namespace BadgerJaus.Messages.Control
         // Getters and Setters
         public int GetAuthorityCode()
         {
-            return authorityCode.getValue();
+            return (int)authorityCode.Value;
         }
 
         public void SetAuthorityCode(int queryType)
         {
-            this.authorityCode.setValue(queryType);
+            this.authorityCode.Value = queryType;
         }
 
         public override int GetPayloadSize()
@@ -68,24 +68,13 @@ namespace BadgerJaus.Messages.Control
         // Packs Message Fields into byte[] then passes array to super class
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!authorityCode.toJausBuffer(buffer, indexOffset))
-            {
-                return false;
-            }
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return authorityCode.Serialize(buffer, index, out indexOffset);
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            authorityCode.setFromJausBuffer(buffer, indexOffset);
-            indexOffset = JausByte.SIZE_BYTES;
-
-            return true;
+            return authorityCode.Deserialize(buffer, index, out indexOffset);
         }
 
         // reports the size of the "Current" message (based on which fields are set)
@@ -96,9 +85,9 @@ namespace BadgerJaus.Messages.Control
             return base.MessageSize() + ReportAuthority.MAX_DATA_SIZE_BYTES;
         }
 
-        public override String toString()
+        public override String ToString()
         {
-            String str = base.toString();
+            String str = base.ToString();
             //str += "Query Type: " + queryTypes[queryType.getValue() - 1] + "\n";
             return str;
         }

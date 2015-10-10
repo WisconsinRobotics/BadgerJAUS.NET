@@ -53,7 +53,7 @@ public interface JausType {
 	 * 
 	 * @see #toJausBuffer(byte[])
 	 */
-	bool toJausBuffer(byte[] byteArray, int index);
+	bool Serialize(byte[] byteArray, int index, out int indexOffset);
 	
 	/**
 	 * This is a shorthand method for {@code toJausBuffer(byte[], 0)}, providing
@@ -65,7 +65,7 @@ public interface JausType {
 	 * 
 	 * @see #toJausBuffer(byte[], int)
 	 */
-	bool toJausBuffer(byte[] byteArray);
+	bool Serialize(byte[] byteArray, out int indexOffset);
 	
 	/**
 	 * Decodes {@code byteArray} populating the data structures of this JausType
@@ -79,7 +79,7 @@ public interface JausType {
 	 * 
 	 * @see #setFromJausBuffer(byte[])
 	 */
-	bool setFromJausBuffer(byte[] byteArray, int index);
+	bool Deserialize(byte[] byteArray, int index, out int indexOffset);
 	
 	/**
 	 * This is a shorthand method for {@code setFromJausBuffer(byte[], 0)}, 
@@ -91,7 +91,15 @@ public interface JausType {
 	 * 
 	 * @see #setFromJausBuffer(byte[], int)
 	 */
-	bool setFromJausBuffer(byte[] byteArray);
+	bool Deserialize(byte[] byteArray, out int indexOffset);
+
+    double ScaleValueToDouble(double min, double max);
+
+    void SetValueFromDouble(double value, double min, double max);
+
+    bool IsBitSet(int bit);
+
+    void ToggleBit(int bit, bool set = false);
 	
 	/**
 	 * Provides a string to view the marshaled data.  An example would be:
@@ -100,13 +108,4 @@ public interface JausType {
 	 * @return a string representing the marshaled data of this JausType
 	 */
 	String toHexString();
-	
-	/**
-	 *
-	 * 
-	 * @return
-	 */
-	int size();
-	
-	
 }

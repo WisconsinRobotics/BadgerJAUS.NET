@@ -45,6 +45,7 @@ namespace BadgerJausUnitTests
             ConfirmControl sendConfirmControl;
             ConfirmControl recConfirmControl;
             byte[] buffer;
+            int indexOffset;
 
             sendConfirmControl = new ConfirmControl();
             sendConfirmControl.SetSource(100);
@@ -52,13 +53,13 @@ namespace BadgerJausUnitTests
             sendConfirmControl.SetResponseCode(ConfirmControl.CONTROL_ACCEPTED);
 
             buffer = new byte[Message.UDP_MAX_PACKET_SIZE];
-            sendConfirmControl.ToJausUdpBuffer(buffer);
+            sendConfirmControl.ToJausUdpBuffer(buffer, out indexOffset);
 
             recConfirmControl = new ConfirmControl();
             recConfirmControl.SetFromJausUdpBuffer(buffer);
 
-            Assert.AreEqual(sendConfirmControl.GetSource().getId(), recConfirmControl.GetSource().getId());
-            Assert.AreEqual(sendConfirmControl.GetDestination().getId(), recConfirmControl.GetDestination().getId());
+            Assert.AreEqual(sendConfirmControl.GetSource().Value, recConfirmControl.GetSource().Value);
+            Assert.AreEqual(sendConfirmControl.GetDestination().Value, recConfirmControl.GetDestination().Value);
             Assert.AreEqual(sendConfirmControl.GetResponseCode(), recConfirmControl.GetResponseCode());
         }
 
@@ -74,20 +75,21 @@ namespace BadgerJausUnitTests
             ReportStatus sendStatus;
             ReportStatus receiveStatus;
             byte[] buffer;
+            int indexOffset;
             
             sendStatus = new ReportStatus();
             sendStatus.SetSource(100);
             sendStatus.SetDestination(200);
-            sendStatus.SetStatus((int) COMPONENT_STATE.STATE_READY);
+            sendStatus.SetStatus((int) ComponentState.STATE_READY);
 
             buffer = new byte[Message.UDP_MAX_PACKET_SIZE];
-            sendStatus.ToJausUdpBuffer(buffer);
+            sendStatus.ToJausUdpBuffer(buffer, out indexOffset);
 
             receiveStatus = new ReportStatus();
             receiveStatus.SetFromJausUdpBuffer(buffer);
 
-            Assert.AreEqual(sendStatus.GetSource().getId(), receiveStatus.GetSource().getId());
-            Assert.AreEqual(sendStatus.GetDestination().getId(), receiveStatus.GetDestination().getId());
+            Assert.AreEqual(sendStatus.GetSource().Value, receiveStatus.GetSource().Value);
+            Assert.AreEqual(sendStatus.GetDestination().Value, receiveStatus.GetDestination().Value);
             Assert.AreEqual(sendStatus.GetStatus(), receiveStatus.GetStatus());
         }
     }

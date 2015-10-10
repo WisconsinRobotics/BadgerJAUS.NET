@@ -24,12 +24,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.Driver
 {
     public class ReportTravelSpeed : Message
     {
-        private static double SPEED_MIN = 0;
-        private static double SPEED_MAX = 327.67;
+        private const double SPEED_MIN = 0;
+        private const double SPEED_MAX = 327.67;
         private JausUnsignedShort speed;
 
         protected override int CommandCode
@@ -39,37 +41,27 @@ namespace BadgerJaus.Messages.Driver
 
         public void SetSpeed(double value)
         {
-            speed.setFromDouble(value, SPEED_MIN, SPEED_MAX);
+            speed.SetValueFromDouble(value, SPEED_MIN, SPEED_MAX);
         }
 
         public int GetSpeed()
         {
-            return speed.getValue();
+            return (int)speed.ScaleValueToDouble(SPEED_MIN, SPEED_MAX);
         }
 
         public override int GetPayloadSize()
         {
-            return JausUnsignedShort.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!speed.toJausBuffer(buffer, indexOffset)) return false;
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
-
-            return true;
+            return speed.Serialize(buffer, index, out indexOffset);
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            bool status;
-
-            status = speed.setFromJausBuffer(buffer, index);
-            indexOffset = index + JausUnsignedShort.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-            return status;
+            return speed.Deserialize(buffer, index, out indexOffset);
         }
     }
 }

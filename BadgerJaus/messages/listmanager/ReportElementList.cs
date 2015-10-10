@@ -24,6 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.ListManager
 {
     public class ReportElementList : Message
@@ -37,21 +39,17 @@ namespace BadgerJaus.Messages.ListManager
 
         public void SetRequestID(int value)
         {
-            requestID.setValue(value);
+            requestID.Value = value;
         }
 
         public override int GetPayloadSize()
         {
-            return JausUnsignedShort.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!requestID.toJausBuffer(buffer, index)) return false;
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
-
-            return true;
+            return requestID.Serialize(buffer, index, out indexOffset);
         }
     }
 }

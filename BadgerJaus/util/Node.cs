@@ -55,16 +55,15 @@ namespace BadgerJaus.Util
 
         public int NodeID
         {
-            get { return nodeID.getValue(); }
-            set { nodeID.setValue(value); }
+            get { return (int)nodeID.Value; }
+            set { nodeID.Value = value; }
         }
 
         public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
             JausByte componentCount = new JausByte(componentList.Count);
             indexOffset = index;
-            componentCount.toJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
+            componentCount.Serialize(buffer, indexOffset, out indexOffset);
             foreach (Component component in componentList)
             {
                 component.Serialize(buffer, indexOffset, out indexOffset, getServices);
@@ -75,7 +74,7 @@ namespace BadgerJaus.Util
 
         public int GetPayloadSize()
         {
-            int totalSize = JausByte.SIZE_BYTES;
+            int totalSize = JausBaseType.BYTE_BYTE_SIZE;
             foreach (Component component in componentList)
             {
                 totalSize += component.GetPayloadSize();

@@ -24,6 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.LocalWaypointDriver
 {
     public class ReportLocalWaypoint : QueryLocalWaypoint
@@ -76,67 +78,67 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
         public void SetX(double xValue)
         {
             x.setFromDouble(xValue, POSE_MIN, POSE_MAX);
-            presence.setBit(X_BIT);
+            presence.ToggleBit(X_BIT, true);
         }
 
         public void SetY(double yValue)
         {
             y.setFromDouble(yValue, POSE_MIN, POSE_MAX);
-            presence.setBit(Y_BIT);
+            presence.ToggleBit(Y_BIT, true);
         }
 
         public void SetZ(double zValue)
         {
             z.setFromDouble(zValue, POSE_MIN, POSE_MAX);
-            presence.setBit(Z_BIT);
+            presence.ToggleBit(Z_BIT, true);
         }
 
         public void SetRoll(double rollValue)
         {
-            roll.setFromDouble(rollValue, ORIENT_MIN, ORIENT_MAX);
-            presence.setBit(ROLL_BIT);
+            roll.SetValueFromDouble(rollValue, ORIENT_MIN, ORIENT_MAX);
+            presence.ToggleBit(ROLL_BIT, true);
         }
 
         public void SetPitch(double pitchValue)
         {
-            pitch.setFromDouble(pitchValue, ORIENT_MIN, ORIENT_MAX);
-            presence.setBit(PITCH_BIT);
+            pitch.SetValueFromDouble(pitchValue, ORIENT_MIN, ORIENT_MAX);
+            presence.ToggleBit(PITCH_BIT, true);
         }
 
         public void SetYaw(double yawValue)
         {
-            yaw.setFromDouble(yawValue, ORIENT_MIN, ORIENT_MAX);
-            presence.setBit(YAW_BIT);
+            yaw.SetValueFromDouble(yawValue, ORIENT_MIN, ORIENT_MAX);
+            presence.ToggleBit(YAW_BIT, true);
         }
 
         public double GetX()
         {
-            return x.scaleToDouble(POSE_MIN, POSE_MAX);
+            return x.ScaleValueToDouble(POSE_MIN, POSE_MAX);
         }
 
         public double GetY()
         {
-            return y.scaleToDouble(POSE_MIN, POSE_MAX);
+            return y.ScaleValueToDouble(POSE_MIN, POSE_MAX);
         }
 
         public double GetZ()
         {
-            return z.scaleToDouble(POSE_MIN, POSE_MAX);
+            return z.ScaleValueToDouble(POSE_MIN, POSE_MAX);
         }
 
         public double GetRoll()
         {
-            return roll.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+            return roll.ScaleValueToDouble(ORIENT_MIN, ORIENT_MAX);
         }
 
         public double GetPitch()
         {
-            return pitch.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+            return pitch.ScaleValueToDouble(ORIENT_MIN, ORIENT_MAX);
         }
 
         public double GetYaw()
         {
-            return yaw.scaleToDouble(ORIENT_MIN, ORIENT_MAX);
+            return yaw.ScaleValueToDouble(ORIENT_MIN, ORIENT_MAX);
         }
 
         public override int GetPayloadSize()
@@ -144,29 +146,29 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
             int payloadSize = 0;
             payloadSize += base.GetPayloadSize();
 
-            if (presence.isBitSet(X_BIT))
-                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+            if (presence.IsBitSet(X_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
 
-            if (presence.isBitSet(Y_BIT))
-                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+            if (presence.IsBitSet(Y_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
 
-            if (presence.isBitSet(Z_BIT))
-                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+            if (presence.IsBitSet(Z_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
 
-            if (presence.isBitSet(ROLL_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(ROLL_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PITCH_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(PITCH_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(YAW_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(YAW_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(WT_BIT))
-                payloadSize += JausUnsignedShort.SIZE_BYTES;
+            if (presence.IsBitSet(WT_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
 
-            if (presence.isBitSet(PT_BIT))
-                payloadSize += JausUnsignedInteger.SIZE_BYTES;
+            if (presence.IsBitSet(PT_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
 
             return payloadSize;
         }
@@ -179,32 +181,28 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
             if (!status)
                 return false;
 
-            if (presence.isBitSet(X_BIT))
+            if (presence.IsBitSet(X_BIT))
             {
-                if (!x.toJausBuffer(buffer, indexOffset))
+                if (!x.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(Y_BIT))
+            if (presence.IsBitSet(Y_BIT))
             {
-                if (!y.toJausBuffer(buffer, indexOffset))
+                if (!y.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(Z_BIT))
+            if (presence.IsBitSet(Z_BIT))
             {
-                if (!z.toJausBuffer(buffer, indexOffset))
+                if (!z.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
             }
 
-            if (presence.isBitSet(YAW_BIT))
+            if (presence.IsBitSet(YAW_BIT))
             {
-                if (!y.toJausBuffer(buffer, indexOffset))
+                if (!y.Serialize(buffer, indexOffset, out indexOffset))
                     return false;
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
             }
 
             return true;
@@ -214,28 +212,24 @@ namespace BadgerJaus.Messages.LocalWaypointDriver
         {
             base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
 
-            if (presence.isBitSet(X_BIT))
+            if (presence.IsBitSet(X_BIT))
             {
-                x.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+                x.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(Y_BIT))
+            if (presence.IsBitSet(Y_BIT))
             {
-                y.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+                y.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(Z_BIT))
+            if (presence.IsBitSet(Z_BIT))
             {
-                z.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedInteger.SIZE_BYTES;
+                z.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
-            if (presence.isBitSet(YAW_BIT))
+            if (presence.IsBitSet(YAW_BIT))
             {
-                yaw.setFromJausBuffer(buffer, indexOffset);
-                indexOffset += JausUnsignedShort.SIZE_BYTES;
+                yaw.Deserialize(buffer, indexOffset, out indexOffset);
             }
 
             return true;

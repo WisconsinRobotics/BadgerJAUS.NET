@@ -24,6 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.LocalPoseSensor
 {
     public class QueryLocalPose : Message
@@ -42,7 +44,7 @@ namespace BadgerJaus.Messages.LocalPoseSensor
 
         public bool IsFieldSet(int bit)
         {
-            return presence.isBitSet(bit);
+            return presence.IsBitSet(bit);
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
@@ -52,7 +54,7 @@ namespace BadgerJaus.Messages.LocalPoseSensor
 
         public override int GetPayloadSize()
         {
-            return JausShortPresenceVector.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         public void SetField(int bit)
@@ -67,16 +69,9 @@ namespace BadgerJaus.Messages.LocalPoseSensor
 
         private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
         {
-            bool status;
             if (set)
-                status = presence.setFromJausBuffer(buffer, index);
-            else
-                status = presence.toJausBuffer(buffer, index);
-            indexOffset = index + JausShortPresenceVector.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-
-            return status;
+                return  presence.Deserialize(buffer, index, out indexOffset);
+            return presence.Serialize(buffer, index, out indexOffset);
         }
     }
 }

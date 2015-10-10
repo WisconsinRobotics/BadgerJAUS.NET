@@ -50,39 +50,12 @@ namespace BadgerJaus.Util
         {
         }
 
-        public bool isBitSet(int bit)
-        {
-            return ((value & (0x01 << bit)) > 0);
-        }
-
-        public bool setBit(int bit)
-        {
-            if (SIZE_BYTES * 8 < bit) // 8 bits per byte
-                return false;
-            else
-            {
-                value = value | (0x01 << bit);
-                return true;
-            }
-        }
-
-        public bool clearBit(int bit)
-        {
-            if (SIZE_BYTES * 8 < bit)
-                return false;
-            else
-            {
-                value = value & ~(0x01 << bit);
-                return true;
-            }
-        }
-
-        new public String toString()
+        public override string ToString()
         {
             String str = "";
-            for (int i = this.size() * 8 - 1; i >= 0; i--)
+            for (int i = SIZE_BYTES * 8 - 1; i >= 0; i--)
             {
-                if (this.isBitSet(i))
+                if (this.IsBitSet(i))
                 {
                     str += "1";
                 }

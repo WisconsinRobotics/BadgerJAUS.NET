@@ -26,6 +26,8 @@
  */
 using System;
 
+using BadgerJaus.Util;
+
 namespace BadgerJaus.Messages.PrimitiveDriver
 {
     public class QueryWrenchEffort : Message
@@ -42,9 +44,9 @@ namespace BadgerJaus.Messages.PrimitiveDriver
             presence = new JausShortPresenceVector();
         }
 
-        public bool isBitSet(int bit)
+        public bool IsBitSet(int bit)
         {
-            return presence.isBitSet(bit);
+            return presence.IsBitSet(bit);
         }
 
         public void SetField(int bit)
@@ -54,7 +56,7 @@ namespace BadgerJaus.Messages.PrimitiveDriver
 
         public override int GetPayloadSize()
         {
-            return JausShortPresenceVector.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
@@ -69,16 +71,10 @@ namespace BadgerJaus.Messages.PrimitiveDriver
 
         private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
         {
-            bool status;
             if (set)
-                status = presence.setFromJausBuffer(buffer, index);
-            else
-                status = presence.toJausBuffer(buffer, index);
-            indexOffset = index + JausShortPresenceVector.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-
-            return status;
+                return presence.Deserialize(buffer, index, out indexOffset);
+                
+            return presence.Serialize(buffer, index, out indexOffset);
         }
     }
 }

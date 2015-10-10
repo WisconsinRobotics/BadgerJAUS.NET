@@ -48,35 +48,28 @@ namespace BadgerJaus.Messages.Management
 
         public void SetStatus(int status)
         {
-            this.status.setValue(status);
+            this.status.Value = status;
         }
 
         public int GetStatus()
         {
-            return status.getValue();
+            return (int)status.Value;
         }
 
         public override int GetPayloadSize()
         {
-            return status.size() + reserved.size();
+            return JausBaseType.BYTE_BYTE_SIZE + JausBaseType.INT_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            if (!status.toJausBuffer(buffer, indexOffset))
+            if (!status.Serialize(buffer, indexOffset, out indexOffset))
             {
                 return false;
             }
-            indexOffset += JausByte.SIZE_BYTES;
 
-            if (!reserved.toJausBuffer(buffer, indexOffset))
-            {
-                return false;
-            }
-            indexOffset += JausUnsignedInteger.SIZE_BYTES;
-
-            return true;
+            return reserved.Serialize(buffer, indexOffset, out indexOffset);
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
@@ -84,14 +77,13 @@ namespace BadgerJaus.Messages.Management
             indexOffset = index;
             if (buffer.Length < index + this.MessageSize() - base.MessageSize())
             {
-                Console.Error.WriteLine("Report Status Payload Error: Not enough Size");
+                //Console.Error.WriteLine("Report Status Payload Error: Not enough Size");
                 return false; // Not Enough Size
             }
 
-            status.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
-            reserved.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausUnsignedInteger.SIZE_BYTES;
+            status.Deserialize(buffer, indexOffset, out indexOffset);
+            reserved.Deserialize(buffer, indexOffset, out indexOffset);
+
             return true;
         }
     }

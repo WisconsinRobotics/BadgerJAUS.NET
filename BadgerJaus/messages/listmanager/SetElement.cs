@@ -44,12 +44,12 @@ namespace BadgerJaus.Messages.ListManager
 
         public void SetRequestID(int value)
         {
-            requestID.setValue(value);
+            requestID.Value = value;
         }
 
         public int GetRequestID()
         {
-            return requestID.getValue();
+            return (int)requestID.Value;
         }
 
         public bool AddElement(JausElement element)
@@ -57,7 +57,7 @@ namespace BadgerJaus.Messages.ListManager
             if (elements.Count >= 255) return false;
 
             elements.AddLast(element);
-            listSize.setValue(listSize.getValue() + 1);
+            listSize.Value += 1;
 
             return true;
         }
@@ -65,18 +65,15 @@ namespace BadgerJaus.Messages.ListManager
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            if (!requestID.setFromJausBuffer(buffer, indexOffset)) return false;
-            indexOffset += JausByte.SIZE_BYTES;
+            if (!requestID.Deserialize(buffer, indexOffset, out indexOffset)) return false;
 
-            if (!listSize.setFromJausBuffer(buffer, indexOffset)) return false;
-            indexOffset += JausByte.SIZE_BYTES;
-            Console.WriteLine("Element list size: " + listSize.getValue());
-            for (int count = 0; count < listSize.getValue(); count++)
+            if (!listSize.Deserialize(buffer, indexOffset, out indexOffset)) return false;
+            //Console.WriteLine("Element list size: " + listSize.getValue());
+            for (int count = 0; count < listSize.Value; count++)
             {
                 JausElement element = new JausElement();
-                if (!element.setFromJausBuffer(buffer, indexOffset)) return false;
+                if (!element.Deserialize(buffer, indexOffset, out indexOffset)) return false;
                 elements.AddLast(element);
-                indexOffset += element.size();
             }
 
             return true;

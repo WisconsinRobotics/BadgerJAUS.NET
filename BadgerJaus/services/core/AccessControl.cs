@@ -41,32 +41,32 @@ namespace BadgerJaus.Services.Core
 
         public const int DEFAULT_AUTHORITY_CODE = 10;
 
-        ControlState controlState;
-        JausAddress controller;
-        int authorityCode;
-
         ConfirmControl confirmControl;
         RejectControl rejectControl;
         ReportAuthority reportAuthority;
         ReportControl reportControl;
 
-        RequestControl requestControl = new RequestControl();
+        RequestControl requestControl;
 
-        public AccessControl()
-            : base()
+        static AccessControl accessControlService = null;
+
+        public static AccessControl CreateAccessControlInstance()
         {
-            controlState = ControlState.STATE_NOT_CONTROLLED;
-            controller = new JausAddress();
-            authorityCode = DEFAULT_AUTHORITY_CODE;
+            if (accessControlService == null)
+                accessControlService = new AccessControl();
+
+            return accessControlService;
         }
 
-        /*
-        public override int GetState()
+        public static AccessControl GetInstance()
         {
-            // TODO Auto-generated method stub
-            return 0;
+            return accessControlService;
         }
-        */
+
+        private AccessControl()
+        {
+            requestControl = new RequestControl();
+        }
 
         public override bool IsSupported(int commandCode)
         {
@@ -84,16 +84,16 @@ namespace BadgerJaus.Services.Core
             }
         }
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {
                 case JausCommandCode.QUERY_CONTROL:
                     reportControl = new ReportControl();
-                    reportControl.SetController(controller);
-                    reportControl.SetAuthorityCode(authorityCode);
+                    reportControl.SetController(component.Controller);
+                    reportControl.SetAuthorityCode(component.AuthorityCode);
                     reportControl.SetDestination(message.GetSource());
-                    reportControl.SetSource(jausAddress);
+                    reportControl.SetSource(component.JausAddress);
                     Transport.SendMessage(reportControl);
                     return true;
 
@@ -101,14 +101,14 @@ namespace BadgerJaus.Services.Core
                     rejectControl = new RejectControl();
                     rejectControl.SetResponseCode(RejectControl.CONTROL_RELEASED);
                     rejectControl.SetDestination(message.GetSource());
-                    rejectControl.SetSource(jausAddress);
-                    if (controlState == ControlState.STATE_CONTROLLED)
+                    rejectControl.SetSource(component.JausAddress);
+                    if (component.ControlState == ControlState.STATE_CONTROLLED)
                     {
-                        if (controller.equals(message.GetSource()))
+                        if (component.Controller == message.GetSource())
                         {
-                            controller.setId(0);
-                            authorityCode = DEFAULT_AUTHORITY_CODE;
-                            controlState = ControlState.STATE_NOT_CONTROLLED;
+                            component.Controller.Value = 0;
+                            component.AuthorityCode = DEFAULT_AUTHORITY_CODE;
+                            component.ControlState = ControlState.STATE_NOT_CONTROLLED;
                         }
                         else
                         {
@@ -121,17 +121,17 @@ namespace BadgerJaus.Services.Core
 
                 case JausCommandCode.REQUEST_CONTROL:
                     requestControl.SetFromJausMessage(message);
-                    switch (controlState)
+                    switch (component.ControlState)
                     {
                         case ControlState.STATE_CONTROL_NOT_AVAILABLE:
                             confirmControl = new ConfirmControl();
                             confirmControl.SetResponseCode(ConfirmControl.NOT_AVAILABLE);
                             confirmControl.SetDestination(requestControl.GetSource());
-                            confirmControl.SetSource(jausAddress);
+                            confirmControl.SetSource(component.JausAddress);
                             Transport.SendMessage(confirmControl);
                             break;
                         case ControlState.STATE_CONTROLLED:
-                            if (controller.equals(requestControl.GetSource()))
+                            if (component.Controller == requestControl.GetSource())
                             {
                                 if (requestControl.GetAuthorityCode() <= DEFAULT_AUTHORITY_CODE)
                                 {
@@ -145,7 +145,7 @@ namespace BadgerJaus.Services.Core
                                 {
                                     rejectControl = new RejectControl();
                                     rejectControl.SetResponseCode(RejectControl.CONTROL_RELEASED);
-                                    controlState = ControlState.STATE_NOT_CONTROLLED;
+                                    component.ControlState = ControlState.STATE_NOT_CONTROLLED;
                                     Transport.SendMessage(rejectControl);
                                 }
                             }
@@ -153,17 +153,17 @@ namespace BadgerJaus.Services.Core
                             {
                                 confirmControl = new ConfirmControl();
                                 confirmControl.SetDestination(requestControl.GetSource());
-                                confirmControl.SetSource(jausAddress);
-                                if (requestControl.GetAuthorityCode() < authorityCode)
+                                confirmControl.SetSource(component.JausAddress);
+                                if (requestControl.GetAuthorityCode() < component.AuthorityCode)
                                 {
                                     rejectControl = new RejectControl();
                                     rejectControl.SetResponseCode(RejectControl.CONTROL_RELEASED);
-                                    rejectControl.SetDestination(controller);
+                                    rejectControl.SetDestination(component.Controller);
                                     rejectControl.SetSource(requestControl.GetDestination());
                                     Transport.SendMessage(rejectControl);
                                     confirmControl.SetResponseCode(ConfirmControl.CONTROL_ACCEPTED);
-                                    controller.setId(requestControl.GetSource().getId());
-                                    authorityCode = requestControl.GetAuthorityCode();
+                                    component.Controller.Value = requestControl.GetSource().Value;
+                                    component.AuthorityCode = requestControl.GetAuthorityCode();
                                 }
                                 else
                                 {
@@ -180,9 +180,9 @@ namespace BadgerJaus.Services.Core
                             if (requestControl.GetAuthorityCode() <= DEFAULT_AUTHORITY_CODE)
                             {
                                 confirmControl.SetResponseCode(ConfirmControl.CONTROL_ACCEPTED);
-                                authorityCode = requestControl.GetAuthorityCode();
-                                controller.setId(requestControl.GetSource().getId());
-                                controlState = ControlState.STATE_CONTROLLED;
+                                component.AuthorityCode = requestControl.GetAuthorityCode();
+                                component.Controller.Value = requestControl.GetSource().Value;
+                                component.ControlState = ControlState.STATE_CONTROLLED;
                             }
                             else
                             {
@@ -196,10 +196,10 @@ namespace BadgerJaus.Services.Core
                     return true;
                 case JausCommandCode.QUERY_AUTHORITY:
                     reportAuthority = new ReportAuthority();
-                    reportAuthority.SetAuthorityCode(authorityCode);
+                    reportAuthority.SetAuthorityCode(component.AuthorityCode);
                     reportAuthority.SetDestination(message.GetSource());
                     //reportAuthority.setSource(message.getDestination());
-                    reportAuthority.SetSource(jausAddress);
+                    reportAuthority.SetSource(component.JausAddress);
                     Transport.SendMessage(reportAuthority);
                     return true;
                 case JausCommandCode.SET_AUTHORITY:
@@ -211,12 +211,12 @@ namespace BadgerJaus.Services.Core
             }
         }
 
-        public bool IsController(JausAddress address)
+        public bool IsController(JausAddress address, Component component)
         {
-            if (controlState != ControlState.STATE_CONTROLLED)
+            if (component.ControlState != ControlState.STATE_CONTROLLED)
                 return false;
 
-            if (controller.getId() != address.getId())
+            if (component.Controller.Value != address.Value)
                 return false;
 
             return true;

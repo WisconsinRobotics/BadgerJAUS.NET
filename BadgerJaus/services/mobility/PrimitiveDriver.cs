@@ -65,7 +65,7 @@ namespace BadgerJaus.Services.Mobility
         }
 
 
-        public override bool ImplementsAndHandledMessage(Message message)
+        public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
             {
@@ -94,40 +94,40 @@ namespace BadgerJaus.Services.Mobility
             report.SetSource(message.GetDestination());
 
             //Set requested data
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_X_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_X_BIT))
                 report.SetPropulsiveLinearEffortX(propLinearX);
 
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_Y_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_Y_BIT))
                 report.SetPropulsiveLinearEffortY(propLinearY);
 
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_Z_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_LINEAR_EFFORT_Z_BIT))
                 report.SetPropulsiveLinearEffortZ(propLinearZ);
 
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_X_BIT))
                 report.SetPropulsiveRotationalEffortX(propRotX);
 
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_Y_BIT))
                 report.SetPropulsiveRotationalEffortY(propRotY);
 
-            if (message.isBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (message.IsBitSet(SetWrenchEffort.PROPULSIVE_ROTATIONAL_EFFORT_Z_BIT))
                 report.SetPropulsiveRotationalEffortZ(propRotZ);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_X_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_X_BIT))
                 report.SetResistiveLinearEffortX(resistLinearX);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_Y_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_Y_BIT))
                 report.SetResistiveLinearEffortY(resistLinearY);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_Z_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_LINEAR_EFFORT_Z_BIT))
                 report.SetResistiveLinearEffortZ(resistLinearZ);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_X_BIT))
                 report.SetResistiveRotationalEffortX(resistRotX);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_Y_BIT))
                 report.SetResistiveRotationalEffortY(resistRotY);
 
-            if (message.isBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
+            if (message.IsBitSet(SetWrenchEffort.RESISTIVE_ROTATIONAL_EFFORT_Z_BIT))
                 report.SetResistiveRotationalEffortZ(resistRotZ);
 
             //Send out message

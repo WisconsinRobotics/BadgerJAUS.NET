@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using BadgerJaus.Messages;
+using BadgerJaus.Util;
 
 namespace BadgerJaus.messages.primitivemanipulator
 {
@@ -21,38 +23,30 @@ namespace BadgerJaus.messages.primitivemanipulator
 
         public void SetEffort(double value)
         {
-            effort.setFromDouble(value, EFFORT_MIN, EFFORT_MAX);
+            effort.SetValueFromDouble(value, EFFORT_MIN, EFFORT_MAX);
         }
 
         public int GetEffort()
         {
-            return effort.getValue();
+            return (int)effort.Value;
         }
 
         public override int GetPayloadSize()
         {
-            return JausUnsignedShort.SIZE_BYTES;
+            return JausBaseType.SHORT_BYTE_SIZE;
         }
 
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!effort.toJausBuffer(buffer, indexOffset)) 
+            if (!effort.Serialize(buffer, index, out indexOffset)) 
                 return false;
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
 
             return true;
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            bool status;
-
-            status = effort.setFromJausBuffer(buffer, index);
-            indexOffset = index + JausUnsignedShort.SIZE_BYTES;
-            if (!status)
-                indexOffset = index;
-            return status;
+            return effort.Deserialize(buffer, index, out indexOffset);
         }
     }
 }

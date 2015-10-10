@@ -49,7 +49,7 @@ namespace BadgerJaus.Messages.Discovery
 
         public override int GetPayloadSize()
         {
-            return JausByte.SIZE_BYTES + JausUnsignedShort.SIZE_BYTES + JausByte.SIZE_BYTES + identification.Length;
+            return JausBaseType.BYTE_BYTE_SIZE + JausBaseType.SHORT_BYTE_SIZE + JausBaseType.BYTE_BYTE_SIZE + identification.Length;
         }
 
         protected override void InitFieldData()
@@ -64,15 +64,11 @@ namespace BadgerJaus.Messages.Discovery
             Encoding enc = Encoding.UTF8;
             base.PayloadToJausBuffer(buffer, index, out indexOffset);
 
-            if (!type.toJausBuffer(buffer, indexOffset)) return false;
-
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
+            if (!type.Serialize(buffer, indexOffset, out indexOffset)) return false;
 
             JausByte identificationCountField = new JausByte(identification.Length);
 
-            if (!identificationCountField.toJausBuffer(buffer, indexOffset)) return false;
-
-            indexOffset += JausByte.SIZE_BYTES;
+            if (!identificationCountField.Serialize(buffer, indexOffset, out indexOffset)) return false;
 
             if (indexOffset + identification.Length > buffer.Length)
                 return false;
@@ -90,11 +86,9 @@ namespace BadgerJaus.Messages.Discovery
             int identificationLength;
 
             base.SetPayloadFromJausBuffer(buffer, index, out indexOffset);
-            type.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausUnsignedShort.SIZE_BYTES;
-            identificationCountField.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += JausByte.SIZE_BYTES;
-            identificationLength = identificationCountField.getValue();
+            type.Deserialize(buffer, indexOffset, out indexOffset);
+            identificationCountField.Deserialize(buffer, indexOffset, out indexOffset);
+            identificationLength = (int)identificationCountField.Value;
 
             if (identificationLength <= 0)
                 return true;

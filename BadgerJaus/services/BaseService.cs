@@ -39,8 +39,6 @@ namespace BadgerJaus.Services
 {
     public abstract class BaseService : Service
     {
-        protected JausAddress jausAddress = null;
-        protected Component component = null;
         protected JausServiceSignature jausServiceSignature = null;
         protected Service parentService = null;
 
@@ -55,7 +53,7 @@ namespace BadgerJaus.Services
             jausServiceSignature = new JausServiceSignature("BaseService", 1, 0);
         }
 
-        protected virtual void Execute()
+        protected virtual void Execute(Component component)
         {
             return;
         }
@@ -63,12 +61,6 @@ namespace BadgerJaus.Services
         public Service GetParentService()
         {
             return parentService;
-        }
-
-        public void SetComponent(Component component)
-        {
-            this.component = component;
-            this.jausAddress = component.JausAddress;
         }
 
         public int MajorVersion
@@ -90,16 +82,16 @@ namespace BadgerJaus.Services
         }
 
         public abstract bool IsSupported(int commandCode);
-        public abstract bool ImplementsAndHandledMessage(Message message);
+        public abstract bool ImplementsAndHandledMessage(Message message, Component component);
 
-        public void ExecuteOnTime()
+        public void ExecuteOnTime(Component component)
         {
             long elapsedTime;
             
             elapsedTime = executionStopwatch.ElapsedMilliseconds;
 
-            if (elapsedTime >= SleepTime && component.GetState() == COMPONENT_STATE.STATE_READY)
-                Execute();
+            if (elapsedTime >= SleepTime && component.ComponentState == ComponentState.STATE_READY)
+                Execute(component);
 
             executionStopwatch.Reset();
             executionStopwatch.Start();
@@ -112,19 +104,13 @@ namespace BadgerJaus.Services
 
         public bool Serialize(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            jausServiceSignature.toJausBuffer(buffer, indexOffset);
-            indexOffset += jausServiceSignature.size();
-
-            return true;
+            return jausServiceSignature.Serialize(buffer, index, out indexOffset);
         }
 
         public bool Deserialize(byte[] buffer, int index, out int indexOffset)
         {
             indexOffset = index;
-            jausServiceSignature.setFromJausBuffer(buffer, indexOffset);
-            indexOffset += jausServiceSignature.size();
-            return true;
+            return jausServiceSignature.Deserialize(buffer, indexOffset, out indexOffset);
         }
     }
 }

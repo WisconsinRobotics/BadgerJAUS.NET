@@ -73,43 +73,36 @@ namespace BadgerJaus.Messages.Discovery
         // Getters and Setters
         public int getQueryType()
         {
-            return queryType.getValue();
+            return (int)queryType.Value;
         }
 
         public void setQueryType(int queryType)
         {
             if (queryType > 0 && queryType < 5)
-                this.queryType.setValue(queryType);
+                this.queryType.Value = queryType;
         }
 
         public override int GetPayloadSize()
         {
-            return JausByte.SIZE_BYTES;
+            return JausBaseType.BYTE_BYTE_SIZE;
         }
 
         // Packs Message Fields into byte[] then passes array to super class
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            if (!queryType.toJausBuffer(buffer, indexOffset)) return false;
-            indexOffset += JausByte.SIZE_BYTES;
-
-            return true;
+            return queryType.Serialize(buffer, index, out indexOffset);
         }
 
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
-            indexOffset = index;
-            queryType.setValue(buffer[indexOffset]);
-            indexOffset += JausByte.SIZE_BYTES;
-            return true;
+            return queryType.Deserialize(buffer, index, out indexOffset);
         }
 
-        public override String toString()
+        public override string ToString()
         {
-            String str = base.toString();
-            str += "Query Type: " + queryTypes[queryType.getValue() - 1] + "\n";
+            String str = base.ToString();
+            str += "Query Type: " + queryTypes[queryType.Value - 1] + "\n";
             return str;
         }
     }
