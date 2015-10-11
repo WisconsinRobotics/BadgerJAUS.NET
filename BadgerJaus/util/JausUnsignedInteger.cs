@@ -83,7 +83,7 @@ namespace BadgerJaus.Util
             this.value = (long)Math.Round((value - bias) / scaleFactor);
         }
 
-        public String toString()
+        public override string ToString()
         {
             return Convert.ToString(this.value);
         }

@@ -65,7 +65,6 @@ namespace BadgerJaus.Services.Core
 
         private AccessControl()
         {
-            requestControl = new RequestControl();
         }
 
         public override bool IsSupported(int commandCode)
@@ -120,6 +119,7 @@ namespace BadgerJaus.Services.Core
                     return true;
 
                 case JausCommandCode.REQUEST_CONTROL:
+                    requestControl = new RequestControl();
                     requestControl.SetFromJausMessage(message);
                     switch (component.ControlState)
                     {
@@ -209,17 +209,6 @@ namespace BadgerJaus.Services.Core
                 default:
                     return false;
             }
-        }
-
-        public bool IsController(JausAddress address, Component component)
-        {
-            if (component.ControlState != ControlState.STATE_CONTROLLED)
-                return false;
-
-            if (component.Controller.Value != address.Value)
-                return false;
-
-            return true;
         }
     }
 }

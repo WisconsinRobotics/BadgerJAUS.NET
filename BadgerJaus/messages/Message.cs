@@ -653,8 +653,8 @@ namespace BadgerJaus.Messages
             str += "Broadcast: " + this.bCast + "\n";
             str += "Ack/Nak: " + this.ackNak + "\n";
             str += "Data Flags: " + this.dataFlags + "\n";
-            str += "Destination: " + this.destination.toString() + "\n";
-            str += "Source: " + this.source.toString() + "\n";
+            str += "Destination: " + this.destination.ToString() + "\n";
+            str += "Source: " + this.source.ToString() + "\n";
             //str += "Command Code: " + commandCodeJT + " (0x" + Integer.toString(this.commandCodeJT.COMMAND_CODE(), 16).toUpperCase() + ") " + "\n";
             str += "Data: " + this.payloadToString() + "\n";
             str += "Sequence Number: " + sequenceNumber.Value + "\n";

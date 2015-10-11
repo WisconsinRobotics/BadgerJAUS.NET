@@ -44,12 +44,11 @@ namespace BadgerJaus.Services.Core
     {
         //public const String SERVICE_ID = 		"urn:jaus:jss:core:Liveness";
         public const String SERVICE_ID = "urn:jaus:jss:core:Liveness";
-        private const long SLEEP_TIME = 4700; //how long we will sleep
+        private const long SLEEP_TIME = 4900; //how long we will sleep
         private const long TIMEOUT_LENGTH = 5000000001L;	//actual timeout length in nanosecond
         private const long TIMEOUT_LENGTH_MILLI = 5000; //TIMEOUT in millisecond
 
-        //private JausAddress destinationJausAddress;
-        private ConcurrentDictionary<String, LivenessTime> targetAddressMap;
+        private ConcurrentDictionary<long, LivenessTime> targetAddressMap;
 
         private static Liveness livenessService = null;
 
@@ -69,44 +68,22 @@ namespace BadgerJaus.Services.Core
         private Liveness()
         {
             //if (this.stopwatch == null) this.stopwatch = new Stopwatch();
-            this.targetAddressMap = new ConcurrentDictionary<String, LivenessTime>();
+            this.targetAddressMap = new ConcurrentDictionary<long, LivenessTime>();
         }
-
-        /*
-        public Liveness(JausAddress destination)
-        {
-            this.targetAddresses = new LinkedList<JausAddress>();
-            if (this.stopwatch == null) this.stopwatch = new Stopwatch();
-            this.stopwatch.Start();
-        }
-        */
 
         //tells us if the destination is live
         public bool IsLive(JausAddress checkAddress)
         {
-            String destinationHexAddr = checkAddress.toHexString();
             LivenessTime checkTime;
-            this.targetAddressMap.TryGetValue(destinationHexAddr, out checkTime);
+            this.targetAddressMap.TryGetValue(checkAddress.Value, out checkTime);
             if (checkTime == null)
-                return true;
+                return false;
 
             long lastReceivedTime = checkTime.getTime();
             if (DateTime.Now.Millisecond * 1000000 - lastReceivedTime > TIMEOUT_LENGTH_MILLI)
                 return false;
             return true;
         }
-
-        /*
-        private void SendReport()
-        {
-            if (destinationJausAddress == null) return;
-            ReportHeartbeatPulse reportHeartBeat = new ReportHeartbeatPulse();
-            reportHeartBeat.setDestination(destinationJausAddress);
-            reportHeartBeat.setSource(jausAddress);
-            Transport.SendMessage(reportHeartBeat);
-        }
-        */
-
 
         private void SendQuery(Component component)
         {
@@ -117,20 +94,17 @@ namespace BadgerJaus.Services.Core
                 queryHeartBeat.SetSource(component.JausAddress);
                 queryHeartBeat.SetDestination(destinationAddress);
 
-                //Console.WriteLine("\t [Sent] QueryHeartbeat source: " + jausAddress.getId());
-                //Console.WriteLine("\t [Sent] QueryHeartbeat dest: " + destinationAddress.getId());
-
                 Transport.SendMessage(queryHeartBeat);
             }
         }
 
-        public bool SetDestinationAddress(JausAddress destination)
+        public bool AddLivenessAddress(JausAddress destination)
         {
             JausAddress target = new JausAddress(destination);
-            String destinationHexAddr = destination.toHexString();
             LivenessTime timeToAdd = new LivenessTime(DateTime.Now.Millisecond * 1000000, target);
-            LivenessTime tempTime = this.targetAddressMap.GetOrAdd(destinationHexAddr, timeToAdd);
-            if (tempTime == null) { return true; }
+            LivenessTime tempTime = this.targetAddressMap.GetOrAdd(destination.Value, timeToAdd);
+            if (tempTime == null)
+                return true;
             return false;
         }
 
@@ -139,9 +113,8 @@ namespace BadgerJaus.Services.Core
             switch (message.GetCommandCode())
             {
                 case JausCommandCode.REPORT_HEARTBEAT_PULSE:
-                    String destinationHexAddr = message.GetSource().toHexString();
                     LivenessTime time;
-                    this.targetAddressMap.TryGetValue(destinationHexAddr, out time);
+                    this.targetAddressMap.TryGetValue(message.GetSource().Value, out time);
                     if (time == null) return true;
                     time.setTime(DateTime.Now.Millisecond * 1000000);
                     return true;
@@ -175,7 +148,7 @@ namespace BadgerJaus.Services.Core
             }
         }
 
-        public ConcurrentDictionary<String, LivenessTime> GetAddresses()
+        public ConcurrentDictionary<long, LivenessTime> GetAddresses()
         {
             return this.targetAddressMap;
         }

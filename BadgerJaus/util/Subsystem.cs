@@ -40,7 +40,7 @@ namespace BadgerJaus.Util
     public abstract class Subsystem
     {
         private JausUnsignedShort subsystemID;
-        private HashSet<Node> nodeList = null;
+        private List<Node> nodeList = null;
 
         protected const int JAUS_PORT = 3974;
 
@@ -58,7 +58,7 @@ namespace BadgerJaus.Util
 
         public Subsystem(int subsystemID, int port = JAUS_PORT)
         {
-            nodeList = new HashSet<Node>();
+            nodeList = new List<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             udpClient = new UdpClient(port);
             jausAddrMap = new ConcurrentDictionary<string, IPEndPoint>();
@@ -113,10 +113,17 @@ namespace BadgerJaus.Util
 
         private void Execute(Object source, ElapsedEventArgs e)
         {
+            bool firstComponent = true;
             foreach (Node node in nodeList)
             {
                 foreach (Component component in node.GetComponents())
                 {
+                    if (firstComponent)
+                    {
+                        firstComponent = false;
+                        livenessService.ExecuteOnTime(component);
+                        discoveryService.ExecuteOnTime(component);
+                    }
                     foreach (BaseService service in component.GetServices())
                     {
                         service.ExecuteOnTime(component);

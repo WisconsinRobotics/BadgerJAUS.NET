@@ -123,6 +123,7 @@ namespace BadgerJaus.Services.Core
                 messageHandled = false;
                 try
                 {
+                    bool firstComponent = true;
                     receivedPacket = receivedMessageQueue.Take();
                     buffer = receivedPacket.Buffer;
                     message = new Message();
@@ -148,6 +149,16 @@ namespace BadgerJaus.Services.Core
                             {
                                 if (component.ComponentID != destination.getComponent())
                                     continue;
+                                if (firstComponent)
+                                {
+                                    firstComponent = false;
+                                    Liveness.GetInstance().ImplementsAndHandledMessage(message, component);
+                                    Discovery.GetInstance().ImplementsAndHandledMessage(message, component);
+                                }
+
+                                AccessControl.GetInstance().ImplementsAndHandledMessage(message, component);
+                                Management.GetInstance().ImplementsAndHandledMessage(message, component);
+                                Liveness.GetInstance().ImplementsAndHandledMessage(message, component);
 
                                 foreach (Service service in component.GetServices())
                                 {

@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
 
 using BadgerJaus.Services;
 using BadgerJaus.Services.Core;
@@ -54,13 +55,10 @@ namespace BadgerJaus.Util
     public class Component
     {
         private JausByte componentID;
-        private HashSet<Service> serviceList;
+        private List<Service> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
         private JausByte instanceID;
-
-        Management managementService = null;
-        AccessControl accessControlService = null;
 
         ControlState controlState;
         ComponentState componentState;
@@ -70,7 +68,7 @@ namespace BadgerJaus.Util
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
-            serviceList = new HashSet<Service>();
+            serviceList = new List<Service>();
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
             instanceID = new JausByte(0);
@@ -91,17 +89,6 @@ namespace BadgerJaus.Util
 
         public void AddService(Service service)
         {
-            if(service is AccessControl)
-            {
-                accessControlService = (AccessControl)service;
-            }
-
-            if(service is Management)
-            {
-                accessControlService = (AccessControl)service;
-                managementService = (Management)service;
-            }
-
             serviceList.Add(service);
         }
 
@@ -196,19 +183,9 @@ namespace BadgerJaus.Util
             jausAddress.setSubsystem(subsystemID);
         }
 
-        public byte[] getBytes(String str)
-        {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
         public bool IsController(JausAddress address)
         {
-            if (accessControlService == null)
-                return false;
-
-            return accessControlService.IsController(address, this);
+            return address == controller;
         }
     }
 }
