@@ -176,11 +176,23 @@ namespace BadgerJaus.Util
 
         public static bool operator ==(JausBaseType value1, JausBaseType value2)
         {
+            if (object.ReferenceEquals(value1, null))
+            {
+                return object.ReferenceEquals(value2, null);
+            }
+            if (object.ReferenceEquals(value2, null))
+                return false;
             return value1.Value == value2.Value;
         }
 
         public static bool operator !=(JausBaseType value1, JausBaseType value2)
         {
+            if(object.ReferenceEquals(value1, null))
+            {
+                return !object.ReferenceEquals(value2, null);
+            }
+            if (object.ReferenceEquals(value2, null))
+                return true;
             return value1.Value != value2.Value;
         }
 #warning Need to fix this for real later
