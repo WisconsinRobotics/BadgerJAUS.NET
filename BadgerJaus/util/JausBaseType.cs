@@ -203,7 +203,10 @@ namespace BadgerJaus.Util
 
         public override bool Equals(object obj)
         {
-            JausBaseType baseType = obj as JausBaseType;
+            JausBaseType baseType;
+            if (obj == null)
+                return false;
+            baseType = obj as JausBaseType;
             if (baseType == null)
                 return false;
 
