@@ -95,7 +95,7 @@ namespace BadgerJaus.Util
 
             foreach (Node node in nodeList)
             {
-                foreach (Component component in node.GetComponents())
+                foreach (Component component in node.ComponentList)
                 {
                     foreach (BaseService service in component.GetServices())
                     {
@@ -114,9 +114,10 @@ namespace BadgerJaus.Util
         private void Execute(Object source, ElapsedEventArgs e)
         {
             bool firstComponent = true;
+            
             foreach (Node node in nodeList)
             {
-                foreach (Component component in node.GetComponents())
+                foreach (Component component in node.ComponentList)
                 {
                     if (firstComponent)
                     {

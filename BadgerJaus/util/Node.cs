@@ -32,13 +32,13 @@ namespace BadgerJaus.Util
 {
     public class Node
     {
-        private HashSet<Component> componentList;
+        private List<Component> componentList;
         private JausByte nodeID;
         private Subsystem jausSubsystem;
 
         public Node(int nodeID)
         {
-            componentList = new HashSet<Component>();
+            componentList = new List<Component>();
             this.nodeID = new JausByte(nodeID);
         }
 
@@ -48,9 +48,9 @@ namespace BadgerJaus.Util
             component.SetNode(this);
         }
 
-        public IEnumerable<Component> GetComponents()
+        public List<Component> ComponentList
         {
-            return Enumerable.AsEnumerable<Component>(componentList);
+            get { return componentList; }
         }
 
         public int NodeID
