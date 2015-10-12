@@ -77,7 +77,7 @@ namespace BadgerJaus.Services.Core
             subsystems = new LinkedList<Subsystem>();
         }
 
-        public void AddRemoteAddress(int hostAddress, IPEndPoint ipEndpoint)
+        public void AddRemoteAddress(long hostAddress, IPEndPoint ipEndpoint)
         {
             sendAddrs.AddOrUpdate(hostAddress, ipEndpoint, (key, oldValue) => ipEndpoint);
         }
