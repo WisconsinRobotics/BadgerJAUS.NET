@@ -30,6 +30,50 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages
 {
+    public enum AckNak
+    {
+        // AckNak Flags
+        NOT_REQUIRED = 0,	// ordinal 0
+        REQUIRED = 1,		// ordinal 1
+        NEGATIVE_ACK = 2,	// ordinal 2
+        ACKNOWLEDGE = 3	// ordinal 3
+    }
+
+    public enum Broadcast
+    {
+        //  Bcast Flags
+        NO = 0,     //Ordinal 0
+        LOCAL = 1,  //Ordinal 1
+        GLOBAL = 2  //Ordinal 2
+    }
+
+    public enum DataFlag
+    {
+        // Data Flags
+        SINGLE_DATA_PACKET = 0,	// ordinal 0   		
+        FIRST_DATA_PACKET = 1,		// ordinal 1
+        NORMAL_DATA_PACKET = 2,	// ordinal 2
+        LAST_DATA_PACKET = 3		// ordinal 3
+    }
+
+    public enum HCFlags
+    {
+        // HCFlags
+        NO_HEADER_COMPRESSION = 0, 		// ordinal 0
+        HEADER_COMPRESSION_REQUEST = 1, // ordinal 1
+        HEADER_COMPRESSION_TWO = 2,		// ordinal 2
+        HEADER_COMPRESSION_ENGAGED = 3	// ordinal 3
+    }
+
+    public enum Priority
+    {
+        // Priority Flags
+        LOW = 0,		// ordinal 0
+        NORMAL = 1,		// ordinal 1
+        HIGH = 2,		// ordinal 2
+        SAFETY = 3		// ordinal 3
+    }
+
     /// <summary>
     /// The message class serves as the base class for all JAUS messages. It
     /// provides a skeleton that extracts header values and information about
@@ -69,14 +113,13 @@ namespace BadgerJaus.Messages
         public const int HC_FLAGS_BIT_POSITION = 6;
 
         // ***** JausMessage Header Fields *****
-        private byte messageTypeHCflags;	// First byte of JAUS Header see below bytes for details
         private byte messageType = 0;
         protected JausUnsignedShort commandCode;// = new JausUnsignedShort();
         // Initial value = 0
         // Values 1 through 32 are reserved for future use.					
 
         // TODO: Implement header compression
-        private HCFlagsClass.HCFlags HCflags;			// Header Compression Flags			
+        private HCFlags hcFlags;			// Header Compression Flags			
         // 0: No header compression is used
         // 1: The sender of this message is requesting 
         //    that the receiver engage in header compression
@@ -86,11 +129,10 @@ namespace BadgerJaus.Messages
         protected JausUnsignedShort dataSize;	// Size of General Transport Header + data
         // private byte HCNumber;				// Used if HCFlags != 0 range 0 - 255
         // private byte HCLength;				// Used if HCflags != 0 range 0 - 255
-        private byte properties;			// JAUS packet properties
-        private PriorityClass.Priority priority;
-        private BroadcastClass.Broadcast bCast;
-        private AckNakClass.AckNak ackNak;
-        private DataFlagClass.DataFlag dataFlags;
+        private Priority priority;
+        private Broadcast bCast;
+        private AckNak ackNak;
+        private DataFlag dataFlags;
         private JausAddress destination;
         private JausAddress source;
         // TODO: Make the following private
@@ -109,12 +151,12 @@ namespace BadgerJaus.Messages
 
         protected void Configure()
         {
-            setMessageType(0);							// Transport Type of Message
-            setHCflags(HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION));
-            setPriority(PriorityClass.value(PriorityClass.Priority.NORMAL));
-            setBcast(BroadcastClass.value(BroadcastClass.Broadcast.NO));
-            setAckNak(AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED));
-            setDataFlag(DataFlagClass.value(DataFlagClass.DataFlag.SINGLE_DATA_PACKET));
+            messageType = 0;							// Transport Type of Message
+            hcFlags = HCFlags.NO_HEADER_COMPRESSION;
+            priority = Priority.NORMAL;
+            bCast = Broadcast.NO;
+            ackNak = AckNak.NOT_REQUIRED;
+            dataFlags = DataFlag.SINGLE_DATA_PACKET;
             commandCode.Value = CommandCode;
         }
 
@@ -161,40 +203,34 @@ namespace BadgerJaus.Messages
             return headerBaseSize + Message.COMMAND_CODE_SIZE_BYTES + Message.SEQUENCE_NUMBER_SIZE_BYTES + GetPayloadSize();
         }
 
-        public byte getMessageTypeHCflags()
+        public AckNak AckNak
         {
-            return messageTypeHCflags;
+            get { return ackNak; }
+            set { ackNak = value; }
         }
 
-        public void setMessageTypeHCflags(byte mtHCflags)
+        public Broadcast BCast
         {
-            this.messageTypeHCflags = mtHCflags;
-            this.setMessageType(this.getMessageType());
-            this.setHCflags(this.getHCflags());
+            get { return bCast; }
+            set { bCast = value; }
         }
 
-        public int getMessageType()
+        public DataFlag DataFlags
         {
-            return (messageTypeHCflags >> MESSAGE_TYPE_BIT_POSITION) & 0x3F;
+            get { return dataFlags; }
+            set { dataFlags = value; }
         }
 
-        //Message type is currently not anything except 0 in the spec.
-        public void setMessageType(int value)
+        public HCFlags HCFlags
         {
-            //		this.messageType = CommandCode.convert(value);
-            messageTypeHCflags = (byte)((messageType << MESSAGE_TYPE_BIT_POSITION) | (messageTypeHCflags & 0xC0));
+            get { return hcFlags; }
+            set { hcFlags = (HCFlags)value; }
         }
 
-        public int getHCflags()
+        public byte MessageType
         {
-            // return this.HCflags;
-            return (messageTypeHCflags >> HC_FLAGS_BIT_POSITION) & 0x03;
-        }
-
-        public void setHCflags(int value)
-        {
-            this.HCflags = HCFlagsClass.convert(value);
-            messageTypeHCflags = (byte)((HCFlagsClass.value(this.HCflags) << HC_FLAGS_BIT_POSITION) | (messageTypeHCflags & 0x3F));
+            get { return messageType; }
+            set { messageType = value; }
         }
 
         /// <summary>
@@ -209,70 +245,6 @@ namespace BadgerJaus.Messages
             if (data != null)
                 return data.Length;
             return 0;
-        }
-
-        public byte getProperties()
-        {
-            return properties;
-        }
-
-        public void setProperties(byte properties)
-        {
-            this.properties = properties;
-            // Inorder to set enum types, these must be called
-            this.setPriority(this.getPriority());
-            this.setBcast(this.getBcast());
-            this.setAckNak(this.getAckNak());
-            this.setDataFlag(this.getDataFlag());
-        }
-
-
-        public int getPriority()
-        {
-            return (properties >> PRIORITY_BIT_POSITION) & 0x03;
-            // return this.priority.ordinal();
-        }
-
-        public void setPriority(int priority)
-        {
-            this.priority = PriorityClass.convert(priority);
-            properties = (byte)((PriorityClass.value(this.priority) << PRIORITY_BIT_POSITION) | (properties & 0xFC));
-        }
-
-        public int getBcast()
-        {
-            return (properties >> BCAST_BIT_POSITION) & 0x03;
-            // return bCast.ordinal();
-        }
-
-        public void setBcast(int bcast)
-        {
-            this.bCast = BroadcastClass.convert(bcast);
-            properties = (byte)((BroadcastClass.value(this.bCast) << BCAST_BIT_POSITION) | (properties & 0xF3));
-        }
-
-        public int getAckNak()
-        {
-            return (properties >> ACK_NAK_BIT_POSITION) & 0x03;
-            // return this.ackNak.ordinal();
-        }
-
-        public void setAckNak(int ackNak)
-        {
-            this.ackNak = AckNakClass.convert(ackNak);
-            properties = (byte)(AckNakClass.value(this.ackNak) << ACK_NAK_BIT_POSITION | (properties & 0xCF));
-        }
-
-        public int getDataFlag()
-        {
-            return (properties >> DATA_FLAGS_BIT_POSITION) & 0x03;
-            // return this.dataFlags.ordinal();
-        }
-
-        public void setDataFlag(int dflag)
-        {
-            this.dataFlags = DataFlagClass.convert(dflag);
-            properties = (byte)((DataFlagClass.value(this.dataFlags) << DATA_FLAGS_BIT_POSITION) | (properties & 0x3F));
         }
 
         protected virtual int CommandCode
@@ -419,14 +391,14 @@ namespace BadgerJaus.Messages
             index += headerBaseSize;
 
             // TODO: Implement Multiple Packets Per Message
-            if (this.getDataFlag() != DataFlagClass.value(DataFlagClass.DataFlag.SINGLE_DATA_PACKET))
+            if (dataFlags != DataFlag.SINGLE_DATA_PACKET)
             {
                 Console.Error.WriteLine("Receiving Multiple Packets Per Message Not Supported");
                 return -1;
             }
 
             // TODO: Implement Ack/Nak
-            if (this.getAckNak() != AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED))
+            if (ackNak != AckNak.NOT_REQUIRED)
             {
                 return -1;
             }
@@ -474,14 +446,14 @@ namespace BadgerJaus.Messages
         {
             indexOffset = index;
             // TODO: Implement Compression
-            if (this.getHCflags() != HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION))
+            if (hcFlags != HCFlags.NO_HEADER_COMPRESSION)
             {
                 Console.Error.WriteLine("Sending Compression Not Supported");
                 return false;
             }
 
             // TODO: Implement Ack/Nak
-            if (this.getAckNak() != AckNakClass.value(AckNakClass.AckNak.NOT_REQUIRED))
+            if (ackNak != AckNak.NOT_REQUIRED)
             {
                 Console.Error.WriteLine("Sending Ack/Nak Not Supported");
                 return false;
@@ -569,13 +541,18 @@ namespace BadgerJaus.Messages
         private bool SetHeaderFromJausBuffer(byte[] buffer, int index)
         {
             int indexOffset;
+            byte properties;
+            byte messageTypeHCflags;
             if (buffer.Length < index + headerBaseSize)
                 return false; // Not Enough Size
 
-            this.setMessageTypeHCflags(buffer[index]);
+            messageTypeHCflags = buffer[index];
+            messageType = (byte)((messageTypeHCflags >> MESSAGE_TYPE_BIT_POSITION) & 0x3F);
+            hcFlags = (HCFlags)((messageTypeHCflags >> HC_FLAGS_BIT_POSITION) & 0x3);
+            
 
             // TODO: Implement Compression
-            if (this.getHCflags() != HCFlagsClass.value(HCFlagsClass.HCFlags.NO_HEADER_COMPRESSION))
+            if (hcFlags != HCFlags.NO_HEADER_COMPRESSION)
             {
                 Console.Error.WriteLine("Compression Not Supported");
                 return false;
@@ -585,7 +562,11 @@ namespace BadgerJaus.Messages
             dataSize.Deserialize(buffer, index + 1, out indexOffset);
 
             // No Compression Assumed
-            this.setProperties(buffer[index + 3]);
+            properties = buffer[index + 3];
+            ackNak = (AckNak)((properties >> ACK_NAK_BIT_POSITION) & 0x03);
+            bCast = (Broadcast)((properties >> BCAST_BIT_POSITION) & 0x03);
+            dataFlags = (DataFlag)((properties >> DATA_FLAGS_BIT_POSITION) & 0x03);
+            priority = (Priority)((properties >> PRIORITY_BIT_POSITION) & 0x3);
 
             destination.setComponent(buffer[index + 4]);
             destination.setNode(buffer[index + 5]);
@@ -602,11 +583,14 @@ namespace BadgerJaus.Messages
         // This method is called whenever a message is packed to put the header properties
         private bool HeaderToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            byte properties = 0;
+            byte messageTypeHCflags = messageType;
             indexOffset = index;
             if (buffer.Length < index + headerBaseSize)
                 return false; // Not Enough Size
 
-            buffer[indexOffset] = this.getMessageTypeHCflags();			// Message type
+            messageTypeHCflags = (byte)(((byte)hcFlags << HC_FLAGS_BIT_POSITION) | (messageTypeHCflags & 0x3F));
+            buffer[indexOffset] = messageTypeHCflags;			// Message type
             indexOffset += 1;
             //Console.WriteLine("Size: " + size());
 
@@ -616,7 +600,11 @@ namespace BadgerJaus.Messages
             //buffer[index + 3] = 0;								// HC number, not needed
             //buffer[index + 4] = 0;								// HC Length, not needed
 
-            buffer[indexOffset] = this.getProperties();				// Message Properties
+            properties = (byte)(((byte)ackNak << ACK_NAK_BIT_POSITION) | properties);
+            properties = (byte)(((byte)bCast << BCAST_BIT_POSITION) | properties);
+            properties = (byte)(((byte)dataFlags << DATA_FLAGS_BIT_POSITION) | properties);
+            properties = (byte)(((byte)priority << PRIORITY_BIT_POSITION) | properties);
+            buffer[indexOffset] = properties;				// Message Properties
             indexOffset += 1;
 
             buffer[indexOffset] = (byte)destination.getComponent();	// Destination component
@@ -645,7 +633,7 @@ namespace BadgerJaus.Messages
             String str = "";
             // str += "JUDP Version: " + JausMessage.JUDP_HEADER + "\n";
             str += "Message Type: " + this.messageType + "\n";
-            str += "HC flags: " + this.HCflags + "\n";
+            str += "HC flags: " + this.hcFlags + "\n";
             str += "Data Size: " + this.dataSize.Value + "\n";
             // str += "HC Number: " + this.getHCnumber() + "\n";
             // str += "HC Length: " + this.getHCLength() + "\n";

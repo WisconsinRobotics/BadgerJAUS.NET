@@ -114,10 +114,6 @@
     <Compile Include="messages\velocitystatesensor\QueryVelocityState.cs" />
     <Compile Include="messages\velocitystatesensor\ReportVelocityState.cs" />
     <Compile Include="services\BaseService.cs" />
-    <Compile Include="util\AckNak.cs" />
-    <Compile Include="util\Broadcast.cs" />
-    <Compile Include="util\DataFlag.cs" />
-    <Compile Include="util\HCFlags.cs" />
     <Compile Include="util\JausBaseType.cs" />
     <Compile Include="util\JausAddress.cs" />
     <Compile Include="util\JausByte.cs" />
@@ -130,7 +126,6 @@
     <Compile Include="util\JausType.cs" />
     <Compile Include="util\JausUnsignedInteger.cs" />
     <Compile Include="util\JausUnsignedShort.cs" />
-    <Compile Include="util\Priority.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="services\core\AccessControl.cs" />
     <Compile Include="services\core\Discovery.cs" />
