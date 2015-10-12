@@ -50,11 +50,11 @@ namespace BadgerJaus.Services.Core
         private static ReceiveThread receiveThread;
         private static BlockingCollection<Message> sendMessageQueue;
         private static BlockingCollection<ReceivedPacket> receivedMessageQueue;
-        private static ConcurrentDictionary<string, IPEndPoint> sendAddrs;
+        private static ConcurrentDictionary<long, IPEndPoint> sendAddrs;
 
         private LinkedList<Subsystem> subsystems = null;
 
-        public static Transport CreateTransportInstance(UdpClient socket, ConcurrentDictionary<string, IPEndPoint> jausAddrMap)
+        public static Transport CreateTransportInstance(UdpClient socket, ConcurrentDictionary<long, IPEndPoint> jausAddrMap)
         {
             if (transportService == null)
                 transportService = new Transport(socket, jausAddrMap);
@@ -67,7 +67,7 @@ namespace BadgerJaus.Services.Core
             return transportService;
         }
 
-        private Transport(UdpClient socket, ConcurrentDictionary<String, IPEndPoint> jausAddrMap)
+        private Transport(UdpClient socket, ConcurrentDictionary<long, IPEndPoint> jausAddrMap)
         {
             sendMessageQueue = new BlockingCollection<Message>();
             receivedMessageQueue = new BlockingCollection<ReceivedPacket>();
@@ -77,7 +77,7 @@ namespace BadgerJaus.Services.Core
             subsystems = new LinkedList<Subsystem>();
         }
 
-        public void AddRemoteAddress(String hostAddress, IPEndPoint ipEndpoint)
+        public void AddRemoteAddress(int hostAddress, IPEndPoint ipEndpoint)
         {
             sendAddrs.AddOrUpdate(hostAddress, ipEndpoint, (key, oldValue) => ipEndpoint);
         }
@@ -127,7 +127,7 @@ namespace BadgerJaus.Services.Core
                     buffer = receivedPacket.Buffer;
                     message = new Message();
                     message.SetFromJausUdpBuffer(buffer);
-                    String from = message.GetSource().toHexString();
+                    long from = message.GetSource().Value;
                     JausAddress destination = message.GetDestination();
                     if (!sendAddrs.ContainsKey(from))
                     {

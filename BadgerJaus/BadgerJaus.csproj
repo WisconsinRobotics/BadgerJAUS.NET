@@ -142,7 +142,6 @@
     <Compile Include="services\SendThread.cs" />
     <Compile Include="services\Service.cs" />
     <Compile Include="util\Component.cs" />
-    <Compile Include="util\JausAddressPort.cs" />
     <Compile Include="util\LivenessTime.cs" />
     <Compile Include="util\Node.cs" />
     <Compile Include="util\ReceivedPacket.cs" />

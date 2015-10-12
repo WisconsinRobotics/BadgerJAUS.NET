@@ -40,12 +40,12 @@ namespace BadgerJaus.Services.Core
     public class SendThread
     {
         BlockingCollection<Message> sendMessage = null;
-        ConcurrentDictionary<String, IPEndPoint> jausAddrMap = null;
+        ConcurrentDictionary<long, IPEndPoint> jausAddrMap = null;
         UdpClient socket = null;
         int maxJausRecvSize = Message.UDP_MAX_PACKET_SIZE + 100; // (100 = buffer)
         short sequenceNumber = 0;
 
-        public SendThread(BlockingCollection<Message> sendMessage, ConcurrentDictionary<String, IPEndPoint> jausAddrMap, UdpClient socket)
+        public SendThread(BlockingCollection<Message> sendMessage, ConcurrentDictionary<long, IPEndPoint> jausAddrMap, UdpClient socket)
         {
             this.sendMessage = sendMessage;
             this.jausAddrMap = jausAddrMap;
@@ -89,7 +89,7 @@ namespace BadgerJaus.Services.Core
                     continue;
                 }
 
-                jausAddrMap.TryGetValue(message.GetDestination().toHexString(), out dest);
+                jausAddrMap.TryGetValue(message.GetDestination().Value, out dest);
 
                 if (dest == null)
                 {

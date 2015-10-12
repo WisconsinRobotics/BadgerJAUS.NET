@@ -45,7 +45,7 @@ namespace BadgerJaus.Util
         protected const int JAUS_PORT = 3974;
 
         private UdpClient udpClient;
-        protected ConcurrentDictionary<string, IPEndPoint> jausAddrMap;
+        protected ConcurrentDictionary<long, IPEndPoint> jausAddrMap;
         private Timer timer;
 
         protected static Transport transportService;
@@ -61,7 +61,7 @@ namespace BadgerJaus.Util
             nodeList = new List<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             udpClient = new UdpClient(port);
-            jausAddrMap = new ConcurrentDictionary<string, IPEndPoint>();
+            jausAddrMap = new ConcurrentDictionary<long, IPEndPoint>();
             transportService = Transport.CreateTransportInstance(udpClient, jausAddrMap);
             accessControlService = AccessControl.CreateAccessControlInstance();
             managementService = Management.CreateManagementInstance();
