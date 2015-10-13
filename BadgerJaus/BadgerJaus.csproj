@@ -84,8 +84,11 @@
     <Compile Include="messages\discovery\ReportServices.cs" />
     <Compile Include="messages\driver\ReportTravelSpeed.cs" />
     <Compile Include="messages\driver\SetTravelSpeed.cs" />
+    <Compile Include="messages\jointpositionsdriver\ReportJointPosition.cs" />
     <Compile Include="messages\primitivemanipulator\QueryJointEffort.cs" />
+    <Compile Include="messages\jointpositionsdriver\QueryJointPosition.cs" />
     <Compile Include="messages\primitivemanipulator\ReportJointEffort.cs" />
+    <Compile Include="messages\jointpositionsdriver\SetJointPosition.cs" />
     <Compile Include="messages\primitivemanipulator\SetJointEffort.cs" />
     <Compile Include="messages\listmanager\ConfirmElementRequest.cs" />
     <Compile Include="messages\listmanager\ReportActiveElement.cs" />

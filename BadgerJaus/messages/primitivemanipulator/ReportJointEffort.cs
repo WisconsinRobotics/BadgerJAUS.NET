@@ -46,9 +46,9 @@ namespace BadgerJaus.Messages.PrimitiveManipulator
             effort.SetValueFromDouble(value, EFFORT_MIN, EFFORT_MAX);
         }
 
-        public int GetEffort()
+        public double GetEffort()
         {
-            return (int)effort.Value;
+            return effort.ScaleValueToDouble(EFFORT_MIN, EFFORT_MAX);
         }
 
         public override int GetPayloadSize()
