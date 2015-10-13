@@ -144,32 +144,18 @@ namespace BadgerJaus.Services.Core
 
         private bool HandleQueryServices(QueryServices message)
         {
-            JausAddress target = message.GetDestination();
-            if (target.getSubsystem() != subsystem.SubsystemID)
-            {
-                Console.WriteLine("Wrong subsystemID: " + target.getSubsystem());
-                return true;
-            }
-
+            List<Node> queryNodes;
+            List<Node> subsystemNodes = subsystem.NodeList;
             reportServices = new ReportServices();
-            //Set<Node> nodeList = subsystem.GetNodes();
-            IEnumerable<Node> nodeItr = subsystem.GetNodes();
-            foreach (Node node in nodeItr)
+
+            queryNodes = message.NodeList;
+
+            foreach(Node node in queryNodes)
             {
-                if (node.NodeID == target.getNode())
+                if(node.NodeID == 255)
                 {
-                    if (target.getComponent() == 1)
-                    {
-                        reportServices.SetNode(node);
-                        reportServices.SetDestination(message.GetSource());
-                        reportServices.SetSource(target);
-                        Transport.SendMessage(reportServices);
-                        break;
-                    }
-                    else
-                    {
-                        //TODO: Implement single component service handling later
-                    }
+                    reportServices.NodeList = subsystemNodes;
+                    break;
                 }
             }
 

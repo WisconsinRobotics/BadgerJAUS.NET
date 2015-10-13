@@ -139,14 +139,16 @@ namespace BadgerJaus.Services.Core
                         if (subsystem.SubsystemID != destination.getSubsystem())
                             continue;
 
-                        foreach (Node node in subsystem.GetNodes())
+                        foreach (Node node in subsystem.NodeList)
                         {
+                            if (node.ComponentList.Count == 0)
+                                continue;
+                            Discovery.GetInstance().ImplementsAndHandledMessage(message, node.ComponentList[0]);
                             if (node.NodeID != destination.getNode())
                                 continue;
 
                             foreach (Component component in node.ComponentList)
                             {
-                                Discovery.GetInstance().ImplementsAndHandledMessage(message, component);
                                 if (component.ComponentID != destination.getComponent())
                                     continue;
 

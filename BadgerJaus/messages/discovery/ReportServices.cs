@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
+using System.Collections.Generic;
 
 using BadgerJaus.Util;
 
@@ -32,55 +33,38 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class ReportServices : Message
     {
-        JausByte nodeID = new JausByte();
-        JausByte componentID = new JausByte();
-        Node node = null;
+        List<Node> nodeList;
 
         protected override int CommandCode
         {
             get { return JausCommandCode.REPORT_SERVICES; }
         }
 
-        protected override void InitFieldData()
-        {
-            nodeID = new JausByte();
-            componentID = new JausByte();
-        }
-
-        // Getters and Setters
-        public int GetNodeID()
-        {
-            return (int)nodeID.Value;
-        }
-
-        public int GetComponentID()
-        {
-            return (int)componentID.Value;
-        }
-
-        public void SetNodeID(int nodeID)
-        {
-            if (nodeID > 0 && nodeID < 256)
-                this.nodeID.Value = nodeID;
-        }
-
-        public void SetComponentID(int componentID)
-        {
-            if (componentID > 0 && componentID < 256)
-                this.componentID.Value = componentID;
-        }
-
         public override int GetPayloadSize()
         {
-            return node.GetPayloadSize();
+            int payloadSize = 0;
+            if (nodeList.Count == 0)
+                return 0;
+            payloadSize += JausBaseType.BYTE_BYTE_SIZE;
+            foreach(Node node in NodeList)
+            {
+                payloadSize += node.GetPayloadSize();
+            }
+            return payloadSize;
         }
 
         // Packs Message Fields into byte[] then passes array to super class
         protected override bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            JausByte nodeCount = new JausByte();
             indexOffset = index;
-            if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset))
-                return false;
+            nodeCount.Value = nodeList.Count;
+            nodeCount.Serialize(buffer, indexOffset, out indexOffset);
+            foreach (Node node in NodeList)
+            {
+                if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset))
+                    return false;
+            }
 
             return true;
         }
@@ -88,9 +72,19 @@ namespace BadgerJaus.Messages.Discovery
         // Takes Super's payload, and unpacks it into Message Fields
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
+            int nodeIndex;
+            //int componentIndex;
+            Node node;
+            JausByte nodeCount = new JausByte();
             indexOffset = index;
-            nodeID.Deserialize(buffer, index, out indexOffset);
-            componentID.Deserialize(buffer, index, out indexOffset);
+            nodeCount.Deserialize(buffer, indexOffset, out indexOffset);
+            for (nodeIndex = 0; nodeIndex < nodeCount.Value; ++nodeIndex)
+            {
+                node = new Node(0);
+                // Need deserialize option
+                //nodeID.Deserialize(buffer, indexOffset, index, out indexOffset);
+                //componentID.Deserialize(buffer, index, out indexOffset);
+            }
 
             return true;
         }
@@ -102,9 +96,10 @@ namespace BadgerJaus.Messages.Discovery
             return str;
         }
 
-        public void SetNode(Node node)
+        public List<Node> NodeList
         {
-            this.node = node;
+            get { return nodeList; }
+            set { nodeList = value; }
         }
     }
 }

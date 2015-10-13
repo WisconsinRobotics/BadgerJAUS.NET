@@ -84,9 +84,9 @@ namespace BadgerJaus.Util
             node.SetSubsystem(this);
         }
 
-        public IEnumerable<Node> GetNodes()
+        public List<Node> NodeList
         {
-            return Enumerable.AsEnumerable<Node>(nodeList);
+            get { return nodeList; }
         }
 
         public void InitializeTimer()
