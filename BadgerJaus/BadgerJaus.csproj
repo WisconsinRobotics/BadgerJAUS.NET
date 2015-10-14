@@ -117,6 +117,7 @@
     <Compile Include="messages\velocitystatesensor\QueryVelocityState.cs" />
     <Compile Include="messages\velocitystatesensor\ReportVelocityState.cs" />
     <Compile Include="services\BaseService.cs" />
+    <Compile Include="services\DiscoveredService.cs" />
     <Compile Include="util\JausBaseType.cs" />
     <Compile Include="util\JausAddress.cs" />
     <Compile Include="util\JausByte.cs" />

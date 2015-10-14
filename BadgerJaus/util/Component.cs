@@ -65,6 +65,8 @@ namespace BadgerJaus.Util
         JausAddress controller;
         int authorityCode;
 
+        List<DiscoveredService> discoveredServices;
+
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
@@ -142,6 +144,45 @@ namespace BadgerJaus.Util
             return true;
         }
 
+        public bool Deserialize(byte[] buffer, int index, out int indexOffset)
+        {
+            JausByte serviceCount = new JausByte();
+            JausByte serviceIdCount;
+            JausByte majorVersion;
+            JausByte minorVersion;
+            string serviceName;
+            DiscoveredService discoveredService;
+            int serviceIndex;
+            indexOffset = index;
+            if (discoveredServices == null)
+                discoveredServices = new List<DiscoveredService>();
+
+            serviceCount.Deserialize(buffer, indexOffset, out indexOffset);
+
+            if (serviceCount.Value == 0)
+                return true;
+
+            serviceIdCount = new JausByte();
+            majorVersion = new JausByte();
+            minorVersion = new JausByte();
+
+            for (serviceIndex = 0; serviceIndex < serviceCount.Value; ++serviceIndex )
+            {
+                discoveredService = new DiscoveredService();
+                serviceIdCount.Deserialize(buffer, indexOffset, out indexOffset);
+                serviceName = Encoding.UTF8.GetString(buffer, indexOffset, (int)serviceIdCount.Value);
+                indexOffset += (int)serviceIdCount.Value;
+                discoveredService.ServiceID = serviceName;
+                majorVersion.Deserialize(buffer, indexOffset, out indexOffset);
+                discoveredService.MajorVersion = (int)majorVersion.Value;
+                minorVersion.Deserialize(buffer, indexOffset, out indexOffset);
+                discoveredService.MinorVersion = (int)minorVersion.Value;
+                discoveredServices.Add(discoveredService);
+            }
+
+            return true;
+        }
+
         public int GetPayloadSize()
         {
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;
@@ -186,6 +227,11 @@ namespace BadgerJaus.Util
         public bool IsController(JausAddress address)
         {
             return address == controller;
+        }
+
+        public List<DiscoveredService> DiscoveredServices
+        {
+            get { return discoveredServices; }
         }
     }
 }
