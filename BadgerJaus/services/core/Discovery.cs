@@ -96,11 +96,11 @@ namespace BadgerJaus.Services.Core
         {
             switch (message.GetCommandCode())
             {
-                case JausCommandCode.REPORT_IDENTIFICATION:
-                    return HandleReportIdentification(message);
                 case JausCommandCode.QUERY_SERVICES:
                     queryServices.SetFromJausMessage(message);
                     return HandleQueryServices(queryServices);
+                case JausCommandCode.REPORT_IDENTIFICATION:
+                    return HandleReportIdentification(message);
                 default:
                     return false;
             }
@@ -158,6 +158,10 @@ namespace BadgerJaus.Services.Core
                     break;
                 }
             }
+
+            reportServices.SetSource(subsystemNodes[0].ComponentList[0].JausAddress);
+            reportServices.SetDestination(message.GetSource());
+            Transport.SendMessage(reportServices);
 
             return true;
         }
