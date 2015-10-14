@@ -228,5 +228,10 @@ namespace BadgerJaus.Util
         {
             return address == controller;
         }
+
+        public List<DiscoveredService> DiscoveredServices
+        {
+            get { return discoveredServices; }
+        }
     }
 }
