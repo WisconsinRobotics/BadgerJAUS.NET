@@ -526,7 +526,7 @@ namespace BadgerJaus.Messages
             buffer[indexOffset] = Message.JUDP_HEADER;
 
             indexOffset += Message.JUDP_HEADER_SIZE_BYTES;
-            return ToJausBuffer(buffer, index, out indexOffset);
+            return ToJausBuffer(buffer, indexOffset, out indexOffset);
         }
 
 
