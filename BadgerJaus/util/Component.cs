@@ -76,7 +76,7 @@ namespace BadgerJaus.Util
             instanceID = new JausByte(0);
             controlState = ControlState.STATE_NOT_CONTROLLED;
             componentState = ComponentState.STATE_INIT;
-            controller = null;
+            controller = new JausAddress();
             authorityCode = AccessControl.DEFAULT_AUTHORITY_CODE;
         }
 
