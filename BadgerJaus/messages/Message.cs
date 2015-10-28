@@ -326,7 +326,7 @@ namespace BadgerJaus.Messages
         protected virtual bool PayloadToJausBuffer(byte[] data, int index, out int indexOffset)
         {
             indexOffset = index;
-            if (this.data == null)
+            if (this.data != null)
             {
                 Array.Copy(this.data, 0, data, index, this.data.Length);
                 indexOffset += this.data.Length;
