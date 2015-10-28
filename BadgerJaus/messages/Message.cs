@@ -327,9 +327,11 @@ namespace BadgerJaus.Messages
         {
             indexOffset = index;
             if (this.data == null)
-                this.data = new byte[data.Length];
-            Array.Copy(this.data, 0, data, index, this.data.Length);
-            indexOffset += this.data.Length;
+            {
+                Array.Copy(this.data, 0, data, index, this.data.Length);
+                indexOffset += this.data.Length;
+            }
+
             return true;
         }
 
