@@ -31,6 +31,7 @@ using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Timers;
 using System.Net;
+using System.Threading;
 
 using BadgerJaus.Services;
 using BadgerJaus.Services.Core;
@@ -46,7 +47,7 @@ namespace BadgerJaus.Util
 
         private UdpClient udpClient;
         protected ConcurrentDictionary<long, IPEndPoint> jausAddrMap;
-        private Timer timer;
+        private System.Timers.Timer timer;
 
         protected static Transport transportService;
         //protected static Event eventService --not yet implemented
@@ -92,6 +93,8 @@ namespace BadgerJaus.Util
         public void InitializeTimer()
         {
             long lowestSleepTime = 5000;
+            Thread transportThread = new Thread(transportService.run);
+            transportThread.Start();
 
             foreach (Node node in nodeList)
             {
@@ -105,7 +108,7 @@ namespace BadgerJaus.Util
                 }
             }
 
-            timer = new Timer(lowestSleepTime);
+            timer = new System.Timers.Timer(lowestSleepTime);
             timer.AutoReset = true;
             timer.Elapsed += Execute;
             timer.Enabled = true;
