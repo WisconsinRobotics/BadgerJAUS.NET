@@ -68,6 +68,7 @@ namespace BadgerJaus.Util
             managementService = Management.CreateManagementInstance();
             livenessService = Liveness.CreateLivenessInstance();
             discoveryService = Discovery.CreateDiscoveryInstance(this);
+            transportService.AddSubsystem(this);
         }
 
         public int SubsystemID
