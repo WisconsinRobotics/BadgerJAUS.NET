@@ -416,11 +416,10 @@ namespace BadgerJaus.Messages
             else
             {
                 JausUnsignedShort bufferCommandCode = new JausUnsignedShort(buffer, index);
+                index += COMMAND_CODE_SIZE_BYTES;
                 if (bufferCommandCode.Value != CommandCode)
                     return -1;
             }
-
-            index += COMMAND_CODE_SIZE_BYTES;
 
             SetPayloadFromJausBuffer(buffer, index, out index);
 
