@@ -34,6 +34,11 @@ namespace BadgerJaus.Messages.Driver
         private const double SPEED_MAX = 327.67;
         private JausUnsignedShort speed;
 
+        public ReportTravelSpeed()
+        {
+            speed = new JausUnsignedShort();
+        }
+
         protected override int CommandCode
         {
             get { return JausCommandCode.REPORT_TRAVEL_SPEED; }

@@ -36,6 +36,11 @@ namespace BadgerJaus.Messages.PrimitiveManipulator
 
         private JausUnsignedShort effort;
 
+        public ReportJointEffort()
+        {
+            effort = new JausUnsignedShort();
+        }
+
         protected override int CommandCode
         {
             get { return JausCommandCode.REPORT_JOINT_EFFORT; }
