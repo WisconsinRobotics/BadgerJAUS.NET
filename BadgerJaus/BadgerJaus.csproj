@@ -71,6 +71,9 @@
   <ItemGroup>
     <Compile Include="messages\discovery\QueryConfiguration.cs" />
     <Compile Include="messages\driver\QueryTravelSpeed.cs" />
+    <Compile Include="messages\endeffectorposedriver\ReportCommandedEndEffectorPose.cs" />
+    <Compile Include="messages\endeffectorposedriver\QueryCommandedEndEffectorPose.cs" />
+    <Compile Include="messages\endeffectorposedriver\SetEndEffectorPose.cs" />
     <Compile Include="messages\JausCommandCode.cs" />
     <Compile Include="messages\control\ConfirmControl.cs" />
     <Compile Include="messages\control\RejectControl.cs" />
@@ -155,6 +158,7 @@
     <Compile Include="util\Subsystem.cs" />
     <Compile Include="util\WaypointElement.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

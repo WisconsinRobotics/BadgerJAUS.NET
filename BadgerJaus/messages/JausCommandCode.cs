@@ -126,6 +126,7 @@ namespace BadgerJaus.Messages
         public const int QUERY_JOINT_VELOCITIES = 0x2603;
         public const int QUERY_TOOL_POINT = 0x2604;
         public const int QUERY_JOINT_FORCE_TORQUES = 0x2605;
+        public const int QUERY_COMMANDED_END_EFFECTOR_POSE = 0X2610;
         public const int QUERY_CAMERA_POSE = 0x2800;
         public const int QUERY_CAMERA_COUNT = 0x2801;
         public const int QUERY_RELATIVE_OBJECT_POSITION = 0x2802;
@@ -178,6 +179,7 @@ namespace BadgerJaus.Messages
         public const int REPORT_JOINT_VELOCITIES = 0x4603;
         public const int REPORT_TOOL_POINT = 0x4604;
         public const int REPORT_JOINT_FORCE_TORQUES = 0x4605;
+        public const int REPORT_COMMANDED_END_EFFECTOR_POSE = 0x4610;
         public const int REPORT_CAMERA_POSE = 0x4800;
         public const int REPORT_CAMERA_COUNT = 0x4801;
         public const int REPORT_RELATIVE_OBJECT_POSITION = 0x4802;

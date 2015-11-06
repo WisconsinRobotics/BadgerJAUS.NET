@@ -25,25 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BadgerJaus.Util;
 
-using BadgerJaus.Messages;
-
-namespace BadgerJaus.Messages.JointPositionsDriver
+namespace BadgerJaus.Messages.endeffectorposedriver
 {
-    public class QueryJointPosition : Message
+    class QueryCommandedEndEffectorPose : Message
     {
         protected override int CommandCode
         {
             get
             {
-                return JausCommandCode.QUERY_JOINT_POSITIONS;
+                return JausCommandCode.QUERY_COMMANDED_END_EFFECTOR_POSE;
             }
         }
-
-
     }
 }
