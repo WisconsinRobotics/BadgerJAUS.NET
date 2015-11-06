@@ -24,9 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using BadgerJaus.Messages;
 
-namespace BadgerJaus.messages.driver
+namespace BadgerJaus.Messages.Driver
 {
     public class QueryTravelSpeed : Message
     {

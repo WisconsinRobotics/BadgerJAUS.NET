@@ -25,13 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace BadgerJaus.Messages.JointPositionDriver
+namespace BadgerJaus.Messages.EndEffectorPoseDriver
 {
-    public class QueryJointPosition : Message
+    public class QueryEndEffectorPose : Message
     {
         protected override int CommandCode
         {
-            get { return JausCommandCode.QUERY_JOINT_POSITIONS; }
+	        get { return JausCommandCode.QUERY_END_EFFECTOR_POSE; }
         }
     }
 }

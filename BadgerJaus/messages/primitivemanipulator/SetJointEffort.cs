@@ -31,7 +31,7 @@ namespace BadgerJaus.Messages.PrimitiveManipulator
     {
         protected override int CommandCode
         {
-            get { return JausCommandCode.SET_JOINT_EFFORT; }
+            get { return JausCommandCode.SET_JOINT_EFFORTS; }
         }
     }
 }

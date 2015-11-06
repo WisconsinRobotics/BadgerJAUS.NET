@@ -24,19 +24,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using BadgerJaus.Util;
 
-namespace BadgerJaus.Messages.endeffectorposedriver
+namespace BadgerJaus.Messages.EndEffectorPoseDriver
 {
-    class QueryCommandedEndEffectorPose : Message
+    public class QueryCommandedEndEffectorPose : QueryEndEffectorPose
     {
         protected override int CommandCode
         {
-            get
-            {
-                return JausCommandCode.QUERY_COMMANDED_END_EFFECTOR_POSE;
-            }
+            get { return JausCommandCode.QUERY_COMMANDED_END_EFFECTOR_POSE; }
         }
     }
 }

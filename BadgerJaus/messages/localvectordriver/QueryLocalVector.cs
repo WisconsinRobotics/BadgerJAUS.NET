@@ -24,7 +24,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
 
 using BadgerJaus.Util;
 
@@ -77,7 +76,7 @@ namespace BadgerJaus.Messages.LocalVectorDriver
 
         private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
         {
-            if(set)
+            if (set)
                 return presence.Deserialize(buffer, index, out indexOffset);
             return presence.Serialize(buffer, index, out indexOffset);
         }

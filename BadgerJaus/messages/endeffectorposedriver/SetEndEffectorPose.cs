@@ -24,15 +24,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BadgerJaus.Messages.endeffectorposedriver
+namespace BadgerJaus.Messages.EndEffectorPoseDriver
 {
-    class SetEndEffectorPose : ReportCommandedEndEffectorPose
+    public class SetEndEffectorPose : ReportCommandedEndEffectorPose
     {
         protected override int CommandCode
         {

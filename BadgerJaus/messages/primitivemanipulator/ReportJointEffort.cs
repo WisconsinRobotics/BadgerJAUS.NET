@@ -29,7 +29,7 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.PrimitiveManipulator
 {
-    public class ReportJointEffort : Message
+    public class ReportJointEffort : QueryJointEffort
     {
         private const double EFFORT_MIN = -100;
         private const double EFFORT_MAX = 100;
@@ -43,7 +43,7 @@ namespace BadgerJaus.Messages.PrimitiveManipulator
 
         protected override int CommandCode
         {
-            get { return JausCommandCode.REPORT_JOINT_EFFORT; }
+            get { return JausCommandCode.REPORT_JOINT_EFFORTS; }
         }
 
         public void SetEffort(double value)

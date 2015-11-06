@@ -24,25 +24,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using BadgerJaus.Messages;
-using BadgerJaus.Util;
-
-namespace BadgerJaus.Messages.JointPositionsDriver
+namespace BadgerJaus.Messages.JointPositionDriver
 {
-    class SetJointPosition : ReportJointPosition
+    public class SetJointPosition : ReportJointPosition
     {
         protected override int CommandCode
         {
-            get
-            {
-                return JausCommandCode.SET_JOINT_POSITIONS;
-            }
+            get { return JausCommandCode.SET_JOINT_POSITIONS; }
         }
     }
 }

@@ -24,13 +24,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System.Collections.Generic;
 
 using BadgerJaus.Util;
 
-namespace BadgerJaus.Messages.JointPositionsDriver
+namespace BadgerJaus.Messages.JointPositionDriver
 {
-    public class ReportJointPosition : Message
+    public class ReportJointPosition : QueryJointPosition
     {
         public const double REVOLUTE_MIN = -8 * System.Math.PI;
         public const double REVOLUTE_MAX = 8 * System.Math.PI;

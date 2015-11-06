@@ -77,16 +77,15 @@ namespace BadgerJaus.Messages
         public const int SET_JOINT_POSITIONS = 0x0602;
         public const int SET_JOINT_VELOCITIES = 0x0603;
         public const int SET_TOOL_POINT = 0x0604;
-        public const int SET_END_EFFECTOR_POSE = 0x0605;
         public const int SET_END_EFFECTOR_VELOCITY_STATE = 0x0606;
         public const int SET_JOINT_MOTION = 0x0607;
         public const int SET_END_EFFECTOR_PATH_MOTION = 0x0608;
+        public const int SET_END_EFFECTOR_POSE = 0x0610;
         public const int SET_CAMERA_POSE = 0x0801;
         public const int SELECT_CAMERA = 0x0802;
         public const int SET_CAMERA_CAPABILITIES = 0x0805;
         public const int SET_CAMERA_FORMAT_OPTIONS = 0x0806;
         public const int REGISTER_SERVICES = 0x0B00;
-        public const int SET_JOINT_EFFORT = 0x0601;
         public const int SET_TOOL_OFFSET = 0x0604;
 
         // JAUS Query Class Messages
@@ -126,7 +125,8 @@ namespace BadgerJaus.Messages
         public const int QUERY_JOINT_VELOCITIES = 0x2603;
         public const int QUERY_TOOL_POINT = 0x2604;
         public const int QUERY_JOINT_FORCE_TORQUES = 0x2605;
-        public const int QUERY_COMMANDED_END_EFFECTOR_POSE = 0X2610;
+        public const int QUERY_COMMANDED_END_EFFECTOR_POSE = 0x2610;
+        public const int QUERY_END_EFFECTOR_POSE = 0x2615;
         public const int QUERY_CAMERA_POSE = 0x2800;
         public const int QUERY_CAMERA_COUNT = 0x2801;
         public const int QUERY_RELATIVE_OBJECT_POSITION = 0x2802;
@@ -138,8 +138,6 @@ namespace BadgerJaus.Messages
         public const int QUERY_CONFIGURATION = 0x2B01;
         public const int QUERY_SUBSYSTEM_LIST = 0x2B02;
         public const int QUERY_SERVICES = 0x2B03;
-        public const int QUERY_JOINT_EFFORT = 0x4601;
-        public const int QUERY_TOOL_OFFSET = 0x4604;
 
         // JAUS Inform Class Messages
         public const int REPORT_AUTHORITY = 0x4001;
@@ -180,6 +178,7 @@ namespace BadgerJaus.Messages
         public const int REPORT_TOOL_POINT = 0x4604;
         public const int REPORT_JOINT_FORCE_TORQUES = 0x4605;
         public const int REPORT_COMMANDED_END_EFFECTOR_POSE = 0x4610;
+        public const int REPORT_END_EFFECTOR_POSE = 0x4615;
         public const int REPORT_CAMERA_POSE = 0x4800;
         public const int REPORT_CAMERA_COUNT = 0x4801;
         public const int REPORT_RELATIVE_OBJECT_POSITION = 0x4802;
@@ -191,8 +190,6 @@ namespace BadgerJaus.Messages
         public const int REPORT_CONFIGURATION = 0x4B01;
         public const int REPORT_SUBSYSTEM_LIST = 0x4B02;
         public const int REPORT_SERVICES = 0x4B03;
-        public const int REPORT_JOINT_EFFORT = 0x4601;
-        public const int REPORT_TOOL_OFFSET = 0x4604;
 
         //@ Deprecated public const int CONFIGURATION_CHANGED_EVENT_SETUP 				= 0xD6A8;
         //@ Deprecated public const int CONFIGURATION_CHANGED_EVENT_NOTIFICATION 		= 0xD8A8;

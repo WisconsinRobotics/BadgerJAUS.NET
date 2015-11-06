@@ -28,7 +28,7 @@ using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.Driver
 {
-    public class ReportTravelSpeed : Message
+    public class ReportTravelSpeed : QueryTravelSpeed
     {
         private const double SPEED_MIN = 0;
         private const double SPEED_MAX = 327.67;

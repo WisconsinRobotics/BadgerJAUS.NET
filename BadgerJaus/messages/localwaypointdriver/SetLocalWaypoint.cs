@@ -24,16 +24,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-
-using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.LocalWaypointDriver
 {
     public class SetLocalWaypoint : ReportLocalWaypoint
     {
-        
-
         protected override int CommandCode
         {
             get { return JausCommandCode.SET_LOCAL_WAYPOINT; }

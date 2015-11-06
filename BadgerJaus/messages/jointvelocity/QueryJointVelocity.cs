@@ -24,17 +24,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using BadgerJaus.Util;
 
 namespace BadgerJaus.Messages.JointVelocity
 {
-    public class QueryJointVelocity : BadgerJaus.Messages.Message
+    public class QueryJointVelocity : Message
     {
         protected override int CommandCode
         {
