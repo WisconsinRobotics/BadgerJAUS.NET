@@ -122,6 +122,11 @@
     <Compile Include="messages\primitivedriver\QueryWrenchEffort.cs" />
     <Compile Include="messages\primitivedriver\ReportWrenchEffort.cs" />
     <Compile Include="messages\primitivedriver\SetWrenchEffort.cs" />
+    <Compile Include="messages\VelocityStateDriver\QueryAccelerationLimit.cs" />
+    <Compile Include="messages\VelocityStateDriver\QueryVelocityCommand.cs" />
+    <Compile Include="messages\VelocityStateDriver\ReportAccelerationLimit.cs" />
+    <Compile Include="messages\VelocityStateDriver\ReportVelocityCommand.cs" />
+    <Compile Include="messages\VelocityStateDriver\SetVelocityCommand.cs" />
     <Compile Include="messages\velocitystatesensor\QueryVelocityState.cs" />
     <Compile Include="messages\velocitystatesensor\ReportVelocityState.cs" />
     <Compile Include="services\BaseService.cs" />

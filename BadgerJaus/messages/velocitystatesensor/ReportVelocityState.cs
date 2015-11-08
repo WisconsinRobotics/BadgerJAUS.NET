@@ -44,16 +44,6 @@ namespace BadgerJaus.Messages.VelocityStateSensor
 
         JausTimeStamp timeStamp;
 
-        public const int X_BIT = 0;
-        public const int Y_BIT = 1;
-        public const int Z_BIT = 2;
-        public const int P_RMS = 3;
-        public const int ROLL_BIT = 4;
-        public const int PITCH_BIT = 5;
-        public const int YAW_BIT = 6;
-        public const int A_RMS = 7;
-        public const int TS_BIT = 8;
-
         private const double POSE_MIN = -327.68;
         private const double POSE_MAX = 327.67;
 

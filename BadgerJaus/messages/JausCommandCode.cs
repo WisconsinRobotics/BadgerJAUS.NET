@@ -66,8 +66,10 @@ namespace BadgerJaus.Messages
         public const int SET_GLOBAL_WAYPOINT = 0x040C;
         public const int SET_LOCAL_WAYPOINT = 0x040D;
         public const int SET_GLOBAL_PATH_SEGMENT = 0x040F;
-        public const int SET_GEOMAGNETIC_PROPERTY = 0x0412;
         public const int SET_LOCAL_PATH_SEGMENT = 0x0410;
+        public const int SET_GEOMAGNETIC_PROPERTY = 0x0412;
+        public const int SET_VELOCITY_COMMAND = 0x0415;
+        public const int SET_ACCELERATION_LIMIT = 0x0416;
         public const int SET_ELEMENT = 0x041A;
         public const int DELETE_ELEMENT = 0x041B;
         public const int CONFIRM_ELEMENT_REQUEST = 0x041C;
@@ -115,6 +117,8 @@ namespace BadgerJaus.Messages
         public const int QUERY_GLOBAL_PATH_SEGMENT = 0x240F;
         public const int QUERY_LOCAL_PATH_SEGMENT = 0x2410;
         public const int QUERY_GEOMAGNETIC_PROPERTY = 0x2412;
+        public const int QUERY_VELOCITY_COMMAND = 0x2415;
+        public const int QUERY_ACCELERATION_LIMIT = 0x2416;
         public const int QUERY_ELEMENT = 0x241A;
         public const int QUERY_ELEMENT_LIST = 0x241B;
         public const int QUERY_ELEMENT_COUNT = 0x241C;
@@ -167,6 +171,8 @@ namespace BadgerJaus.Messages
         public const int REPORT_GLOBAL_PATH_SEGMENT = 0x440F;
         public const int REPORT_LOCAL_PATH_SEGMENT = 0x4410;
         public const int REPORT_GEOMAGNETIC_PROPERTY = 0x4412;
+        public const int REPORT_VELOCITY_COMMAND = 0x4415;
+        public const int REPORT_ACCELERATION_LIMIT = 0x4416;
         public const int REPORT_ELEMENT = 0x441A;
         public const int REPORT_ELEMENT_LIST = 0x441B;
         public const int REPORT_ELEMENT_COUNT = 0x441C;
@@ -245,6 +251,8 @@ namespace BadgerJaus.Messages
                 commandCodes.Add(SET_LOCAL_WAYPOINT, "SET_LOCAL_WAYPOINT");
                 commandCodes.Add(SET_GLOBAL_PATH_SEGMENT, "SET_GLOBAL_PATH_SEGMENT");
                 commandCodes.Add(SET_GEOMAGNETIC_PROPERTY, "SET_GEOMAGNETIC_PROPERTY");
+                commandCodes.Add(SET_VELOCITY_COMMAND, "SET_VELOCITY_COMMAND");
+                commandCodes.Add(SET_ACCELERATION_LIMIT, "SET_ACCELERATION_LIMIT");
                 commandCodes.Add(SET_LOCAL_PATH_SEGMENT, "SET_LOCAL_PATH_SEGMENT");
                 commandCodes.Add(SET_ELEMENT, "SET_ELEMENT");
                 commandCodes.Add(DELETE_ELEMENT, "DELETE_ELEMENT");
@@ -292,6 +300,8 @@ namespace BadgerJaus.Messages
                 commandCodes.Add(QUERY_GLOBAL_PATH_SEGMENT, "QUERY_GLOBAL_PATH_SEGMENT");
                 commandCodes.Add(QUERY_LOCAL_PATH_SEGMENT, "QUERY_LOCAL_PATH_SEGMENT");
                 commandCodes.Add(QUERY_GEOMAGNETIC_PROPERTY, "QUERY_GEOMAGNETIC_PROPERTY");
+                commandCodes.Add(QUERY_VELOCITY_COMMAND, "QUERY_VELOCITY_COMMAND");
+                commandCodes.Add(QUERY_ACCELERATION_LIMIT, "QUERY_ACCELERATION_LIMIT");
                 commandCodes.Add(QUERY_ELEMENT, "QUERY_ELEMENT");
                 commandCodes.Add(QUERY_ELEMENT_LIST, "QUERY_ELEMENT_LIST");
                 commandCodes.Add(QUERY_ELEMENT_COUNT, "QUERY_ELEMENT_COUNT");
@@ -342,6 +352,8 @@ namespace BadgerJaus.Messages
                 commandCodes.Add(REPORT_GLOBAL_PATH_SEGMENT, "REPORT_GLOBAL_PATH_SEGMENT");
                 commandCodes.Add(REPORT_LOCAL_PATH_SEGMENT, "REPORT_LOCAL_PATH_SEGMENT");
                 commandCodes.Add(REPORT_GEOMAGNETIC_PROPERTY, "REPORT_GEOMAGNETIC_PROPERTY");
+                commandCodes.Add(REPORT_VELOCITY_COMMAND, "REPORT_VELOCITY_COMMAND");
+                commandCodes.Add(REPORT_ACCELERATION_LIMIT, "REPORT_ACCELERATION_LIMIT");
                 commandCodes.Add(REPORT_ELEMENT, "REPORT_ELEMENT");
                 commandCodes.Add(REPORT_ELEMENT_LIST, "REPORT_ELEMENT_LIST");
                 commandCodes.Add(REPORT_ELEMENT_COUNT, "REPORT_ELEMENT_COUNT");
