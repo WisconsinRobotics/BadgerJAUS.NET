@@ -126,11 +126,13 @@
     <Compile Include="messages\VelocityStateDriver\QueryVelocityCommand.cs" />
     <Compile Include="messages\VelocityStateDriver\ReportAccelerationLimit.cs" />
     <Compile Include="messages\VelocityStateDriver\ReportVelocityCommand.cs" />
+    <Compile Include="messages\VelocityStateDriver\SetAccelerationLimit.cs" />
     <Compile Include="messages\VelocityStateDriver\SetVelocityCommand.cs" />
     <Compile Include="messages\velocitystatesensor\QueryVelocityState.cs" />
     <Compile Include="messages\velocitystatesensor\ReportVelocityState.cs" />
     <Compile Include="services\BaseService.cs" />
     <Compile Include="services\DiscoveredService.cs" />
+    <Compile Include="services\mobility\VelocityStateDriver.cs" />
     <Compile Include="util\JausBaseType.cs" />
     <Compile Include="util\JausAddress.cs" />
     <Compile Include="util\JausByte.cs" />
