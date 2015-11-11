@@ -113,12 +113,18 @@ namespace BadgerJaus.Services.Mobility
             report.SetSource(message.GetDestination());
 
             //Set requested data
-            report.VelocityX = velocityX;
-            report.VelocityY = velocityY;
-            report.VelocityZ = velocityZ;
-            report.RollRate = rollRate;
-            report.PitchRate = pitchRate;
-            report.YawRate = yawRate;
+            if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_X_BIT))
+                report.VelocityX = velocityX;
+            if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Y_BIT))
+                report.VelocityY = velocityY;
+            if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Z_BIT))
+                report.VelocityZ = velocityZ;
+            if (message.IsFieldSet(QueryVelocityCommand.ROLL_RATE_BIT))
+                report.RollRate = rollRate;
+            if (message.IsFieldSet(QueryVelocityCommand.PITCH_RATE_BIT))
+                report.PitchRate = pitchRate;
+            if (message.IsFieldSet(QueryVelocityCommand.YAW_RATE_BIT))
+                report.YawRate = yawRate;
 
 
             //Send response
@@ -134,12 +140,18 @@ namespace BadgerJaus.Services.Mobility
 
             setVelocityCommand.SetFromJausMessage(message);
 
-            velocityX = setVelocityCommand.VelocityX;
-            velocityY = setVelocityCommand.VelocityY;
-            velocityZ = setVelocityCommand.VelocityZ;
-            rollRate = setVelocityCommand.RollRate;
-            pitchRate = setVelocityCommand.PitchRate;
-            yawRate = setVelocityCommand.YawRate;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.VELOCITY_X_BIT))
+                velocityX = setVelocityCommand.VelocityX;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.VELOCITY_Y_BIT))
+                velocityY = setVelocityCommand.VelocityY;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.VELOCITY_Y_BIT))
+                velocityZ = setVelocityCommand.VelocityZ;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.ROLL_RATE_BIT))
+                rollRate = setVelocityCommand.RollRate;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.PITCH_RATE_BIT))
+                pitchRate = setVelocityCommand.PitchRate;
+            if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.YAW_RATE_BIT))
+                yawRate = setVelocityCommand.YawRate;
 
             return true;
         }
