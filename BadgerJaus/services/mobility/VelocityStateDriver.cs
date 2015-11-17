@@ -54,8 +54,25 @@ namespace BadgerJaus.Services.Mobility
         protected double reportPitchRate;
         protected double reportYawRate;
 
+        protected double accelerationX;
+        protected double accelerationY;
+        protected double accelerationZ;
+        protected double rollAcceleration;
+        protected double pitchAcceleration;
+        protected double yawAcceleration;
+
+        protected double reportAccelerationX;
+        protected double reportAccelerationY;
+        protected double reportAccelerationZ;
+        protected double reportRollAcceleration;
+        protected double reportPitchAcceleration;
+        protected double reportYawAcceleration;
+
         QueryVelocityCommand queryVelocityCommand;
         SetVelocityCommand setVelocityCommand;
+
+        QueryAccelerationLimit queryAccelerationLimit;
+        SetAccelerationLimit setAccelerationLimit;
         
         public VelocityStateDriver()
         {
@@ -73,8 +90,25 @@ namespace BadgerJaus.Services.Mobility
             reportPitchRate = 0;
             reportYawRate = 0;
 
+            accelerationX = 0;
+            accelerationY = 0;
+            accelerationZ = 0;
+            rollAcceleration = 0;
+            pitchAcceleration = 0;
+            yawAcceleration = 0;
+
+            reportAccelerationX = 0;
+            reportAccelerationY = 0;
+            reportAccelerationZ = 0;
+            reportRollAcceleration = 0;
+            reportPitchAcceleration = 0;
+            reportYawAcceleration = 0;
+
             queryVelocityCommand = new QueryVelocityCommand();
             setVelocityCommand = new SetVelocityCommand();
+
+            queryAccelerationLimit = new QueryAccelerationLimit();
+            setAccelerationLimit = new SetAccelerationLimit();
         }
 
         public override bool IsSupported(int commandCode)
@@ -83,6 +117,9 @@ namespace BadgerJaus.Services.Mobility
             {
                 case JausCommandCode.QUERY_VELOCITY_COMMAND:
                 case JausCommandCode.SET_VELOCITY_COMMAND:
+
+                case JausCommandCode.QUERY_ACCELERATION_LIMIT:
+                case JausCommandCode.SET_ACCELERATION_LIMIT:
                     return true;
                 default:
                     return false;
@@ -99,6 +136,11 @@ namespace BadgerJaus.Services.Mobility
                 case JausCommandCode.SET_VELOCITY_COMMAND:
                     return HandleSetVelocityCommand(message, component);
 
+                case JausCommandCode.QUERY_ACCELERATION_LIMIT:
+                    queryAccelerationLimit.SetFromJausMessage(message);
+                    return HandleQueryAccelerationLimit(queryAccelerationLimit);
+                case JausCommandCode.SET_ACCELERATION_LIMIT:
+                    return HandleSetAccelerationLimit(message, component);
                 default:
                     return false;
             }
@@ -152,6 +194,58 @@ namespace BadgerJaus.Services.Mobility
                 pitchRate = setVelocityCommand.PitchRate;
             if (setVelocityCommand.IsFieldSet(QueryVelocityCommand.YAW_RATE_BIT))
                 yawRate = setVelocityCommand.YawRate;
+
+            return true;
+        }
+
+        protected bool HandleQueryAccelerationLimit(QueryAccelerationLimit message)
+        {
+            //Initialize response
+
+            ReportAccelerationLimit report = new ReportAccelerationLimit();
+            report.SetDestination(message.GetSource());
+            report.SetSource(message.GetDestination());
+
+            //Set requested data
+            if (message.IsFieldSet(QueryAccelerationLimit.ACCELERATION_X_BIT))
+                report.AccelerationX = accelerationX;
+            if (message.IsFieldSet(QueryAccelerationLimit.ACCELERATION_Y_BIT))
+                report.AccelerationY = accelerationY;
+            if (message.IsFieldSet(QueryAccelerationLimit.ACCELERATION_Z_BIT))
+                report.AccelerationZ = accelerationZ;
+            if (message.IsFieldSet(QueryAccelerationLimit.ROLL_ACCELERATION_BIT))
+                report.RollAcceleration = rollAcceleration;
+            if (message.IsFieldSet(QueryAccelerationLimit.PITCH_ACCELERATION_BIT))
+                report.PitchAcceleration = pitchAcceleration;
+            if (message.IsFieldSet(QueryAccelerationLimit.YAW_ACCELERATION_BIT))
+                report.YawAcceleration = yawAcceleration;
+
+
+            //Send response
+            Transport.SendMessage(report);
+
+            return true;
+        }
+
+        protected bool HandleSetAccelerationLimit(Message message, Component component)
+        {
+            if (!component.IsController(message.GetSource()))
+                return true;
+
+            setAccelerationLimit.SetFromJausMessage(message);
+
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.ACCELERATION_X_BIT))
+                accelerationX = setAccelerationLimit.AccelerationX;
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.ACCELERATION_Y_BIT))
+                accelerationY = setAccelerationLimit.AccelerationY;
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.ACCELERATION_Z_BIT))
+                accelerationZ = setAccelerationLimit.AccelerationZ;
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.ROLL_ACCELERATION_BIT))
+                rollAcceleration = setAccelerationLimit.RollAcceleration;
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.PITCH_ACCELERATION_BIT))
+                pitchAcceleration = setAccelerationLimit.PitchAcceleration;
+            if (setAccelerationLimit.IsFieldSet(QueryAccelerationLimit.YAW_ACCELERATION_BIT))
+                yawAcceleration = setAccelerationLimit.YawAcceleration;
 
             return true;
         }
