@@ -30,9 +30,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BadgerJaus.Messages.primitivepantilt
+namespace BadgerJaus.Messages.PrimitivePanTilt
 {
-    class SetPanTiltJointEffort : ReportPanTiltJointEffort
+    public class SetPanTiltJointEffort : ReportPanTiltJointEffort
     {
         protected override int CommandCode
         {

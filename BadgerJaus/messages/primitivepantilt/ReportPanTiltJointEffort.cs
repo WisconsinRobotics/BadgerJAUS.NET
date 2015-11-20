@@ -31,12 +31,12 @@ using System.Text;
 using System.Threading.Tasks;
 using BadgerJaus.Util;
 
-namespace BadgerJaus.Messages.primitivepantilt
+namespace BadgerJaus.Messages.PrimitivePanTilt
 {
     public class ReportPanTiltJointEffort : QueryPanTiltJointEffort
     {
-        JausUnsignedInteger Joint1Effort;
-        JausUnsignedInteger Joint2Effort;
+        JausUnsignedShort Joint1Effort;
+        JausUnsignedShort Joint2Effort;
 
         public const int LOWER_LIMIT = -100;
         public const int UPPER_LIMIT = 100;
@@ -48,18 +48,18 @@ namespace BadgerJaus.Messages.primitivepantilt
 
         protected override void InitFieldData()
         {
-            Joint1Effort = new JausUnsignedInteger();
-            Joint2Effort = new JausUnsignedInteger();
+            Joint1Effort = new JausUnsignedShort();
+            Joint2Effort = new JausUnsignedShort();
         }
 
         public void setJoint1Effort(double joint1)
         {
-            Joint1Effort.setFromDouble(joint1, LOWER_LIMIT, UPPER_LIMIT);
+            Joint1Effort.SetValueFromDouble(joint1, LOWER_LIMIT, UPPER_LIMIT);
         }
 
         public void setJoint2Effort(double joint2)
         {
-            Joint2Effort.setFromDouble(joint2, LOWER_LIMIT, UPPER_LIMIT);
+            Joint2Effort.SetValueFromDouble(joint2, LOWER_LIMIT, UPPER_LIMIT);
         }
 
         public double getJoint1Effort()
@@ -74,7 +74,7 @@ namespace BadgerJaus.Messages.primitivepantilt
 
         public override int GetPayloadSize()
         {
-            return JausBaseType.INT_BYTE_SIZE * 2;
+            return JausBaseType.SHORT_BYTE_SIZE * 2;
         }
 
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)

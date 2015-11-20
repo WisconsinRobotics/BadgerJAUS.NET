@@ -30,7 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BadgerJaus.Messages.primitivepantilt
+namespace BadgerJaus.Messages.PrimitivePanTilt
 {
     public class QueryPanTiltJointEffort : Message
     {
