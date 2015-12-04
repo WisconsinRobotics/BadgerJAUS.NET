@@ -84,6 +84,7 @@ namespace BadgerJaus.Messages
         public const int SET_END_EFFECTOR_PATH_MOTION = 0x0608;
         public const int SET_END_EFFECTOR_POSE = 0x0610;
         public const int SET_PAN_TILT_JOINT_EFFORT = 0x0621;
+        public const int SET_PAN_TILT_JOINT_VELOCITY = 0x0623;
         public const int SET_CAMERA_POSE = 0x0801;
         public const int SELECT_CAMERA = 0x0802;
         public const int SET_CAMERA_CAPABILITIES = 0x0805;
@@ -133,6 +134,8 @@ namespace BadgerJaus.Messages
         public const int QUERY_COMMANDED_END_EFFECTOR_POSE = 0x2610;
         public const int QUERY_END_EFFECTOR_POSE = 0x2615;
         public const int QUERY_PAN_TILT_JOINT_EFFORT = 0x2621;
+        public const int QUERY_PAN_TILT_JOINT_VELOCITY = 0x2623;
+        public const int QUERY_COMMANDED_PAN_TILT_JOINT_VELOCITY = 0x2631;
         public const int QUERY_CAMERA_POSE = 0x2800;
         public const int QUERY_CAMERA_COUNT = 0x2801;
         public const int QUERY_RELATIVE_OBJECT_POSITION = 0x2802;
@@ -188,6 +191,8 @@ namespace BadgerJaus.Messages
         public const int REPORT_COMMANDED_END_EFFECTOR_POSE = 0x4610;
         public const int REPORT_END_EFFECTOR_POSE = 0x4615;
         public const int REPORT_PAN_TILT_JOINT_EFFORT = 0x4621;
+        public const int REPORT_PAN_TILT_JOINT_VELOCITY = 0x4623;
+        public const int REPORT_COMMANDED_PAN_TILT_JOINT_VELOCITY = 0x4631;
         public const int REPORT_CAMERA_POSE = 0x4800;
         public const int REPORT_CAMERA_COUNT = 0x4801;
         public const int REPORT_RELATIVE_OBJECT_POSITION = 0x4802;

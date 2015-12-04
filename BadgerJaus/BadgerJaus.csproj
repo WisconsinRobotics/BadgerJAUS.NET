@@ -95,6 +95,11 @@
     <Compile Include="messages\jointvelocity\QueryJointVelocity.cs" />
     <Compile Include="messages\jointvelocity\ReportJointVelocity.cs" />
     <Compile Include="messages\jointvelocity\SetJointVelocity.cs" />
+    <Compile Include="messages\pantiltjointvelocitydriver\SetPanTiltJointVelocity.cs" />
+    <Compile Include="messages\pantiltjointvelocitydriver\ReportCommandedPanTiltJointVelocity.cs" />
+    <Compile Include="messages\pantiltjointvelocitydriver\QueryCommandedPanTiltJointVelocity.cs" />
+    <Compile Include="messages\pantiltjointvelocitysensor\QueryPanTiltJointVelocity.cs" />
+    <Compile Include="messages\pantiltjointvelocitysensor\ReportPanTiltJointVelocity.cs" />
     <Compile Include="messages\primitivemanipulator\QueryJointEffort.cs" />
     <Compile Include="messages\jointpositionsdriver\QueryJointPosition.cs" />
     <Compile Include="messages\primitivemanipulator\ReportJointEffort.cs" />
