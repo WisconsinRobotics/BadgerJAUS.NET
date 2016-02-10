@@ -156,17 +156,17 @@ namespace BadgerJaus.Services.Mobility
 
             //Set requested data
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_X_BIT))
-                report.VelocityX = velocityX;
+                report.VelocityX = reportVelocityX;
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Y_BIT))
-                report.VelocityY = velocityY;
+                report.VelocityY = reportVelocityY;
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Z_BIT))
-                report.VelocityZ = velocityZ;
+                report.VelocityZ = reportVelocityZ;
             if (message.IsFieldSet(QueryVelocityCommand.ROLL_RATE_BIT))
-                report.RollRate = rollRate;
+                report.RollRate = reportRollRate;
             if (message.IsFieldSet(QueryVelocityCommand.PITCH_RATE_BIT))
-                report.PitchRate = pitchRate;
+                report.PitchRate = reportPitchRate;
             if (message.IsFieldSet(QueryVelocityCommand.YAW_RATE_BIT))
-                report.YawRate = yawRate;
+                report.YawRate = reportYawRate;
 
 
             //Send response
