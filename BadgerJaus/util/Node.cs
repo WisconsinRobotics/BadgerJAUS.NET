@@ -32,23 +32,23 @@ namespace BadgerJaus.Util
 {
     public class Node
     {
-        private List<Component> componentList;
+        private Dictionary<long, Component> componentList;
         private JausByte nodeID;
         private Subsystem jausSubsystem;
 
         public Node(int nodeID)
         {
-            componentList = new List<Component>();
+            componentList = new Dictionary<long, Component>();
             this.nodeID = new JausByte(nodeID);
         }
 
         public void AddComponent(Component component)
         {
-            componentList.Add(component);
+            componentList.Add(component.ComponentID, component);
             component.SetNode(this);
         }
 
-        public List<Component> ComponentList
+        public Dictionary<long, Component> ComponentList
         {
             get { return componentList; }
         }
@@ -64,7 +64,7 @@ namespace BadgerJaus.Util
             JausByte componentCount = new JausByte(componentList.Count);
             indexOffset = index;
             componentCount.Serialize(buffer, indexOffset, out indexOffset);
-            foreach (Component component in componentList)
+            foreach (Component component in componentList.Values)
             {
                 component.Serialize(buffer, indexOffset, out indexOffset, getServices);
             }
@@ -75,7 +75,7 @@ namespace BadgerJaus.Util
         public int GetPayloadSize()
         {
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;
-            foreach (Component component in componentList)
+            foreach (Component component in componentList.Values)
             {
                 totalSize += component.GetPayloadSize();
             }
@@ -90,7 +90,7 @@ namespace BadgerJaus.Util
 
             int subsystemID = subsystem.SubsystemID;
             jausSubsystem = subsystem;
-            foreach (Component component in componentList)
+            foreach (Component component in componentList.Values)
             {
                 component.SetSubsystemAddress(subsystemID);
             }
@@ -99,6 +99,21 @@ namespace BadgerJaus.Util
         public Subsystem GetSubsystem()
         {
             return jausSubsystem;
+        }
+
+        public void UpdateComponents(Dictionary<long, Component> updatedList)
+        {
+            foreach(KeyValuePair<long, Component> entry in updatedList)
+            {
+                Component existingComponent;
+                if(!componentList.TryGetValue(entry.Key, out existingComponent))
+                {
+                    componentList.Add(entry.Key, entry.Value);
+                    continue;
+                }
+
+                existingComponent.Services = entry.Value.Services;
+            }
         }
     }
 }

@@ -613,13 +613,13 @@ namespace BadgerJaus.Messages
             indexOffset += 1;
             buffer[indexOffset] = (byte)destination.getNode();		// Destination node	
             indexOffset += 1;
-            new JausUnsignedShort(destination.getSubsystem()).Serialize(buffer, indexOffset, out indexOffset);
+            new JausUnsignedShort(destination.SubsystemID).Serialize(buffer, indexOffset, out indexOffset);
 
             buffer[indexOffset] = (byte)source.getComponent();		// Source component
             indexOffset += 1;
             buffer[indexOffset] = (byte)source.getNode();				// Source node
             indexOffset += 1;
-            new JausUnsignedShort(source.getSubsystem()).Serialize(buffer, indexOffset, out indexOffset);
+            new JausUnsignedShort(source.SubsystemID).Serialize(buffer, indexOffset, out indexOffset);
 
             return true;
         }

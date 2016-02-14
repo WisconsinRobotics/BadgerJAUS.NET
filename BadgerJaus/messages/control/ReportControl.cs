@@ -69,7 +69,7 @@ namespace BadgerJaus.Messages.Control
 
         public void SetController(JausAddress controller)
         {
-            this.controller.setSubsystem(controller.getSubsystem());
+            this.controller.setSubsystem(controller.SubsystemID);
             this.controller.setNode(controller.getNode());
             this.controller.setComponent(controller.getComponent());
         }

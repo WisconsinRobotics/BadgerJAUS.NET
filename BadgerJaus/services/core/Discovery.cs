@@ -26,7 +26,9 @@
  */
 using System;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 
 using BadgerJaus.Messages;
 using BadgerJaus.Messages.Discovery;
@@ -49,6 +51,7 @@ namespace BadgerJaus.Services.Core
         ReportServices reportServices;
 
         Subsystem subsystem = null;
+        ConcurrentDictionary<long, Subsystem> discoveredSubsystems;
 
         DiscoveryState clientDiscoveryState;
         DiscoveryState serverDiscoveryState;
@@ -60,8 +63,10 @@ namespace BadgerJaus.Services.Core
 
         public static Discovery CreateDiscoveryInstance(Subsystem subsystem)
         {
+            Monitor.Enter(discoveryService);
             if (discoveryService == null)
                 discoveryService = new Discovery(subsystem);
+            Monitor.Exit(discoveryService);
 
             return discoveryService;
         }
@@ -75,6 +80,7 @@ namespace BadgerJaus.Services.Core
         {
             this.subsystem = subsystem;
             clientDiscoveryState = DiscoveryState.BROADCAST_STATE;
+            discoveredSubsystems = new ConcurrentDictionary<long, Subsystem>();
             performDiscovery = false;
         }
 
@@ -96,11 +102,20 @@ namespace BadgerJaus.Services.Core
         {
             switch (message.GetCommandCode())
             {
+                case JausCommandCode.QUERY_IDENTIFICATION:
+                    ReportIdentification reportIdentification = new ReportIdentification();
+                    reportIdentification.SetSource(subsystem.SubsystemID);
+                    reportIdentification.SetDestination(message.GetSource());
+                    reportIdentification.Identification = subsystem.Identification;
+                    Transport.SendMessage(reportIdentification);
+                    return true;
                 case JausCommandCode.QUERY_SERVICES:
                     queryServices.SetFromJausMessage(message);
                     return HandleQueryServices(queryServices);
                 case JausCommandCode.REPORT_IDENTIFICATION:
                     return HandleReportIdentification(message);
+                case JausCommandCode.REPORT_SERVICES:
+                    return HandleReportServices(message);
                 default:
                     return false;
             }
@@ -136,16 +151,21 @@ namespace BadgerJaus.Services.Core
 
         private bool HandleReportIdentification(Message message)
         {
-            //discoveryState = DiscoveryState.STATE_READY;
-            //JausAddress address = message.getSource();
-            //Transport.AddReceiver(address.toString());
+            int remoteSubsystemID = message.GetSource().SubsystemID;
+            Subsystem remoteSubsystem;
+            ReportIdentification reportIdentification = new ReportIdentification();
+            reportIdentification.SetFromJausMessage(message);
+
+            discoveredSubsystems.TryGetValue(remoteSubsystemID, out remoteSubsystem);
+            remoteSubsystem.Identification = reportIdentification.Identification;
+
             return true;
         }
 
         private bool HandleQueryServices(QueryServices message)
         {
             List<Node> queryNodes;
-            List<Node> subsystemNodes = subsystem.NodeList;
+            Dictionary<long, Node> subsystemNodes = subsystem.NodeList;
             reportServices = new ReportServices();
 
             queryNodes = message.NodeList;
@@ -164,6 +184,29 @@ namespace BadgerJaus.Services.Core
             Transport.SendMessage(reportServices);
 
             return true;
+        }
+
+        private bool HandleReportServices(Message message)
+        {
+            int remoteSubsystemID = message.GetSource().SubsystemID;
+            Subsystem remoteSubsystem;
+            ReportServices reportServices = new ReportServices();
+
+            reportServices.SetFromJausMessage(message);
+            discoveredSubsystems.TryGetValue(remoteSubsystemID, out remoteSubsystem);
+            remoteSubsystem.UpdateNodList(reportServices.NodeList);
+
+            return true;
+        }
+
+        public ConcurrentDictionary<long, Subsystem> DiscoveredSubsystems
+        {
+            get { return discoveredSubsystems; }
+        }
+
+        public void AddRemoteSubsystem(long remoteSubsystemID, Subsystem remoteSubsystem)
+        {
+            discoveredSubsystems.AddOrUpdate(remoteSubsystemID, remoteSubsystem, (key, oldValue) => remoteSubsystem);
         }
     }
 }

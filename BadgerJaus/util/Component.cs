@@ -65,8 +65,6 @@ namespace BadgerJaus.Util
         JausAddress controller;
         int authorityCode;
 
-        List<DiscoveredService> discoveredServices;
-
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
@@ -94,9 +92,10 @@ namespace BadgerJaus.Util
             serviceList.Add(service);
         }
 
-        public IEnumerable<Service> GetServices()
+        public List<Service> Services
         {
-            return Enumerable.AsEnumerable<Service>(serviceList);
+            get { return serviceList; }
+            set { serviceList = value; }
         }
 
         public ControlState ControlState
@@ -154,8 +153,6 @@ namespace BadgerJaus.Util
             DiscoveredService discoveredService;
             int serviceIndex;
             indexOffset = index;
-            if (discoveredServices == null)
-                discoveredServices = new List<DiscoveredService>();
 
             serviceCount.Deserialize(buffer, indexOffset, out indexOffset);
 
@@ -177,7 +174,7 @@ namespace BadgerJaus.Util
                 discoveredService.MajorVersion = (int)majorVersion.Value;
                 minorVersion.Deserialize(buffer, indexOffset, out indexOffset);
                 discoveredService.MinorVersion = (int)minorVersion.Value;
-                discoveredServices.Add(discoveredService);
+                serviceList.Add(discoveredService);
             }
 
             return true;
@@ -227,11 +224,6 @@ namespace BadgerJaus.Util
         public bool IsController(JausAddress address)
         {
             return address == controller;
-        }
-
-        public List<DiscoveredService> DiscoveredServices
-        {
-            get { return discoveredServices; }
         }
     }
 }

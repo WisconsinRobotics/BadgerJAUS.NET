@@ -151,6 +151,7 @@
     <Compile Include="util\JausElement.cs" />
     <Compile Include="util\JausServiceSignature.cs" />
     <Compile Include="util\JausShortPresenceVector.cs" />
+    <Compile Include="util\JausSubsystem.cs" />
     <Compile Include="util\JausTimeStamp.cs" />
     <Compile Include="util\JausType.cs" />
     <Compile Include="util\JausUnsignedInteger.cs" />

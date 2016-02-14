@@ -38,37 +38,27 @@ using BadgerJaus.Services.Core;
 
 namespace BadgerJaus.Util
 {
-    public abstract class Subsystem
+    public class Subsystem
     {
-        private JausUnsignedShort subsystemID;
-        private List<Node> nodeList = null;
+        protected JausUnsignedShort subsystemID;
+        protected Dictionary<long, Node> nodeList = null;
+        protected IPEndPoint networkAddress = null;
+        protected string identification;
 
-        protected const int JAUS_PORT = 3974;
+        public const int JAUS_PORT = 3974;
 
-        private UdpClient udpClient;
-        protected ConcurrentDictionary<long, IPEndPoint> jausAddrMap;
-        private System.Timers.Timer timer;
-
-        protected static Transport transportService;
-        //protected static Event eventService --not yet implemented
-        protected static AccessControl accessControlService;
-        protected static Management managementService;
-        //protected static Time timeService --not yet implemented
-        protected static Liveness livenessService;
-        protected static Discovery discoveryService;
-
-        public Subsystem(int subsystemID, int port = JAUS_PORT)
+        public Subsystem(int subsystemID, int port)
         {
-            nodeList = new List<Node>();
+            nodeList = new Dictionary<long, Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
-            udpClient = new UdpClient(port);
-            jausAddrMap = new ConcurrentDictionary<long, IPEndPoint>();
-            transportService = Transport.CreateTransportInstance(udpClient, jausAddrMap);
-            accessControlService = AccessControl.CreateAccessControlInstance();
-            managementService = Management.CreateManagementInstance();
-            livenessService = Liveness.CreateLivenessInstance();
-            discoveryService = Discovery.CreateDiscoveryInstance(this);
-            transportService.AddSubsystem(this);
+            networkAddress = new IPEndPoint(IPAddress.Any, port);
+        }
+
+        public Subsystem(int subSystemID, IPEndPoint networkAddress)
+        {
+            nodeList = new Dictionary<long, Node>();
+            this.subsystemID = new JausUnsignedShort(subsystemID);
+            this.networkAddress = new IPEndPoint(networkAddress.Address, networkAddress.Port);
         }
 
         public int SubsystemID
@@ -82,58 +72,38 @@ namespace BadgerJaus.Util
             if (node == null)
                 return;
 
-            nodeList.Add(node);
+            nodeList.Add(node.NodeID, node);
             node.SetSubsystem(this);
         }
 
-        public List<Node> NodeList
+        public Dictionary<long, Node> NodeList
         {
             get { return nodeList; }
         }
 
-        public void InitializeTimer()
+        public IPEndPoint NetworkAddress
         {
-            long lowestSleepTime = 5000;
-            Thread transportThread = new Thread(transportService.run);
-            transportThread.Start();
-
-            foreach (Node node in nodeList)
-            {
-                foreach (Component component in node.ComponentList)
-                {
-                    foreach (BaseService service in component.GetServices())
-                    {
-                        if (service.SleepTime < lowestSleepTime)
-                            lowestSleepTime = service.SleepTime;
-                    }
-                }
-            }
-
-            timer = new System.Timers.Timer(lowestSleepTime);
-            timer.AutoReset = true;
-            timer.Elapsed += Execute;
-            timer.Enabled = true;
+            get { return networkAddress; }
         }
 
-        private void Execute(Object source, ElapsedEventArgs e)
+        public string Identification
         {
-            bool firstComponent = true;
-            
-            foreach (Node node in nodeList)
+            get { return identification; }
+            set { identification = value; }
+        }
+
+        public void UpdateNodList(Dictionary<long, Node> updatedList)
+        {
+            foreach(KeyValuePair<long, Node> entry in updatedList)
             {
-                foreach (Component component in node.ComponentList)
+                Node existingNode;
+                if(!nodeList.TryGetValue(entry.Key, out existingNode))
                 {
-                    if (firstComponent)
-                    {
-                        firstComponent = false;
-                        livenessService.ExecuteOnTime(component);
-                        discoveryService.ExecuteOnTime(component);
-                    }
-                    foreach (BaseService service in component.GetServices())
-                    {
-                        service.ExecuteOnTime(component);
-                    }
+                    nodeList.Add(entry.Key, entry.Value);
+                    continue;
                 }
+
+                existingNode.UpdateComponents(entry.Value.ComponentList);
             }
         }
     }

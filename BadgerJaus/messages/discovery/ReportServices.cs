@@ -33,7 +33,7 @@ namespace BadgerJaus.Messages.Discovery
 {
     public class ReportServices : Message
     {
-        List<Node> nodeList;
+        Dictionary<long, Node> nodeList;
 
         protected override int CommandCode
         {
@@ -46,7 +46,7 @@ namespace BadgerJaus.Messages.Discovery
             if (nodeList.Count == 0)
                 return 0;
             payloadSize += JausBaseType.BYTE_BYTE_SIZE;
-            foreach(Node node in NodeList)
+            foreach(Node node in nodeList.Values)
             {
                 payloadSize += node.GetPayloadSize();
             }
@@ -60,7 +60,7 @@ namespace BadgerJaus.Messages.Discovery
             indexOffset = index;
             nodeCount.Value = nodeList.Count;
             nodeCount.Serialize(buffer, indexOffset, out indexOffset);
-            foreach (Node node in NodeList)
+            foreach (Node node in nodeList.Values)
             {
                 if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset))
                     return false;
@@ -96,7 +96,7 @@ namespace BadgerJaus.Messages.Discovery
             return str;
         }
 
-        public List<Node> NodeList
+        public Dictionary<long, Node> NodeList
         {
             get { return nodeList; }
             set { nodeList = value; }

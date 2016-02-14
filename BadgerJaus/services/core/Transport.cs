@@ -50,15 +50,15 @@ namespace BadgerJaus.Services.Core
         private static ReceiveThread receiveThread;
         private static BlockingCollection<Message> sendMessageQueue;
         private static BlockingCollection<ReceivedPacket> receivedMessageQueue;
-        private static ConcurrentDictionary<long, IPEndPoint> sendAddrs;
+
+        private UdpClient udpSocket;
 
         private LinkedList<Subsystem> subsystems = null;
 
-        public static Transport CreateTransportInstance(UdpClient socket, ConcurrentDictionary<long, IPEndPoint> jausAddrMap)
+        public static Transport CreateTransportInstance(Subsystem parentSubsystem)
         {
             if (transportService == null)
-                transportService = new Transport(socket, jausAddrMap);
-
+                transportService = new Transport(parentSubsystem);
             return transportService;
         }
 
@@ -67,19 +67,15 @@ namespace BadgerJaus.Services.Core
             return transportService;
         }
 
-        private Transport(UdpClient socket, ConcurrentDictionary<long, IPEndPoint> jausAddrMap)
+        private Transport(Subsystem parentSubsystem)
         {
+            udpSocket = new UdpClient(parentSubsystem.NetworkAddress.Port);
             sendMessageQueue = new BlockingCollection<Message>();
             receivedMessageQueue = new BlockingCollection<ReceivedPacket>();
-            sendThread = new SendThread(sendMessageQueue, jausAddrMap, socket);
-            receiveThread = new ReceiveThread(receivedMessageQueue, socket);
-            sendAddrs = jausAddrMap;
+            sendThread = new SendThread(sendMessageQueue, parentSubsystem, udpSocket);
+            receiveThread = new ReceiveThread(receivedMessageQueue, udpSocket);
             subsystems = new LinkedList<Subsystem>();
-        }
-
-        public void AddRemoteAddress(long hostAddress, IPEndPoint ipEndpoint)
-        {
-            sendAddrs.AddOrUpdate(hostAddress, ipEndpoint, (key, oldValue) => ipEndpoint);
+            subsystems.AddLast(parentSubsystem);
         }
 
         public void AddSubsystem(Subsystem subsystem)
@@ -115,6 +111,8 @@ namespace BadgerJaus.Services.Core
             byte[] buffer;
             Thread sendThreadT = new Thread(Transport.sendThread.run);
             Thread receiveThreadT = new Thread(Transport.receiveThread.run);
+            Discovery discoveryService = Discovery.GetInstance();
+            ConcurrentDictionary<long, Subsystem> discoveredSubsystems = discoveryService.DiscoveredSubsystems;
 
             sendThreadT.Start();
             receiveThreadT.Start();
@@ -129,17 +127,21 @@ namespace BadgerJaus.Services.Core
                     message.SetFromJausUdpBuffer(buffer);
                     long from = message.GetSource().Value;
                     JausAddress destination = message.GetDestination();
-                    if (!sendAddrs.ContainsKey(from))
+                    int sourceSubsystemID = message.GetSource().SubsystemID;
+                    Subsystem remoteSubsystem;
+
+                    if (!discoveredSubsystems.TryGetValue(sourceSubsystemID, out remoteSubsystem))
                     {
-                        sendAddrs.TryAdd(from, receivedPacket.SourceAddr);
+                        remoteSubsystem = new Subsystem(sourceSubsystemID, receivedPacket.SourceAddr);
+                        discoveredSubsystems.TryAdd(sourceSubsystemID, remoteSubsystem);
                     }
 
                     foreach (Subsystem subsystem in subsystems)
                     {
-                        if (subsystem.SubsystemID != destination.getSubsystem())
+                        if (subsystem.SubsystemID != destination.SubsystemID)
                             continue;
 
-                        foreach (Node node in subsystem.NodeList)
+                        foreach (Node node in subsystem.NodeList.Values)
                         {
                             if (node.ComponentList.Count == 0)
                                 continue;
@@ -147,7 +149,7 @@ namespace BadgerJaus.Services.Core
                             if (node.NodeID != destination.getNode())
                                 continue;
 
-                            foreach (Component component in node.ComponentList)
+                            foreach (Component component in node.ComponentList.Values)
                             {
                                 if (component.ComponentID != destination.getComponent())
                                     continue;
@@ -156,7 +158,7 @@ namespace BadgerJaus.Services.Core
                                 AccessControl.GetInstance().ImplementsAndHandledMessage(message, component);
                                 Management.GetInstance().ImplementsAndHandledMessage(message, component);
 
-                                foreach (Service service in component.GetServices())
+                                foreach (Service service in component.Services)
                                 {
                                     if (service.ImplementsAndHandledMessage(message, component))
                                     {

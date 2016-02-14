@@ -138,9 +138,9 @@ namespace BadgerJaus.Util
          * 
          * @see #setSubsystem(int)
          */
-        public int getSubsystem()
+        public int SubsystemID
         {
-            return (int)value >> SUBSYSTEM_BIT_POSITION;
+            get { return (int)value >> SUBSYSTEM_BIT_POSITION; }
         }
 
         /**
@@ -231,7 +231,7 @@ namespace BadgerJaus.Util
         {
             if (this.getComponent() != INVALID_COMPONENT && this.getComponent() != BROADCAST_COMPONENT &&
                  this.getNode() != INVALID_NODE && this.getNode() != BROADCAST_NODE &&
-                 this.getSubsystem() != 0 && this.getSubsystem() != BROADCAST_SUBSYSTEM)
+                 this.SubsystemID != 0 && this.SubsystemID != BROADCAST_SUBSYSTEM)
             {
                 return true;
             }
@@ -245,7 +245,7 @@ namespace BadgerJaus.Util
         {
             return (new JausByte(this.getComponent())).toHexString() +
             " " + (new JausByte(this.getNode())).toHexString() +
-            " " + (new JausUnsignedShort(this.getSubsystem())).toHexString();
+            " " + (new JausUnsignedShort(this.SubsystemID)).toHexString();
         }
 
         public int size()
@@ -255,7 +255,7 @@ namespace BadgerJaus.Util
 
         public override string ToString()
         {
-            return "" + getSubsystem() + "." + getNode() + "." + getComponent();
+            return "" + SubsystemID + "." + getNode() + "." + getComponent();
         }
 
         public static String IDToHexString(int id)

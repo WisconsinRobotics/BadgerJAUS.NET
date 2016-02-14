@@ -40,26 +40,30 @@ namespace BadgerJaus.Services.Core
     public class SendThread
     {
         BlockingCollection<Message> sendMessage = null;
-        ConcurrentDictionary<long, IPEndPoint> jausAddrMap = null;
+        ConcurrentDictionary<long, Subsystem> jausAddrMap = null;
         UdpClient socket = null;
         int maxJausRecvSize = Message.UDP_MAX_PACKET_SIZE + 100; // (100 = buffer)
         short sequenceNumber = 0;
+        Subsystem parentSubsystem;
 
-        public SendThread(BlockingCollection<Message> sendMessage, ConcurrentDictionary<long, IPEndPoint> jausAddrMap, UdpClient socket)
+        public SendThread(BlockingCollection<Message> sendMessage, Subsystem parentSubsystem, UdpClient socket)
         {
             this.sendMessage = sendMessage;
-            this.jausAddrMap = jausAddrMap;
             this.socket = socket;
+            this.parentSubsystem = parentSubsystem;
         }
 
         public void run()
         {
             // TODO Auto-generated method stub
-            IPEndPoint currentDest = null;
             if (sendMessage == null) return;
-            if (jausAddrMap == null) return;
+            if (jausAddrMap == null)
+            {
+                jausAddrMap = Discovery.GetInstance().DiscoveredSubsystems;
+            }
             if (socket == null) return;
             IPEndPoint dest = null;
+            Subsystem targetSubsystem;
             byte[] sendbuffer = new byte[maxJausRecvSize];
             int indexOffset;
 
@@ -89,26 +93,16 @@ namespace BadgerJaus.Services.Core
                     continue;
                 }
 
-                jausAddrMap.TryGetValue(message.GetDestination().Value, out dest);
+                jausAddrMap.TryGetValue(message.GetDestination().SubsystemID, out targetSubsystem);
 
-                if (dest == null)
+                if (targetSubsystem == null)
                 {
                     Console.Error.WriteLine("Error: this address is not recognized: ");
                     Console.Error.WriteLine(message.GetDestination().toHexString());
                     continue;
                 }
 
-                if (currentDest == null || currentDest != dest)
-                {
-                    //System.Net.IPEndPoint endPoint = new System.Net.IPEndPoint(dest.ipAddr, dest.port);
-                    socket.Connect(dest);
-                }
-                else if (currentDest != dest)
-                {
-                    socket.Close();
-                    socket.Connect(dest);
-                }
-                currentDest = dest;
+                dest = targetSubsystem.NetworkAddress;
 
                 if (!message.ToJausUdpBuffer(sendbuffer, out indexOffset))
                 {
@@ -117,7 +111,7 @@ namespace BadgerJaus.Services.Core
 
                 try
                 {
-                    socket.Send(sendbuffer, message.UdpSize());
+                    socket.Send(sendbuffer, message.UdpSize(), dest);
 
                 }
                 catch (IOException e)
