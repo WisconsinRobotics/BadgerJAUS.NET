@@ -106,5 +106,10 @@ namespace BadgerJaus.Util
                 existingNode.UpdateComponents(entry.Value.ComponentList);
             }
         }
+
+        public override string ToString()
+        {
+            return identification;
+        }
     }
 }

@@ -40,7 +40,6 @@ namespace BadgerJaus.Util
 {
     public abstract class JausSubsystem : Subsystem
     {
-        private UdpClient udpClient;
         protected ConcurrentDictionary<long, IPEndPoint> jausAddrMap;
         private System.Timers.Timer timer;
 
@@ -54,7 +53,6 @@ namespace BadgerJaus.Util
 
         public JausSubsystem(int subsystemID, string identification, int port = JAUS_PORT) : base(subsystemID, port)
         {
-            udpClient = new UdpClient(port);
             jausAddrMap = new ConcurrentDictionary<long, IPEndPoint>();
             transportService = Transport.CreateTransportInstance(this);
             accessControlService = AccessControl.CreateAccessControlInstance();

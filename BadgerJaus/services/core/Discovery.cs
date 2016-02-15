@@ -44,7 +44,7 @@ namespace BadgerJaus.Services.Core
         public const String SERVICE_ID = "urn:jaus:jss:core:Discovery";
         public const String PARENT_SERVICE = "Events";
         // Discovery Service States
-        public enum DiscoveryState { BROADCAST_STATE, SERVICE_STATE, CONFIGURATION_STATE };
+        public enum DiscoveryState { IDLE_STATE, BROADCAST_STATE, SERVICE_STATE, CONFIGURATION_STATE };
 
         QueryIdentification qID = new QueryIdentification();
         QueryServices queryServices = new QueryServices();
@@ -63,10 +63,8 @@ namespace BadgerJaus.Services.Core
 
         public static Discovery CreateDiscoveryInstance(Subsystem subsystem)
         {
-            Monitor.Enter(discoveryService);
             if (discoveryService == null)
                 discoveryService = new Discovery(subsystem);
-            Monitor.Exit(discoveryService);
 
             return discoveryService;
         }
@@ -79,7 +77,7 @@ namespace BadgerJaus.Services.Core
         private Discovery(Subsystem subsystem)
         {
             this.subsystem = subsystem;
-            clientDiscoveryState = DiscoveryState.BROADCAST_STATE;
+            clientDiscoveryState = DiscoveryState.IDLE_STATE;
             discoveredSubsystems = new ConcurrentDictionary<long, Subsystem>();
             performDiscovery = false;
         }
@@ -153,11 +151,25 @@ namespace BadgerJaus.Services.Core
         {
             int remoteSubsystemID = message.GetSource().SubsystemID;
             Subsystem remoteSubsystem;
+            QueryServices queryServices;
+            JausAddress remoteAddress;
+            Node remoteNode;
+            Component remoteComponent;
             ReportIdentification reportIdentification = new ReportIdentification();
             reportIdentification.SetFromJausMessage(message);
 
             discoveredSubsystems.TryGetValue(remoteSubsystemID, out remoteSubsystem);
             remoteSubsystem.Identification = reportIdentification.Identification;
+            queryServices = new QueryServices();
+            remoteAddress = new JausAddress(remoteSubsystemID, 255, 255);
+            queryServices.SetDestination(remoteAddress);
+            queryServices.SetSource(reportIdentification.GetDestination());
+            remoteNode = new Node(255);
+            remoteComponent = new Component(255);
+            remoteNode.AddComponent(remoteComponent);
+            queryServices.AddNode(remoteNode);
+
+            Transport.SendMessage(queryServices);
 
             return true;
         }
@@ -207,6 +219,11 @@ namespace BadgerJaus.Services.Core
         public void AddRemoteSubsystem(long remoteSubsystemID, Subsystem remoteSubsystem)
         {
             discoveredSubsystems.AddOrUpdate(remoteSubsystemID, remoteSubsystem, (key, oldValue) => remoteSubsystem);
+        }
+
+        public void SetDiscoveryState(DiscoveryState state)
+        {
+            clientDiscoveryState = state;
         }
     }
 }
