@@ -69,9 +69,9 @@ namespace BadgerJaus.Util
             Thread transportThread = new Thread(transportService.run);
             transportThread.Start();
 
-            foreach (Node node in nodeList.Values)
+            foreach (Node node in nodeDictionary.Values)
             {
-                foreach (Component component in node.ComponentList.Values)
+                foreach (Component component in node.ComponentDictionary.Values)
                 {
                     foreach (BaseService service in component.Services)
                     {
@@ -91,9 +91,9 @@ namespace BadgerJaus.Util
         {
             bool firstComponent = true;
 
-            foreach (Node node in nodeList.Values)
+            foreach (Node node in nodeDictionary.Values)
             {
-                foreach (Component component in node.ComponentList.Values)
+                foreach (Component component in node.ComponentDictionary.Values)
                 {
                     if (firstComponent)
                     {

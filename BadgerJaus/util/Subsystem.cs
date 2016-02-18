@@ -41,7 +41,7 @@ namespace BadgerJaus.Util
     public class Subsystem
     {
         protected JausUnsignedShort subsystemID;
-        protected Dictionary<long, Node> nodeList = null;
+        protected Dictionary<long, Node> nodeDictionary = null;
         protected IPEndPoint networkAddress = null;
         protected string identification;
 
@@ -49,14 +49,14 @@ namespace BadgerJaus.Util
 
         public Subsystem(int subsystemID, int port)
         {
-            nodeList = new Dictionary<long, Node>();
+            nodeDictionary = new Dictionary<long, Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             networkAddress = new IPEndPoint(IPAddress.Any, port);
         }
 
         public Subsystem(int subSystemID, IPEndPoint networkAddress)
         {
-            nodeList = new Dictionary<long, Node>();
+            nodeDictionary = new Dictionary<long, Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             this.networkAddress = new IPEndPoint(networkAddress.Address, networkAddress.Port);
         }
@@ -72,13 +72,18 @@ namespace BadgerJaus.Util
             if (node == null)
                 return;
 
-            nodeList.Add(node.NodeID, node);
+            nodeDictionary.Add(node.NodeID, node);
             node.SetSubsystem(this);
         }
 
-        public Dictionary<long, Node> NodeList
+        public Dictionary<long, Node> NodeDictionary
         {
-            get { return nodeList; }
+            get { return nodeDictionary; }
+        }
+
+        public IEnumerable<Node> NodeList
+        {
+            get { return nodeDictionary.Values; }
         }
 
         public IPEndPoint NetworkAddress
@@ -97,13 +102,13 @@ namespace BadgerJaus.Util
             foreach(KeyValuePair<long, Node> entry in updatedList)
             {
                 Node existingNode;
-                if(!nodeList.TryGetValue(entry.Key, out existingNode))
+                if(!nodeDictionary.TryGetValue(entry.Key, out existingNode))
                 {
-                    nodeList.Add(entry.Key, entry.Value);
+                    nodeDictionary.Add(entry.Key, entry.Value);
                     continue;
                 }
 
-                existingNode.UpdateComponents(entry.Value.ComponentList);
+                existingNode.UpdateComponents(entry.Value.ComponentDictionary);
             }
         }
 

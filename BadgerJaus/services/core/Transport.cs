@@ -141,15 +141,15 @@ namespace BadgerJaus.Services.Core
                         if (subsystem.SubsystemID != destination.SubsystemID)
                             continue;
 
-                        foreach (Node node in subsystem.NodeList.Values)
+                        foreach (Node node in subsystem.NodeDictionary.Values)
                         {
-                            if (node.ComponentList.Count == 0)
+                            if (node.ComponentDictionary.Count == 0)
                                 continue;
-                            Discovery.GetInstance().ImplementsAndHandledMessage(message, node.ComponentList[0]);
+                            Discovery.GetInstance().ImplementsAndHandledMessage(message, node.ComponentDictionary[0]);
                             if (node.NodeID != destination.getNode())
                                 continue;
 
-                            foreach (Component component in node.ComponentList.Values)
+                            foreach (Component component in node.ComponentDictionary.Values)
                             {
                                 if (component.ComponentID != destination.getComponent())
                                     continue;

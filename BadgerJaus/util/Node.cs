@@ -32,25 +32,30 @@ namespace BadgerJaus.Util
 {
     public class Node
     {
-        private Dictionary<long, Component> componentList;
+        private Dictionary<long, Component> componentDictionary;
         private JausByte nodeID;
         private Subsystem jausSubsystem;
 
         public Node(int nodeID)
         {
-            componentList = new Dictionary<long, Component>();
+            componentDictionary = new Dictionary<long, Component>();
             this.nodeID = new JausByte(nodeID);
         }
 
         public void AddComponent(Component component)
         {
-            componentList.Add(component.ComponentID, component);
+            componentDictionary.Add(component.ComponentID, component);
             component.SetNode(this);
         }
 
-        public Dictionary<long, Component> ComponentList
+        public Dictionary<long, Component> ComponentDictionary
         {
-            get { return componentList; }
+            get { return componentDictionary; }
+        }
+
+        public IEnumerable<Component> ComponentList
+        {
+            get { return componentDictionary.Values; }
         }
 
         public int NodeID
@@ -61,10 +66,10 @@ namespace BadgerJaus.Util
 
         public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
-            JausByte componentCount = new JausByte(componentList.Count);
+            JausByte componentCount = new JausByte(componentDictionary.Count);
             indexOffset = index;
             componentCount.Serialize(buffer, indexOffset, out indexOffset);
-            foreach (Component component in componentList.Values)
+            foreach (Component component in componentDictionary.Values)
             {
                 component.Serialize(buffer, indexOffset, out indexOffset, getServices);
             }
@@ -75,7 +80,7 @@ namespace BadgerJaus.Util
         public int GetPayloadSize()
         {
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;
-            foreach (Component component in componentList.Values)
+            foreach (Component component in componentDictionary.Values)
             {
                 totalSize += component.GetPayloadSize();
             }
@@ -90,7 +95,7 @@ namespace BadgerJaus.Util
 
             int subsystemID = subsystem.SubsystemID;
             jausSubsystem = subsystem;
-            foreach (Component component in componentList.Values)
+            foreach (Component component in componentDictionary.Values)
             {
                 component.SetSubsystemAddress(subsystemID);
             }
@@ -106,9 +111,9 @@ namespace BadgerJaus.Util
             foreach(KeyValuePair<long, Component> entry in updatedList)
             {
                 Component existingComponent;
-                if(!componentList.TryGetValue(entry.Key, out existingComponent))
+                if(!componentDictionary.TryGetValue(entry.Key, out existingComponent))
                 {
-                    componentList.Add(entry.Key, entry.Value);
+                    componentDictionary.Add(entry.Key, entry.Value);
                     continue;
                 }
 

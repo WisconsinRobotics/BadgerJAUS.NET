@@ -177,7 +177,7 @@ namespace BadgerJaus.Services.Core
         private bool HandleQueryServices(QueryServices message)
         {
             List<Node> queryNodes;
-            Dictionary<long, Node> subsystemNodes = subsystem.NodeList;
+            Dictionary<long, Node> subsystemNodes = subsystem.NodeDictionary;
             reportServices = new ReportServices();
 
             queryNodes = message.NodeList;
@@ -191,7 +191,7 @@ namespace BadgerJaus.Services.Core
                 }
             }
 
-            reportServices.SetSource(subsystemNodes[0].ComponentList[0].JausAddress);
+            reportServices.SetSource(subsystemNodes[0].ComponentDictionary[0].JausAddress);
             reportServices.SetDestination(message.GetSource());
             Transport.SendMessage(reportServices);
 
