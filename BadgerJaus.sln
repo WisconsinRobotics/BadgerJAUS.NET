@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadgerJaus", "BadgerJaus\BadgerJaus.csproj", "{99272CA6-ABF9-496B-8F0D-2229025E644C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadgerJausUnitTests", "BadgerJausUnitTests\BadgerJausUnitTests.csproj", "{0217E4A7-5E5C-4C2B-94B1-09CEB8B3A3DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadgerJAUSSubsystem", "BadgerJAUSSubsystem\BadgerJAUSSubsystem.csproj", "{BEB9381B-8D47-4711-82F9-7C67B13458E5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99272CA6-ABF9-496B-8F0D-2229025E644C} = {99272CA6-ABF9-496B-8F0D-2229025E644C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +34,14 @@ Global
 		{0217E4A7-5E5C-4C2B-94B1-09CEB8B3A3DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0217E4A7-5E5C-4C2B-94B1-09CEB8B3A3DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0217E4A7-5E5C-4C2B-94B1-09CEB8B3A3DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Debug|x64.Build.0 = Debug|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Release|x64.ActiveCfg = Release|Any CPU
+		{BEB9381B-8D47-4711-82F9-7C67B13458E5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
