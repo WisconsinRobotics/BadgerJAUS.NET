@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 using BadgerJaus.Messages;
 using BadgerJaus.Util;
 
-namespace BadgerJaus.Messages.discovery
+namespace BadgerJaus.Messages.Discovery
 {
     public class QueryConfiguration : Message
     {
