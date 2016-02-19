@@ -28,6 +28,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 
 using BadgerJaus.Messages;
@@ -52,6 +53,7 @@ namespace BadgerJaus.Services.Core
 
         Subsystem subsystem = null;
         ConcurrentDictionary<long, Subsystem> discoveredSubsystems;
+        ObservableCollection<Subsystem> observableDiscoveredSubsystems;
 
         DiscoveryState clientDiscoveryState;
         DiscoveryState serverDiscoveryState;
@@ -79,6 +81,7 @@ namespace BadgerJaus.Services.Core
             this.subsystem = subsystem;
             clientDiscoveryState = DiscoveryState.IDLE_STATE;
             discoveredSubsystems = new ConcurrentDictionary<long, Subsystem>();
+            observableDiscoveredSubsystems = new ObservableCollection<Subsystem>();
             performDiscovery = false;
         }
 
@@ -102,7 +105,7 @@ namespace BadgerJaus.Services.Core
             {
                 case JausCommandCode.QUERY_IDENTIFICATION:
                     ReportIdentification reportIdentification = new ReportIdentification();
-                    reportIdentification.SetSource(subsystem.SubsystemID);
+                    reportIdentification.SetSource(new JausAddress(subsystem.SubsystemID, 255, 255));
                     reportIdentification.SetDestination(message.GetSource());
                     reportIdentification.Identification = subsystem.Identification;
                     Transport.SendMessage(reportIdentification);
@@ -191,7 +194,7 @@ namespace BadgerJaus.Services.Core
                 }
             }
 
-            reportServices.SetSource(subsystemNodes[0].ComponentDictionary[0].JausAddress);
+            reportServices.SetSource(message.GetDestination());
             reportServices.SetDestination(message.GetSource());
             Transport.SendMessage(reportServices);
 
@@ -216,8 +219,17 @@ namespace BadgerJaus.Services.Core
             get { return discoveredSubsystems; }
         }
 
+        public ObservableCollection<Subsystem> ObservableDiscoveredSubsystems
+        {
+            get { return observableDiscoveredSubsystems; }
+        }
+
         public void AddRemoteSubsystem(long remoteSubsystemID, Subsystem remoteSubsystem)
         {
+            if (discoveredSubsystems.ContainsKey(remoteSubsystemID))
+                observableDiscoveredSubsystems.Remove(remoteSubsystem);
+
+            observableDiscoveredSubsystems.Add(remoteSubsystem);
             discoveredSubsystems.AddOrUpdate(remoteSubsystemID, remoteSubsystem, (key, oldValue) => remoteSubsystem);
         }
 

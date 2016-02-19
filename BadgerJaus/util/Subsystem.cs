@@ -26,11 +26,13 @@
  */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Timers;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using BadgerJaus.Services;
@@ -38,7 +40,7 @@ using BadgerJaus.Services.Core;
 
 namespace BadgerJaus.Util
 {
-    public class Subsystem
+    public class Subsystem : INotifyPropertyChanged
     {
         protected JausUnsignedShort subsystemID;
         protected Dictionary<long, Node> nodeDictionary = null;
@@ -46,6 +48,8 @@ namespace BadgerJaus.Util
         protected string identification;
 
         public const int JAUS_PORT = 3974;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public Subsystem(int subsystemID, int port)
         {
@@ -94,7 +98,13 @@ namespace BadgerJaus.Util
         public string Identification
         {
             get { return identification; }
-            set { identification = value; }
+            set
+            {
+                if (identification == value)
+                    return;
+                identification = value;
+                NotifyPropertyChanged("Identification");
+            }
         }
 
         public void UpdateNodList(Dictionary<long, Node> updatedList)
@@ -115,6 +125,14 @@ namespace BadgerJaus.Util
         public override string ToString()
         {
             return identification;
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
