@@ -145,7 +145,7 @@ namespace BadgerJaus.Services.Core
                         {
                             if (node.ComponentDictionary.Count == 0)
                                 continue;
-                            Discovery.GetInstance().ImplementsAndHandledMessage(message, node.ComponentDictionary[0]);
+                            Discovery.GetInstance().ImplementsAndHandledMessage(message, null);
                             if (node.NodeID != destination.getNode())
                                 continue;
 

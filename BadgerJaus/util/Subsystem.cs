@@ -54,7 +54,7 @@ namespace BadgerJaus.Util
             networkAddress = new IPEndPoint(IPAddress.Any, port);
         }
 
-        public Subsystem(int subSystemID, IPEndPoint networkAddress)
+        public Subsystem(int subsystemID, IPEndPoint networkAddress)
         {
             nodeDictionary = new Dictionary<long, Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
