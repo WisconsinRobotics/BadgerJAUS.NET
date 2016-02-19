@@ -166,14 +166,7 @@ namespace BadgerJaus.Util
             for (serviceIndex = 0; serviceIndex < serviceCount.Value; ++serviceIndex )
             {
                 discoveredService = new DiscoveredService();
-                serviceIdCount.Deserialize(buffer, indexOffset, out indexOffset);
-                serviceName = Encoding.UTF8.GetString(buffer, indexOffset, (int)serviceIdCount.Value);
-                indexOffset += (int)serviceIdCount.Value;
-                discoveredService.ServiceID = serviceName;
-                majorVersion.Deserialize(buffer, indexOffset, out indexOffset);
-                discoveredService.MajorVersion = (int)majorVersion.Value;
-                minorVersion.Deserialize(buffer, indexOffset, out indexOffset);
-                discoveredService.MinorVersion = (int)minorVersion.Value;
+                discoveredService.Deserialize(buffer, indexOffset, out indexOffset);
                 serviceList.Add(discoveredService);
             }
 

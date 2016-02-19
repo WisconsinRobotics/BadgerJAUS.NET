@@ -145,12 +145,12 @@ namespace BadgerJaus.Util
             uriLength = (int)(new JausByte(byteArray, indexOffset).Value);
             indexOffset += JausBaseType.BYTE_BYTE_SIZE;
 
-            uri = Encoding.UTF8.GetString(byteArray, index, uriLength);
+            uri = Encoding.UTF8.GetString(byteArray, indexOffset, uriLength);
             indexOffset += uriLength;
 
-            this.majorVersionNumber.Deserialize(byteArray, index, out indexOffset);
+            this.majorVersionNumber.Deserialize(byteArray, indexOffset, out indexOffset);
 
-            this.minorVersionNumber.Deserialize(byteArray, index, out indexOffset);
+            this.minorVersionNumber.Deserialize(byteArray, indexOffset, out indexOffset);
 
             return true;
         }
