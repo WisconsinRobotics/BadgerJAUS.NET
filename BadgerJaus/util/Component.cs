@@ -169,7 +169,8 @@ namespace BadgerJaus.Util
 
         public int GetPayloadSize()
         {
-            int totalSize = JausBaseType.BYTE_BYTE_SIZE;
+            // There is both a component AND an instance ID. And a service count value
+            int totalSize = 3 * JausBaseType.BYTE_BYTE_SIZE;
             foreach (Service service in serviceList)
             {
                 totalSize += service.Size();
