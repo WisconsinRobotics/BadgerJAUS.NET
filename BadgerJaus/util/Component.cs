@@ -137,7 +137,7 @@ namespace BadgerJaus.Util
 
             foreach(Service service in serviceList)
             {
-                service.Serialize(buffer, index, out indexOffset);
+                service.Serialize(buffer, indexOffset, out indexOffset);
             }
 
             return true;
@@ -150,6 +150,7 @@ namespace BadgerJaus.Util
             int serviceIndex;
             indexOffset = index;
 
+            componentID.Deserialize(buffer, indexOffset, out indexOffset);
             serviceCount.Deserialize(buffer, indexOffset, out indexOffset);
 
             if (serviceCount.Value == 0)
