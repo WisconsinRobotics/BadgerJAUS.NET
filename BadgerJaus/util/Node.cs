@@ -78,6 +78,26 @@ namespace BadgerJaus.Util
             return true;
         }
 
+        public bool Deserialize(byte[] buffer, int index, out int indexOffset)
+        {
+            int componentIndex;
+            JausByte componentCount = new JausByte();
+
+            indexOffset = index;
+
+            nodeID.Deserialize(buffer, indexOffset, out indexOffset);
+            componentCount.Deserialize(buffer, indexOffset, out indexOffset);
+
+            for (componentIndex = 0; componentIndex < componentCount.Value; ++componentIndex)
+            {
+                Component component = new Component(0);
+                component.Deserialize(buffer, indexOffset, out indexOffset);
+                componentDictionary.Add(component.ComponentID, component);
+            }
+
+            return true;
+        }
+
         public int GetPayloadSize()
         {
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;

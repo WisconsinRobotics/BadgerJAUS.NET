@@ -75,17 +75,22 @@ namespace BadgerJaus.Messages.Discovery
         protected override bool SetPayloadFromJausBuffer(byte[] buffer, int index, out int indexOffset)
         {
             int nodeIndex;
-            //int componentIndex;
             Node node;
             JausByte nodeCount = new JausByte();
+
             indexOffset = index;
             nodeCount.Deserialize(buffer, indexOffset, out indexOffset);
+
+            if (nodeCount.Value == 0)
+                return true;
+
+            nodeList = new Dictionary<long, Node>();
+
             for (nodeIndex = 0; nodeIndex < nodeCount.Value; ++nodeIndex)
             {
                 node = new Node(0);
-                // Need deserialize option
-                //nodeID.Deserialize(buffer, indexOffset, index, out indexOffset);
-                //componentID.Deserialize(buffer, index, out indexOffset);
+                node.Deserialize(buffer, indexOffset, out indexOffset);
+                nodeList.Add(node.NodeID, node);
             }
 
             return true;
