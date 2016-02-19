@@ -38,6 +38,7 @@ namespace BadgerJaus.Services
         bool IsSupported(int commandCode);
         bool ImplementsAndHandledMessage(Message message, Component component);
         bool Serialize(byte[] buffer, int index, out int indexOffset);
+        int Size();
         //String toString();
     }
 }

@@ -146,10 +146,6 @@ namespace BadgerJaus.Util
         public bool Deserialize(byte[] buffer, int index, out int indexOffset)
         {
             JausByte serviceCount = new JausByte();
-            JausByte serviceIdCount;
-            JausByte majorVersion;
-            JausByte minorVersion;
-            string serviceName;
             DiscoveredService discoveredService;
             int serviceIndex;
             indexOffset = index;
@@ -158,10 +154,6 @@ namespace BadgerJaus.Util
 
             if (serviceCount.Value == 0)
                 return true;
-
-            serviceIdCount = new JausByte();
-            majorVersion = new JausByte();
-            minorVersion = new JausByte();
 
             for (serviceIndex = 0; serviceIndex < serviceCount.Value; ++serviceIndex )
             {
@@ -178,11 +170,7 @@ namespace BadgerJaus.Util
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;
             foreach (Service service in serviceList)
             {
-#warning This needs to be fixed
-                //String serviceID = service.GetServiceID();
-                //totalSize += serviceID.Length;
-                totalSize += JausBaseType.BYTE_BYTE_SIZE;
-                totalSize += JausBaseType.BYTE_BYTE_SIZE;
+                totalSize += service.Size();
             }
 
             return totalSize;

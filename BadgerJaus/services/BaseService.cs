@@ -117,5 +117,14 @@ namespace BadgerJaus.Services
         {
             get { return ""; }
         }
+
+        public int Size()
+        {
+            int payloadSize;
+
+            payloadSize = jausServiceSignature.size();
+
+            return payloadSize;
+        }
     }
 }
