@@ -50,7 +50,7 @@ namespace BadgerJaus.Services
         {
             executionStopwatch = new Stopwatch();
             executionStopwatch.Start();
-            jausServiceSignature = new JausServiceSignature("BaseService", 1, 0);
+            jausServiceSignature = new JausServiceSignature(OVERRIDE_SERVICE_ID, 1, 0);
         }
 
         protected virtual void Execute(Component component)
@@ -111,6 +111,11 @@ namespace BadgerJaus.Services
         {
             indexOffset = index;
             return jausServiceSignature.Deserialize(buffer, indexOffset, out indexOffset);
+        }
+
+        protected virtual string OVERRIDE_SERVICE_ID
+        {
+            get { return ""; }
         }
     }
 }

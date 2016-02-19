@@ -58,6 +58,11 @@ namespace BadgerJaus.Services.Mobility
         protected double pitchOrigin = 0;
         protected double yawOrigin = 0;
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         public override bool IsSupported(int commandCode)
         {
             switch (commandCode)

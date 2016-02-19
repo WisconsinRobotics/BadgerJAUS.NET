@@ -71,6 +71,11 @@ namespace BadgerJaus.Services.Core
             this.targetAddressMap = new ConcurrentDictionary<long, LivenessTime>();
         }
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         //tells us if the destination is live
         public bool IsLive(JausAddress checkAddress)
         {

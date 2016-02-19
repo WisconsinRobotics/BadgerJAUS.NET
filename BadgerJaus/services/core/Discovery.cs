@@ -85,6 +85,11 @@ namespace BadgerJaus.Services.Core
             performDiscovery = false;
         }
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         public override bool IsSupported(int commandCode)
         {
             switch (commandCode)

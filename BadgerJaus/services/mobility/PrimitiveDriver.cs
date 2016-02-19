@@ -58,6 +58,10 @@ namespace BadgerJaus.Services.Mobility
         private double resistRotY;
         private double resistRotZ;
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
 
         public override bool IsSupported(int commandCode)
         {

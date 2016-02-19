@@ -64,7 +64,7 @@ namespace BadgerJaus.Util
             set { nodeID.Value = value; }
         }
 
-        public bool PayloadToJausBuffer(byte[] buffer, int index, out int indexOffset, bool getServices = true)
+        public bool Serialize(byte[] buffer, int index, out int indexOffset, bool getServices = true)
         {
             JausByte componentCount = new JausByte(componentDictionary.Count);
             indexOffset = index;

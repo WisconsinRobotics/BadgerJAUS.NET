@@ -71,7 +71,7 @@ namespace BadgerJaus.Messages.Discovery
             
             foreach(Node node in nodeList)
             {
-                if (!node.PayloadToJausBuffer(buffer, indexOffset, out indexOffset, false))
+                if (!node.Serialize(buffer, indexOffset, out indexOffset, false))
                     return false;
             }
 

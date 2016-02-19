@@ -75,6 +75,11 @@ namespace BadgerJaus.Services.Mobility
             setVector = new SetLocalVector();
         }
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         public override bool IsSupported(int commandCode)
         {
             switch (commandCode)

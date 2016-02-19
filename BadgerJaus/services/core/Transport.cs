@@ -78,6 +78,11 @@ namespace BadgerJaus.Services.Core
             subsystems.AddLast(parentSubsystem);
         }
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         public void AddSubsystem(Subsystem subsystem)
         {
             if (subsystem == null)

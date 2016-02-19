@@ -48,6 +48,11 @@ namespace BadgerJaus.Services.Mobility
 
         protected double yawRate = 0;
 
+        protected override string OVERRIDE_SERVICE_ID
+        {
+            get { return SERVICE_ID; }
+        }
+
         public override bool IsSupported(int commandCode)
         {
             // TODO Auto-generated method stub
