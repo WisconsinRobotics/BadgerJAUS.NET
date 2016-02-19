@@ -43,6 +43,8 @@ namespace BadgerJaus.Messages.Discovery
         public override int GetPayloadSize()
         {
             int payloadSize = 0;
+            if (nodeList == null)
+                return 0;
             if (nodeList.Count == 0)
                 return 0;
             payloadSize += JausBaseType.BYTE_BYTE_SIZE;

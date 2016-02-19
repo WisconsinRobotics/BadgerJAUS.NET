@@ -68,6 +68,7 @@ namespace BadgerJaus.Util
         {
             JausByte componentCount = new JausByte(componentDictionary.Count);
             indexOffset = index;
+            nodeID.Serialize(buffer, indexOffset, out indexOffset);
             componentCount.Serialize(buffer, indexOffset, out indexOffset);
             foreach (Component component in componentDictionary.Values)
             {
