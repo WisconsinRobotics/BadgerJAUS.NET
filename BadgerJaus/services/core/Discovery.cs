@@ -111,6 +111,7 @@ namespace BadgerJaus.Services.Core
                     Transport.SendMessage(reportIdentification);
                     return true;
                 case JausCommandCode.QUERY_SERVICES:
+                    queryServices = new QueryServices();
                     queryServices.SetFromJausMessage(message);
                     return HandleQueryServices(queryServices);
                 case JausCommandCode.REPORT_IDENTIFICATION:

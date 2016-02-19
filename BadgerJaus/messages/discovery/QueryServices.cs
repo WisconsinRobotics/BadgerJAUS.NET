@@ -99,6 +99,7 @@ namespace BadgerJaus.Messages.Discovery
 #warning Unpacking is not yet implemented
                 nodeID.Deserialize(buffer, indexOffset, out indexOffset);
                 node = new Node((int)nodeID.Value);
+                nodeList.Add(node);
                 if (nodeID.Value == 255)
                     break;
                 componentCount.Deserialize(buffer, indexOffset, out indexOffset);
