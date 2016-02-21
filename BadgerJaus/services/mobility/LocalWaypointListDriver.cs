@@ -43,6 +43,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalWaypointListDriver : BaseService
     {
+        public const string SERVICE_NAME = "LocalWaypointListDriver";
         public const String SERVICE_VERSION = "1.0";
         public const String PARENT_SERVICE = "ListManager";
 
@@ -72,7 +73,7 @@ namespace BadgerJaus.Services.Mobility
 
         protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return "LocalWaypointListDriver"; }
+            get { return SERVICE_NAME; }
         }
 
         protected override string OVERRIDE_SERVICE_FAMILY

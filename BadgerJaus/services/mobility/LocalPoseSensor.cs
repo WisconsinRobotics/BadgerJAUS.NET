@@ -37,6 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalPoseSensor : BaseService
     {
+        public const string SERVICE_NAME = "LocalPoseSensor";
         public const String SERVICE_VERSION = "1.0";
         public const String PARENT_SERVICE = "AccessControl";
 
@@ -58,7 +59,7 @@ namespace BadgerJaus.Services.Mobility
 
         protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return "LocalPoseSensor"; }
+            get { return SERVICE_NAME; }
         }
 
         protected override string OVERRIDE_SERVICE_FAMILY

@@ -37,7 +37,9 @@ namespace BadgerJaus.Services.Mobility
 {
     public class PrimitiveDriver : BaseService
     {
-        public const String SERVICE_VERSION = "1.0";
+        public const string SERVICE_NAME = "PrimitiveDriver";
+        public const string SERVICE_VERSION = "1.0";
+        public const string PARENT_SERVICE = "Management";
 
         private double propLinearX;
         private double propLinearY;
@@ -57,7 +59,7 @@ namespace BadgerJaus.Services.Mobility
 
         protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return "Management"; }
+            get { return SERVICE_NAME; }
         }
 
         protected override string OVERRIDE_SERVICE_FAMILY

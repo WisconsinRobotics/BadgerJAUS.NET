@@ -37,6 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class VelocityStateSensor : BaseService
     {
+        public const string SERVICE_NAME = "VelocityStateSensor";
         public const String SERVICE_VERSION = "1.0";
         public const String PARENT_SERVICE = "Events";
 
@@ -48,7 +49,7 @@ namespace BadgerJaus.Services.Mobility
 
         protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return "VelocityStateSensor"; }
+            get { return SERVICE_NAME; }
         }
 
         protected override string OVERRIDE_SERVICE_FAMILY

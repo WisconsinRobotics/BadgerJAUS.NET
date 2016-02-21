@@ -37,6 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalVectorDriver : BaseService
     {
+        public const string SERVICE_NAME = "LocalVectorDriver";
         public const String SERVICE_VERSION = "1.0";
         public const String PARENT_SERVICE = "Management";
 
@@ -75,7 +76,7 @@ namespace BadgerJaus.Services.Mobility
 
         protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return "LocalVectorDriver"; }
+            get { return SERVICE_NAME; }
         }
 
         protected override string OVERRIDE_SERVICE_FAMILY
