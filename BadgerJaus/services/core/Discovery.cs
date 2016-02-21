@@ -232,8 +232,12 @@ namespace BadgerJaus.Services.Core
 
         public void AddRemoteSubsystem(long remoteSubsystemID, Subsystem remoteSubsystem)
         {
-            if (discoveredSubsystems.ContainsKey(remoteSubsystemID))
-                observableDiscoveredSubsystems.Remove(remoteSubsystem);
+            Subsystem discoveredSubsystem;
+            if(discoveredSubsystems.TryGetValue(remoteSubsystemID, out discoveredSubsystem))
+            {
+                discoveredSubsystem.NetworkAddress = remoteSubsystem.NetworkAddress;
+                return;
+            }
 
             observableDiscoveredSubsystems.Add(remoteSubsystem);
             discoveredSubsystems.AddOrUpdate(remoteSubsystemID, remoteSubsystem, (key, oldValue) => remoteSubsystem);

@@ -93,6 +93,15 @@ namespace BadgerJaus.Util
         public IPEndPoint NetworkAddress
         {
             get { return networkAddress; }
+            set
+            {
+                if(value != null)
+                {
+                    networkAddress.Address = value.Address;
+                    networkAddress.Port = value.Port;
+                }
+                    
+            }
         }
 
         public string Identification
