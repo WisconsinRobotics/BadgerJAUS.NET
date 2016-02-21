@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace BadgerJaus.Util
     public class Component
     {
         private JausByte componentID;
-        private List<BaseService> serviceList;
+        private ObservableCollection<BaseService> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
         private JausByte instanceID;
@@ -68,7 +69,7 @@ namespace BadgerJaus.Util
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
-            serviceList = new List<BaseService>();
+            serviceList = new ObservableCollection<BaseService>();
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
             instanceID = new JausByte(0);
@@ -92,7 +93,7 @@ namespace BadgerJaus.Util
             serviceList.Add(service);
         }
 
-        public List<BaseService> Services
+        public ObservableCollection<BaseService> Services
         {
             get { return serviceList; }
             set { serviceList = value; }

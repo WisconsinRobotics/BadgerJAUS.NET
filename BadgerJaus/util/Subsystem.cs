@@ -26,6 +26,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Sockets;
@@ -43,7 +44,8 @@ namespace BadgerJaus.Util
     public class Subsystem : INotifyPropertyChanged
     {
         protected JausUnsignedShort subsystemID;
-        protected Dictionary<long, Node> nodeDictionary = null;
+        protected Dictionary<long, Node> nodeDictionary;
+        protected ObservableCollection<Node> observableNodes;
         protected IPEndPoint networkAddress = null;
         protected string identification;
 
@@ -54,6 +56,7 @@ namespace BadgerJaus.Util
         public Subsystem(int subsystemID, int port)
         {
             nodeDictionary = new Dictionary<long, Node>();
+            observableNodes = new ObservableCollection<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             networkAddress = new IPEndPoint(IPAddress.Any, port);
         }
@@ -61,6 +64,7 @@ namespace BadgerJaus.Util
         public Subsystem(int subsystemID, IPEndPoint networkAddress)
         {
             nodeDictionary = new Dictionary<long, Node>();
+            observableNodes = new ObservableCollection<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
             this.networkAddress = new IPEndPoint(networkAddress.Address, networkAddress.Port);
         }
@@ -73,10 +77,18 @@ namespace BadgerJaus.Util
 
         public void AddNode(Node node)
         {
+            Node knownNode;
             if (node == null)
                 return;
 
+            if(NodeDictionary.TryGetValue(node.NodeID, out knownNode))
+            {
+                nodeDictionary.Remove(node.NodeID);
+                observableNodes.Remove(knownNode);
+            }
             nodeDictionary.Add(node.NodeID, node);
+            observableNodes.Add(node);
+
             node.SetSubsystem(this);
         }
 
@@ -88,6 +100,11 @@ namespace BadgerJaus.Util
         public IEnumerable<Node> NodeList
         {
             get { return nodeDictionary.Values; }
+        }
+
+        public ObservableCollection<Node> ObservableNodes
+        {
+            get { return observableNodes; }
         }
 
         public IPEndPoint NetworkAddress
@@ -123,7 +140,7 @@ namespace BadgerJaus.Util
                 Node existingNode;
                 if(!nodeDictionary.TryGetValue(entry.Key, out existingNode))
                 {
-                    nodeDictionary.Add(entry.Key, entry.Value);
+                    AddNode(entry.Value);
                     continue;
                 }
 

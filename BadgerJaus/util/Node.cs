@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections;
 using System.Linq;
 
@@ -33,18 +34,28 @@ namespace BadgerJaus.Util
     public class Node
     {
         private Dictionary<long, Component> componentDictionary;
+        private ObservableCollection<Component> observableComponents;
         private JausByte nodeID;
         private Subsystem jausSubsystem;
 
         public Node(int nodeID)
         {
             componentDictionary = new Dictionary<long, Component>();
+            observableComponents = new ObservableCollection<Component>();
             this.nodeID = new JausByte(nodeID);
         }
 
         public void AddComponent(Component component)
         {
+            Component knownComponent;
+
+            if (componentDictionary.TryGetValue(component.ComponentID, out knownComponent))
+            {
+                componentDictionary.Remove(component.ComponentID);
+                observableComponents.Remove(knownComponent);
+            }
             componentDictionary.Add(component.ComponentID, component);
+            observableComponents.Add(component);
             component.SetNode(this);
         }
 
@@ -56,6 +67,11 @@ namespace BadgerJaus.Util
         public IEnumerable<Component> ComponentList
         {
             get { return componentDictionary.Values; }
+        }
+
+        public ObservableCollection<Component> ObservableComponents
+        {
+            get { return observableComponents; }
         }
 
         public int NodeID
@@ -92,7 +108,7 @@ namespace BadgerJaus.Util
             {
                 Component component = new Component(0);
                 component.Deserialize(buffer, indexOffset, out indexOffset);
-                componentDictionary.Add(component.ComponentID, component);
+                AddComponent(component);
             }
 
             return true;
@@ -134,7 +150,7 @@ namespace BadgerJaus.Util
                 Component existingComponent;
                 if(!componentDictionary.TryGetValue(entry.Key, out existingComponent))
                 {
-                    componentDictionary.Add(entry.Key, entry.Value);
+                    AddComponent(entry.Value);
                     continue;
                 }
 
