@@ -39,10 +39,8 @@ namespace BadgerJaus.Services.Core
 {
     public sealed class Transport : BaseService
     {
-        public const String SERVICE_NAME = "Transport";
-        public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:Transport";
-        public const String PARENT_SERVICE = "none";
+        public const string SERVICE_VERSION = "1.0";
+        public const string PARENT_SERVICE = "none";
 
         private static Transport transportService = null;
 
@@ -78,9 +76,14 @@ namespace BadgerJaus.Services.Core
             subsystems.AddLast(parentSubsystem);
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "Transport"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return CORE_SERVICE; }
         }
 
         public void AddSubsystem(Subsystem subsystem)
@@ -186,6 +189,11 @@ namespace BadgerJaus.Services.Core
                     Console.WriteLine(e.ToString());
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return "Transport";
         }
     }
 }

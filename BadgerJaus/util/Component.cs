@@ -55,7 +55,7 @@ namespace BadgerJaus.Util
     public class Component
     {
         private JausByte componentID;
-        private List<Service> serviceList;
+        private List<BaseService> serviceList;
         private Node jausNode;
         private JausAddress jausAddress;
         private JausByte instanceID;
@@ -68,7 +68,7 @@ namespace BadgerJaus.Util
         public Component(int componentID)
         {
             this.componentID = new JausByte(componentID);
-            serviceList = new List<Service>();
+            serviceList = new List<BaseService>();
             jausAddress = new JausAddress();
             jausAddress.setComponent(componentID);
             instanceID = new JausByte(0);
@@ -87,12 +87,12 @@ namespace BadgerJaus.Util
             }
         }
 
-        public void AddService(Service service)
+        public void AddService(BaseService service)
         {
             serviceList.Add(service);
         }
 
-        public List<Service> Services
+        public List<BaseService> Services
         {
             get { return serviceList; }
             set { serviceList = value; }

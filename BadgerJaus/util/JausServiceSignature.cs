@@ -38,14 +38,15 @@ namespace BadgerJaus.Util
 
         // Values for Service identification (See RegisterServicesMessage)
         private string uri;
+        private string serviceName;
         private JausByte majorVersionNumber;
         private JausByte minorVersionNumber;
+
+        private const string uriBase = "urn:jaus:jss";
 
         // Constructors
         public JausServiceSignature()
         {
-
-            uri = "";
             majorVersionNumber = new JausByte();
             minorVersionNumber = new JausByte();
 
@@ -59,10 +60,11 @@ namespace BadgerJaus.Util
 
         }
 
-        public JausServiceSignature(String uri, int majorVN, int minorVN)
+        public JausServiceSignature(string serviceName, string serviceFamily, int majorVN, int minorVN)
         {
 
-            this.uri = uri;
+            this.serviceName = serviceName;
+            this.uri = uriBase + ":" + serviceFamily + ":" + ServiceName;
             this.majorVersionNumber = new JausByte(majorVN);
             this.minorVersionNumber = new JausByte(minorVN);
 
@@ -74,7 +76,11 @@ namespace BadgerJaus.Util
         public string URI
         {
             get { return uri; }
-            set { uri = value; }
+        }
+
+        public string ServiceName
+        {
+            get { return serviceName; }
         }
 
         // Major Version Number
@@ -146,6 +152,7 @@ namespace BadgerJaus.Util
             indexOffset += JausBaseType.BYTE_BYTE_SIZE;
 
             uri = Encoding.UTF8.GetString(byteArray, indexOffset, uriLength);
+            serviceName = uri.Split(':').Last();
             indexOffset += uriLength;
 
             this.majorVersionNumber.Deserialize(byteArray, indexOffset, out indexOffset);

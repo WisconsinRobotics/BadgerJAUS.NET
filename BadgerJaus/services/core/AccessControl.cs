@@ -34,9 +34,7 @@ namespace BadgerJaus.Services.Core
 {
     public class AccessControl : BaseService
     {
-        public const String SERVICE_NAME = "AccessControl";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:AccessControl";
         public const String PARENT_SERVICE = "Events";
 
         public const int DEFAULT_AUTHORITY_CODE = 10;
@@ -67,9 +65,14 @@ namespace BadgerJaus.Services.Core
         {
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "AccessControl"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return CORE_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -214,6 +217,11 @@ namespace BadgerJaus.Services.Core
                 default:
                     return false;
             }
+        }
+
+        public override string ToString()
+        {
+            return "Access Control";
         }
     }
 }

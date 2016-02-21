@@ -37,9 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalWaypointDriver : BaseService
     {
-        public const String SERVICE_NAME = "LocalWaypointDriver";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:LocalWaypointDriver";
         public const String PARENT_SERVICE = "Management";
 
         private double x;
@@ -50,9 +48,14 @@ namespace BadgerJaus.Services.Mobility
         private double pitch;
         private double yaw;
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "LocalWaypointDriver"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -128,6 +131,11 @@ namespace BadgerJaus.Services.Mobility
             Transport.SendMessage(reportLocalWaypoint);
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Local Waypoint Driver";
         }
     }
 }

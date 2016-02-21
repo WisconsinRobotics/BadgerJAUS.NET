@@ -42,8 +42,6 @@ namespace BadgerJaus.Services.Core
     //if the source is the robot, the destination is the server. 
     public class Liveness : BaseService
     {
-        //public const String SERVICE_ID = 		"urn:jaus:jss:core:Liveness";
-        public const String SERVICE_ID = "urn:jaus:jss:core:Liveness";
         private const long SLEEP_TIME = 4900; //how long we will sleep
         private const long TIMEOUT_LENGTH = 5000000001L;	//actual timeout length in nanosecond
         private const long TIMEOUT_LENGTH_MILLI = 5000; //TIMEOUT in millisecond
@@ -71,9 +69,14 @@ namespace BadgerJaus.Services.Core
             this.targetAddressMap = new ConcurrentDictionary<long, LivenessTime>();
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "Liveness"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return CORE_SERVICE; }
         }
 
         //tells us if the destination is live
@@ -166,6 +169,11 @@ namespace BadgerJaus.Services.Core
         public override long SleepTime
         {
             get { return SLEEP_TIME; }
+        }
+
+        public override string ToString()
+        {
+            return "Liveness";
         }
     }
 }

@@ -62,9 +62,14 @@ namespace BadgerJaus.Services.Core
 
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "Management"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return CORE_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -112,5 +117,9 @@ namespace BadgerJaus.Services.Core
             }
         }
 
+        public override string ToString()
+        {
+            return "Management";
+        }
     }
 }

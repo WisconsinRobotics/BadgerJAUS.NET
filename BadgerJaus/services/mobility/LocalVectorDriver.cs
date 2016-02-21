@@ -37,9 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalVectorDriver : BaseService
     {
-        public const String SERVICE_NAME = "PrimitiveDriver";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:mobility:LocalVectorDriver";
         public const String PARENT_SERVICE = "Management";
 
         protected double speed;
@@ -75,9 +73,14 @@ namespace BadgerJaus.Services.Mobility
             setVector = new SetLocalVector();
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "LocalVectorDriver"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -160,6 +163,11 @@ namespace BadgerJaus.Services.Mobility
                 Interlocked.Exchange(ref pitch, setVector.GetPitch());
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Local Vector Driver";
         }
     }
 }

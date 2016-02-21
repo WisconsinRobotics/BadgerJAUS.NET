@@ -43,9 +43,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalWaypointListDriver : BaseService
     {
-        public const String SERVICE_NAME = "LocalWaypointListDriver";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:LocalWaypointListDriver";
         public const String PARENT_SERVICE = "ListManager";
 
         protected LinkedList<WaypointElement> waypointList = new LinkedList<WaypointElement>();
@@ -72,9 +70,14 @@ namespace BadgerJaus.Services.Mobility
             this.localPoseSensor = localPoseSensor;
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "LocalWaypointListDriver"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -312,6 +315,11 @@ namespace BadgerJaus.Services.Mobility
         public WaypointElement GetCurrentWaypoint()
         {
             return currentWaypointElement;
+        }
+
+        public override string ToString()
+        {
+            return "Local Waypoint List Driver";
         }
     }
 }

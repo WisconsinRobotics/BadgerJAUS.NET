@@ -42,7 +42,6 @@ namespace BadgerJaus.Services.Core
     {
         public const String SERVICE_NAME = "Discovery";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:Discovery";
         public const String PARENT_SERVICE = "Events";
         // Discovery Service States
         public enum DiscoveryState { IDLE_STATE, BROADCAST_STATE, SERVICE_STATE, CONFIGURATION_STATE };
@@ -85,9 +84,14 @@ namespace BadgerJaus.Services.Core
             performDiscovery = false;
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "Discovery"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return CORE_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -246,6 +250,11 @@ namespace BadgerJaus.Services.Core
         public void SetDiscoveryState(DiscoveryState state)
         {
             clientDiscoveryState = state;
+        }
+
+        public override string ToString()
+        {
+            return "Discovery";
         }
     }
 }

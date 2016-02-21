@@ -37,10 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class PrimitiveDriver : BaseService
     {
-        public const String SERVICE_NAME = "PrimitiveDriver";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:mobility:PrimitiveDriver";
-        public const String PARENT_SERVICE = "Management";
 
         private double propLinearX;
         private double propLinearY;
@@ -58,9 +55,14 @@ namespace BadgerJaus.Services.Mobility
         private double resistRotY;
         private double resistRotZ;
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "Management"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -179,6 +181,11 @@ namespace BadgerJaus.Services.Mobility
                 resistRotZ = message.GetResistiveRotationalEffortZ();
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Primitive Driver";
         }
     }
 }

@@ -37,9 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class VelocityStateSensor : BaseService
     {
-        public const String SERVICE_NAME = "VelocityStateSensor";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:VelocityStateSensor";
         public const String PARENT_SERVICE = "Events";
 
         protected double xVelocity = 0;
@@ -48,9 +46,14 @@ namespace BadgerJaus.Services.Mobility
 
         protected double yawRate = 0;
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "VelocityStateSensor"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -82,6 +85,11 @@ namespace BadgerJaus.Services.Mobility
             Transport.SendMessage(reportVelocityState);
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Velocity State Sensor";
         }
     }
 }

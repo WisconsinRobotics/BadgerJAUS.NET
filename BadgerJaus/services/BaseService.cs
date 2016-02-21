@@ -44,13 +44,16 @@ namespace BadgerJaus.Services
 
         public const int DEFAULT_SLEEP_TIME = 5000;
 
+        public const string CORE_SERVICE = "core";
+        public const string MOBILITY_SERVICE = "mobility";
+
         private Stopwatch executionStopwatch;
 
         public BaseService()
         {
             executionStopwatch = new Stopwatch();
             executionStopwatch.Start();
-            jausServiceSignature = new JausServiceSignature(OVERRIDE_SERVICE_ID, 1, 0);
+            jausServiceSignature = new JausServiceSignature(OVERRIDE_SERVICE_NAME, OVERRIDE_SERVICE_FAMILY, 1, 0);
         }
 
         protected virtual void Execute(Component component)
@@ -78,7 +81,11 @@ namespace BadgerJaus.Services
         public string ServiceID
         {
             get { return jausServiceSignature.URI; }
-            set { jausServiceSignature.URI = value; }
+        }
+
+        public string ServiceName
+        {
+            get { return jausServiceSignature.ServiceName; }
         }
 
         public abstract bool IsSupported(int commandCode);
@@ -113,7 +120,12 @@ namespace BadgerJaus.Services
             return jausServiceSignature.Deserialize(buffer, indexOffset, out indexOffset);
         }
 
-        protected virtual string OVERRIDE_SERVICE_ID
+        protected virtual string OVERRIDE_SERVICE_NAME
+        {
+            get { return ""; }
+        }
+
+        protected virtual string OVERRIDE_SERVICE_FAMILY
         {
             get { return ""; }
         }
@@ -125,6 +137,11 @@ namespace BadgerJaus.Services
             payloadSize = jausServiceSignature.size();
 
             return payloadSize;
+        }
+
+        public override string ToString()
+        {
+            return jausServiceSignature.ServiceName;
         }
     }
 }

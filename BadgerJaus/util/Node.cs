@@ -141,5 +141,10 @@ namespace BadgerJaus.Util
                 existingComponent.Services = entry.Value.Services;
             }
         }
+
+        public override string ToString()
+        {
+            return nodeID.Value.ToString();
+        }
     }
 }

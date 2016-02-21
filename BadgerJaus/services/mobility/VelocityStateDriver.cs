@@ -35,9 +35,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class VelocityStateDriver : BaseService
     {
-        public const string SERVICE_NAME = "VelocityStateDriver";
         public const string SERVICE_VERSION = "1.0";
-        public const string SERVICE_ID = "urn:jaus:jss:mobility:VelocityStateDriver";
         public const string PARENT_SERVICE = "Management";
 
         protected double velocityX;
@@ -111,9 +109,14 @@ namespace BadgerJaus.Services.Mobility
             setAccelerationLimit = new SetAccelerationLimit();
         }
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "VelocityStateDriver"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -253,6 +256,11 @@ namespace BadgerJaus.Services.Mobility
                 yawAcceleration = setAccelerationLimit.YawAcceleration;
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Velocity State Driver";
         }
     }
 }

@@ -37,9 +37,7 @@ namespace BadgerJaus.Services.Mobility
 {
     public class LocalPoseSensor : BaseService
     {
-        public const String SERVICE_NAME = "LocalPoseSensor";
         public const String SERVICE_VERSION = "1.0";
-        public const String SERVICE_ID = "urn:jaus:jss:core:LocalPoseSensor";
         public const String PARENT_SERVICE = "AccessControl";
 
         protected double x;
@@ -58,9 +56,14 @@ namespace BadgerJaus.Services.Mobility
         protected double pitchOrigin = 0;
         protected double yawOrigin = 0;
 
-        protected override string OVERRIDE_SERVICE_ID
+        protected override string OVERRIDE_SERVICE_NAME
         {
-            get { return SERVICE_ID; }
+            get { return "LocalPoseSensor"; }
+        }
+
+        protected override string OVERRIDE_SERVICE_FAMILY
+        {
+            get { return MOBILITY_SERVICE; }
         }
 
         public override bool IsSupported(int commandCode)
@@ -180,6 +183,11 @@ namespace BadgerJaus.Services.Mobility
         public double GetOriginY()
         {
             return yOrigin;
+        }
+
+        public override string ToString()
+        {
+            return "Local Pose Sensor";
         }
     }
 }
