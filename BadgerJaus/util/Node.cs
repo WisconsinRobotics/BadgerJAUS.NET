@@ -114,12 +114,12 @@ namespace BadgerJaus.Util
             return true;
         }
 
-        public int GetPayloadSize()
+        public int GetPayloadSize(bool serviceSize = true)
         {
             int totalSize = JausBaseType.BYTE_BYTE_SIZE;
             foreach (Component component in componentDictionary.Values)
             {
-                totalSize += component.GetPayloadSize();
+                totalSize += component.GetPayloadSize(serviceSize);
             }
 
             return totalSize;

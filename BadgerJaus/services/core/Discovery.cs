@@ -119,6 +119,10 @@ namespace BadgerJaus.Services.Core
                     reportIdentification.Identification = subsystem.Identification;
                     Transport.SendMessage(reportIdentification);
                     return true;
+                case JausCommandCode.QUERY_CONFIGURATION:
+                    QueryConfiguration queryConfiguration = new QueryConfiguration();
+                    queryConfiguration.SetFromJausMessage(message);
+                    return HandleQueryConfiguration(queryConfiguration);
                 case JausCommandCode.QUERY_SERVICES:
                     queryServices = new QueryServices();
                     queryServices.SetFromJausMessage(message);
@@ -184,6 +188,11 @@ namespace BadgerJaus.Services.Core
 
             Transport.SendMessage(queryServices);
 
+            return true;
+        }
+
+        private bool HandleQueryConfiguration(QueryConfiguration message)
+        {
             return true;
         }
 

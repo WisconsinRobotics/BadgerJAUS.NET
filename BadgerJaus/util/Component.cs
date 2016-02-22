@@ -168,7 +168,7 @@ namespace BadgerJaus.Util
             return true;
         }
 
-        public int GetPayloadSize()
+        public int GetPayloadSize(bool serviceSize = true)
         {
             // There is both a component AND an instance ID. And a service count value
             int totalSize = 3 * JausBaseType.BYTE_BYTE_SIZE;

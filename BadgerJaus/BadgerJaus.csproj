@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="messages\discovery\QueryConfiguration.cs" />
+    <Compile Include="messages\discovery\ReportConfiguration.cs" />
     <Compile Include="messages\driver\QueryTravelSpeed.cs" />
     <Compile Include="messages\endeffectorposedriver\QueryEndEffectorPose.cs" />
     <Compile Include="messages\endeffectorposedriver\ReportCommandedEndEffectorPose.cs" />
