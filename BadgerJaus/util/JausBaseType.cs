@@ -73,7 +73,7 @@ namespace BadgerJaus.Util
             int valueByte;
 
             indexOffset = index;
-            if (indexOffset + SIZE_BYTES >= byteArray.Length)
+            if (indexOffset + SIZE_BYTES > byteArray.Length)
                 return false;
             value = 0;
             for (valueByte = 0; valueByte < SIZE_BYTES; ++valueByte, ++indexOffset)
@@ -107,8 +107,8 @@ namespace BadgerJaus.Util
             double bias = min;
 
             // limit real number between min and max
-            if (value < MIN_VALUE) value = min;
-            if (value > MAX_VALUE) value = max;
+            if (value < min) value = min;
+            if (value > max) value = max;
 
             // calculate rounded integer value
             this.value = (long)Math.Round((value - bias) / scaleFactor);
