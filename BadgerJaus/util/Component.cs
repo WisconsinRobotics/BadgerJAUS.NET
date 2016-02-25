@@ -152,6 +152,7 @@ namespace BadgerJaus.Util
             indexOffset = index;
 
             componentID.Deserialize(buffer, indexOffset, out indexOffset);
+            jausAddress.setComponent((int)componentID.Value);
             instanceID.Deserialize(buffer, indexOffset, out indexOffset);
             serviceCount.Deserialize(buffer, indexOffset, out indexOffset);
 
