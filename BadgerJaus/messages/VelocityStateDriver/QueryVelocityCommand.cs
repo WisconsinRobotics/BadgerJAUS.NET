@@ -79,6 +79,11 @@ namespace BadgerJaus.Messages.VelocityStateDriver
             return commandCode.Serialize(buffer, indexOffset, out indexOffset);
         }
 
+        public override int GetPayloadSize()
+        {
+            return JausBaseType.BYTE_BYTE_SIZE + JausByte.BYTE_BYTE_SIZE;
+        }
+
         private bool PresenceOperation(byte[] buffer, int index, out int indexOffset, bool set)
         {
             if (set)

@@ -100,6 +100,28 @@ namespace BadgerJaus.Messages.VelocityStateDriver
             return true;
         }
 
+        public override int GetPayloadSize()
+        {
+            int payloadSize = 0;
+
+            payloadSize += base.GetPayloadSize();
+
+            if (IsFieldSet(VELOCITY_X_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
+            if (IsFieldSet(VELOCITY_Y_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
+            if (IsFieldSet(VELOCITY_Z_BIT))
+                payloadSize += JausBaseType.INT_BYTE_SIZE;
+            if (IsFieldSet(ROLL_RATE_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
+            if (IsFieldSet(PITCH_RATE_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
+            if (IsFieldSet(YAW_RATE_BIT))
+                payloadSize += JausBaseType.SHORT_BYTE_SIZE;
+
+            return payloadSize;
+        }
+
         public double VelocityX
         {
             get { return velocityX.ScaleValueToDouble(LINEAR_MIN, LINEAR_MAX); }
