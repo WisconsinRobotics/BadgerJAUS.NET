@@ -46,26 +46,12 @@ namespace BadgerJaus.Services.Mobility
         protected double pitchRate;
         protected double yawRate;
 
-        protected double reportVelocityX;
-        protected double reportVelocityY;
-        protected double reportVelocityZ;
-        protected double reportRollRate;
-        protected double reportPitchRate;
-        protected double reportYawRate;
-
         protected double accelerationX;
         protected double accelerationY;
         protected double accelerationZ;
         protected double rollAcceleration;
         protected double pitchAcceleration;
         protected double yawAcceleration;
-
-        protected double reportAccelerationX;
-        protected double reportAccelerationY;
-        protected double reportAccelerationZ;
-        protected double reportRollAcceleration;
-        protected double reportPitchAcceleration;
-        protected double reportYawAcceleration;
 
         QueryVelocityCommand queryVelocityCommand;
         SetVelocityCommand setVelocityCommand;
@@ -82,26 +68,12 @@ namespace BadgerJaus.Services.Mobility
             pitchRate = 0;
             yawRate = 0;
 
-            reportVelocityX = 0;
-            reportVelocityY = 0;
-            reportVelocityZ = 0;
-            reportRollRate = 0;
-            reportPitchRate = 0;
-            reportYawRate = 0;
-
             accelerationX = 0;
             accelerationY = 0;
             accelerationZ = 0;
             rollAcceleration = 0;
             pitchAcceleration = 0;
             yawAcceleration = 0;
-
-            reportAccelerationX = 0;
-            reportAccelerationY = 0;
-            reportAccelerationZ = 0;
-            reportRollAcceleration = 0;
-            reportPitchAcceleration = 0;
-            reportYawAcceleration = 0;
 
             queryVelocityCommand = new QueryVelocityCommand();
             setVelocityCommand = new SetVelocityCommand();
@@ -165,17 +137,17 @@ namespace BadgerJaus.Services.Mobility
 
             //Set requested data
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_X_BIT))
-                report.VelocityX = reportVelocityX;
+                report.VelocityX = velocityX;
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Y_BIT))
-                report.VelocityY = reportVelocityY;
+                report.VelocityY = velocityY;
             if (message.IsFieldSet(QueryVelocityCommand.VELOCITY_Z_BIT))
-                report.VelocityZ = reportVelocityZ;
+                report.VelocityZ = velocityZ;
             if (message.IsFieldSet(QueryVelocityCommand.ROLL_RATE_BIT))
-                report.RollRate = reportRollRate;
+                report.RollRate = rollRate;
             if (message.IsFieldSet(QueryVelocityCommand.PITCH_RATE_BIT))
-                report.PitchRate = reportPitchRate;
+                report.PitchRate = pitchRate;
             if (message.IsFieldSet(QueryVelocityCommand.YAW_RATE_BIT))
-                report.YawRate = reportYawRate;
+                report.YawRate = yawRate;
 
 
             //Send response
