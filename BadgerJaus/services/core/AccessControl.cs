@@ -185,7 +185,7 @@ namespace BadgerJaus.Services.Core
                         case ControlState.STATE_NOT_CONTROLLED:
                             confirmControl = new ConfirmControl();
                             confirmControl.SetDestination(requestControl.GetSource());
-                            if (requestControl.GetAuthorityCode() <= DEFAULT_AUTHORITY_CODE)
+                            if (requestControl.GetAuthorityCode() > DEFAULT_AUTHORITY_CODE)
                             {
                                 confirmControl.SetResponseCode(ConfirmControl.CONTROL_ACCEPTED);
                                 component.AuthorityCode = requestControl.GetAuthorityCode();
