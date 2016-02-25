@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using BadgerJaus.Util;
 using BadgerJaus.Services.Mobility;
 
+using BadgerJAUSSubsystem.Services;
+
 namespace BadgerJAUSSubsystem
 {
     class BadgerJAUSSubsystem : JausSubsystem
@@ -25,11 +27,14 @@ namespace BadgerJAUSSubsystem
             BadgerJAUSSubsystem badgerJAUSSubsystem = new BadgerJAUSSubsystem();
             Node node = new Node(NODE_ID);
             Component component = new Component(COMPONENT_ID);
-            LocalVectorDriver localVectorDriver = new LocalVectorDriver();
+            //LocalVectorDriver localVectorDriver = new LocalVectorDriver();
+            BadgerVelocityStateDriver velocityStateDriver = new BadgerVelocityStateDriver();
 
             node.AddComponent(component);
             badgerJAUSSubsystem.AddNode(node);
-            component.AddService(localVectorDriver);
+            //component.AddService(localVectorDriver);
+            component.AddService(velocityStateDriver);
+            component.ComponentState = ComponentState.STATE_READY;
 
             badgerJAUSSubsystem.InitializeTimer();
         }
