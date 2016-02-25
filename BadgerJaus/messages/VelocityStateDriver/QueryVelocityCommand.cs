@@ -76,7 +76,7 @@ namespace BadgerJaus.Messages.VelocityStateDriver
             indexOffset = index;
             if (!PresenceOperation(buffer, indexOffset, out indexOffset, false))
                 return false;
-            return commandCode.Serialize(buffer, indexOffset, out indexOffset);
+            return commandType.Serialize(buffer, indexOffset, out indexOffset);
         }
 
         public override int GetPayloadSize()
