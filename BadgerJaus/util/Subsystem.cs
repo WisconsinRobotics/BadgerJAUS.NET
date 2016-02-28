@@ -55,18 +55,21 @@ namespace BadgerJaus.Util
 
         public Subsystem(int subsystemID, int port)
         {
-            nodeDictionary = new Dictionary<long, Node>();
-            observableNodes = new ObservableCollection<Node>();
-            this.subsystemID = new JausUnsignedShort(subsystemID);
+            InitializeData(subsystemID);
             networkAddress = new IPEndPoint(IPAddress.Any, port);
         }
 
         public Subsystem(int subsystemID, IPEndPoint networkAddress)
         {
+            InitializeData(subsystemID);
+            this.networkAddress = new IPEndPoint(networkAddress.Address, networkAddress.Port);
+        }
+
+        private void InitializeData(int subsystemID)
+        {
             nodeDictionary = new Dictionary<long, Node>();
             observableNodes = new ObservableCollection<Node>();
             this.subsystemID = new JausUnsignedShort(subsystemID);
-            this.networkAddress = new IPEndPoint(networkAddress.Address, networkAddress.Port);
         }
 
         public int SubsystemID
