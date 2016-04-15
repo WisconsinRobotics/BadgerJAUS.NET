@@ -72,6 +72,31 @@ namespace BadgerJaus.Services.Mobility
             return false;
         }
 
+        public double PropLinearX
+        {
+            get { return propLinearX; }
+        }
+        public double PropLinearY
+        {
+            get { return propLinearY; }
+        }
+        public double PropLinearZ
+        {
+            get { return propLinearZ; }
+        }
+
+        public double PropRotX
+        {
+            get { return propRotX; }
+        }
+        public double PropRotY
+        {
+            get { return propRotY; }
+        }
+        public double PropRotZ
+        {
+            get { return propRotZ; }
+        }
 
         public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
