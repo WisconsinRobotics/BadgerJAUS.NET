@@ -98,6 +98,36 @@ namespace BadgerJaus.Services.Mobility
             get { return propRotZ; }
         }
 
+        public double ResistLinearX
+        {
+            get { return resistLinearX; }
+        }
+
+        public double ResistLinearY
+        {
+            get { return resistLinearY; }
+        }
+
+        public double ResistLinearZ
+        {
+            get { return resistLinearZ; }
+        }
+
+        public double ResistRotX
+        {
+            get { return resistRotX; }
+        }
+
+        public double ResistRotY
+        {
+            get { return resistRotY; }
+        }
+
+        public double ResistRotZ
+        {
+            get { return resistRotZ; }
+        }
+
         public override bool ImplementsAndHandledMessage(Message message, Component component)
         {
             switch (message.GetCommandCode())
